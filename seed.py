@@ -250,6 +250,73 @@ def seed(force=False):
     history(t22, jdupont, "statut",    "ouvert",   "en_cours", days_ago=4)
     history(t22, admin,   "assigné à", "Non assigné", "jdupont", days_ago=4)
 
+    # ── Tickets créés par jdupont (technicien signalant des problèmes) ──
+    t23 = ticket("Imprimante réseau HP salle de réunion hors service",
+        "L'imprimante HP LaserJet de la salle de réunion principale (RDC) ne répond plus "
+        "depuis ce matin. Les jobs s'accumulent dans la file. Redémarrage sans effet.",
+        "panne", "imprimante", "normale", "en_cours", jdupont, jdupont, created_days_ago=1)
+    history(t23, jdupont, "création",  None,     "ouvert",   days_ago=1)
+    history(t23, jdupont, "statut",    "ouvert", "en_cours", days_ago=0)
+    comment(t23, jdupont,
+        "Pilote réinstallé, file d'impression vidée. Problème persiste. "
+        "Carte réseau de l'imprimante probablement défaillante. Commande pièce en cours.")
+
+    t24 = ticket("Demande accès VPN pour télétravail",
+        "Suite à ma nouvelle organisation en télétravail 2 jours/semaine, "
+        "j'ai besoin d'un accès VPN pour me connecter aux ressources internes depuis chez moi.",
+        "demande_acces", "reseau", "normale", "resolu", jdupont, admin, created_days_ago=7)
+    history(t24, jdupont, "création",  None,       "ouvert",   days_ago=7)
+    history(t24, admin,   "statut",    "ouvert",   "en_cours", days_ago=6)
+    history(t24, admin,   "statut",    "en_cours", "resolu",   days_ago=5)
+    comment(t24, admin,
+        "Compte VPN créé. Identifiants envoyés par email sécurisé. "
+        "Guide d'installation joint.", days_ago=5)
+
+    t25 = ticket("Mise à jour Windows bloquée sur 12 postes",
+        "Les mises à jour Windows Update sont bloquées sur 12 postes du service comptabilité "
+        "depuis 3 semaines. Erreur 0x80070057. Les postes sont vulnérables aux derniers CVE.",
+        "dysfonctionnement", "logiciel", "haute", "ouvert", jdupont, created_days_ago=3)
+    history(t25, jdupont, "création", None, "ouvert", days_ago=3)
+
+    # ── Tickets créés par admin ──
+    t26 = ticket("Téléphone IP bureau direction muet",
+        "Le téléphone IP Cisco du bureau de la Direction Générale n'émet plus aucun son "
+        "en réception d'appel depuis hier. L'écran s'allume mais pas de sonnerie ni audio.",
+        "dysfonctionnement", "telephonie", "haute", "en_cours", admin, jdupont, created_days_ago=2)
+    history(t26, admin,   "création",  None,       "ouvert",   days_ago=2)
+    history(t26, jdupont, "statut",    "ouvert",   "en_cours", days_ago=1)
+    history(t26, admin,   "assigné à", "Non assigné", "jdupont", days_ago=1)
+
+    t27 = ticket("Formation sécurité informatique obligatoire",
+        "Conformément à la politique sécurité 2026, tous les collaborateurs doivent suivre "
+        "la formation e-learning 'Cybersécurité au quotidien' avant le 30 juin. "
+        "Merci de déployer l'accès à la plateforme pour les 45 employés.",
+        "demande_formation", "logiciel", "haute", "en_cours", admin, admin, created_days_ago=6)
+    history(t27, admin, "création", None,       "ouvert",   days_ago=6)
+    history(t27, admin, "statut",   "ouvert",   "en_cours", days_ago=5)
+    comment(t27, admin,
+        "Plateforme configurée. Invitations envoyées à 45 collaborateurs. "
+        "32/45 formations complétées à ce jour.", days_ago=2)
+
+    t28 = ticket("Coupure réseau datacenter lors maintenance",
+        "La maintenance programmée du switch core ce soir de 22h à 00h "
+        "entraînera une coupure réseau complète du datacenter. "
+        "Tous les services hébergés seront indisponibles pendant cette fenêtre.",
+        "coupure_reseau", "reseau", "haute", "ferme", admin, admin, created_days_ago=10)
+    history(t28, admin, "création", None,       "ouvert",   days_ago=10)
+    history(t28, admin, "statut",   "ouvert",   "en_cours", days_ago=10)
+    history(t28, admin, "statut",   "en_cours", "resolu",   days_ago=9)
+    history(t28, admin, "statut",   "resolu",   "ferme",    days_ago=9)
+    comment(t28, admin,
+        "Maintenance effectuée sans incident. Retour à la normale à 23h42. "
+        "Durée effective : 1h42 sur les 2h prévues.", days_ago=9)
+
+    t29 = ticket("Renouvellement certificat SSL site intranet",
+        "Le certificat SSL de l'intranet (intranet.entreprise.fr) expire dans 15 jours. "
+        "Merci de procéder au renouvellement avant expiration pour éviter les alertes navigateur.",
+        "demande_licence", "reseau", "critique", "ouvert", admin, created_days_ago=0)
+    history(t29, admin, "création", None, "ouvert", days_ago=0)
+
     db.commit()
 
     # Résumé
