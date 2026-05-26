@@ -185,6 +185,147 @@ def export_tickets(
     )
 
 
+@router.get("/export/pdf")
+def export_tickets_pdf(
+    status: Optional[str] = Query(None),
+    type: Optional[str] = Query(None),
+    priority: Optional[str] = Query(None),
+    category: Optional[str] = Query(None),
+    assigned_to_id: Optional[int] = Query(None),
+    unassigned: bool = Query(False),
+    mine: bool = Query(False),
+    search: Optional[str] = Query(None),
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    from reportlab.lib import colors
+    from reportlab.lib.pagesizes import A4, landscape
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.lib.units import cm
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+    from reportlab.lib.enums import TA_CENTER, TA_LEFT
+
+    q = db.query(models.Ticket)
+    if mine:
+        q = q.filter(models.Ticket.created_by_id == current_user.id)
+    if status:
+        q = q.filter(models.Ticket.status == status)
+    if type:
+        q = q.filter(models.Ticket.type == type)
+    if priority:
+        q = q.filter(models.Ticket.priority == priority)
+    if category:
+        q = q.filter(models.Ticket.category == category)
+    if unassigned:
+        q = q.filter(models.Ticket.assigned_to_id == None)
+    elif assigned_to_id is not None:
+        q = q.filter(models.Ticket.assigned_to_id == assigned_to_id)
+    if search:
+        q = q.filter(models.Ticket.title.ilike(f"%{search}%"))
+    tickets = q.order_by(models.Ticket.created_at.desc()).all()
+
+    STATUS_COLORS = {
+        "ouvert": colors.HexColor("#1976d2"),
+        "en_cours": colors.HexColor("#f57c00"),
+        "resolu": colors.HexColor("#388e3c"),
+        "ferme": colors.HexColor("#757575"),
+    }
+    PRIORITY_COLORS = {
+        "faible": colors.HexColor("#9e9e9e"),
+        "normale": colors.HexColor("#1976d2"),
+        "haute": colors.HexColor("#f57c00"),
+        "critique": colors.HexColor("#c62828"),
+    }
+    STATUS_LABELS   = {"ouvert": "Ouvert", "en_cours": "En cours", "resolu": "Résolu", "ferme": "Fermé"}
+    PRIORITY_LABELS = {"faible": "Faible", "normale": "Normale", "haute": "Haute", "critique": "Critique"}
+    TYPE_LABELS = {
+        "incident": "Incident", "panne": "Panne", "dysfonctionnement": "Dysfonct.",
+        "alerte_securite": "Alerte sécu.", "coupure_reseau": "Coupure réseau",
+        "demande": "Demande", "demande_acces": "D. accès",
+        "demande_installation": "D. install.", "demande_materiel": "D. matériel",
+        "demande_information": "D. info",
+    }
+
+    buf = io.BytesIO()
+    doc = SimpleDocTemplate(buf, pagesize=landscape(A4),
+                            leftMargin=1.5*cm, rightMargin=1.5*cm,
+                            topMargin=1.5*cm, bottomMargin=1.5*cm)
+    styles = getSampleStyleSheet()
+    title_style = ParagraphStyle("title", fontSize=16, fontName="Helvetica-Bold",
+                                 spaceAfter=4, textColor=colors.HexColor("#1565c0"))
+    sub_style   = ParagraphStyle("sub", fontSize=9, fontName="Helvetica",
+                                 spaceAfter=12, textColor=colors.HexColor("#757575"))
+    cell_style  = ParagraphStyle("cell", fontSize=8, fontName="Helvetica", leading=10)
+
+    elements = [
+        Paragraph("HelpDesk IT — Export des tickets", title_style),
+        Paragraph(
+            f"Généré le {datetime.now().strftime('%d/%m/%Y à %H:%M')} "
+            f"par {current_user.username}  •  {len(tickets)} ticket(s)",
+            sub_style
+        ),
+    ]
+
+    headers = ["#", "Titre", "Type", "Catégorie", "Priorité", "Statut", "Créateur", "Assigné à", "Date"]
+    col_widths = [1*cm, 7*cm, 3*cm, 2.5*cm, 2*cm, 2*cm, 2.5*cm, 2.5*cm, 3*cm]
+
+    data = [headers]
+    row_commands = []
+
+    for i, t in enumerate(tickets, start=1):
+        row = i + 1  # +1 for header
+        status_col  = STATUS_COLORS.get(t.status, colors.grey)
+        priority_col = PRIORITY_COLORS.get(t.priority, colors.grey)
+
+        data.append([
+            str(t.id),
+            Paragraph(t.title[:80] + ("…" if len(t.title) > 80 else ""), cell_style),
+            TYPE_LABELS.get(t.type, t.type),
+            t.category.capitalize(),
+            PRIORITY_LABELS.get(t.priority, t.priority),
+            STATUS_LABELS.get(t.status, t.status),
+            t.creator.username,
+            t.assignee.username if t.assignee else "—",
+            t.created_at.strftime("%d/%m/%Y") if t.created_at else "",
+        ])
+        row_commands += [
+            ("TEXTCOLOR", (4, row), (4, row), priority_col),
+            ("TEXTCOLOR", (5, row), (5, row), status_col),
+            ("FONTNAME",  (4, row), (5, row), "Helvetica-Bold"),
+        ]
+        if i % 2 == 0:
+            row_commands.append(("BACKGROUND", (0, row), (-1, row), colors.HexColor("#f5f5f5")))
+
+    table_style = TableStyle([
+        ("BACKGROUND",   (0, 0), (-1, 0), colors.HexColor("#1565c0")),
+        ("TEXTCOLOR",    (0, 0), (-1, 0), colors.white),
+        ("FONTNAME",     (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("FONTSIZE",     (0, 0), (-1, 0), 9),
+        ("ALIGN",        (0, 0), (-1, -1), "LEFT"),
+        ("ALIGN",        (0, 0), (0, -1), "CENTER"),
+        ("FONTSIZE",     (0, 1), (-1, -1), 8),
+        ("ROWBACKGROUND",(0, 0), (-1, -1), [colors.white, colors.HexColor("#f5f5f5")]),
+        ("GRID",         (0, 0), (-1, -1), 0.4, colors.HexColor("#e0e0e0")),
+        ("VALIGN",       (0, 0), (-1, -1), "MIDDLE"),
+        ("TOPPADDING",   (0, 0), (-1, -1), 4),
+        ("BOTTOMPADDING",(0, 0), (-1, -1), 4),
+        ("LEFTPADDING",  (0, 0), (-1, -1), 4),
+    ] + row_commands)
+
+    table = Table(data, colWidths=col_widths, repeatRows=1)
+    table.setStyle(table_style)
+    elements.append(table)
+
+    doc.build(elements)
+    buf.seek(0)
+    filename = f"tickets_{datetime.now().strftime('%Y%m%d_%H%M')}.pdf"
+    return StreamingResponse(
+        iter([buf.getvalue()]),
+        media_type="application/pdf",
+        headers={"Content-Disposition": f"attachment; filename={filename}"},
+    )
+
+
 @router.get("/stats")
 def get_stats(
     db: Session = Depends(get_db),
