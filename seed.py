@@ -1,0 +1,272 @@
+"""
+Script de peuplement de la base de données avec des données de test.
+Usage :
+    python seed.py          # Peuple si la base est vide
+    python seed.py --force  # Vide et repeuple même si des données existent
+"""
+import sys
+from datetime import datetime, timedelta, timezone
+from database import SessionLocal, engine
+import models
+from auth import hash_password
+
+models.Base.metadata.create_all(bind=engine)
+
+
+def seed(force=False):
+    db = SessionLocal()
+
+    if db.query(models.User).count() > 0:
+        if not force:
+            print("Base déjà peuplée. Utilisez --force pour réinitialiser.")
+            db.close()
+            return
+        print("Réinitialisation de la base...")
+        db.query(models.TicketHistory).delete()
+        db.query(models.Comment).delete()
+        db.query(models.Ticket).delete()
+        db.query(models.User).delete()
+        db.commit()
+
+    # ── Utilisateurs ──────────────────────────────────────────────────────────
+    print("Création des utilisateurs...")
+    admin    = models.User(username="admin",    email="admin@helpdesk.fr",
+                           hashed_password=hash_password("admin123"), role="admin")
+    jdupont  = models.User(username="jdupont",  email="jean.dupont@helpdesk.fr",
+                           hashed_password=hash_password("tech123"),  role="technician")
+    mmartin  = models.User(username="mmartin",  email="marie.martin@helpdesk.fr",
+                           hashed_password=hash_password("user123"),  role="user")
+    db.add_all([admin, jdupont, mmartin])
+    db.commit()
+
+    # ── Helpers ───────────────────────────────────────────────────────────────
+    def ticket(title, description, type, category, priority, status,
+               creator, assignee=None, created_days_ago=0):
+        t = models.Ticket(
+            title=title, description=description,
+            type=type, category=category, priority=priority, status=status,
+            created_by_id=creator.id,
+            assigned_to_id=assignee.id if assignee else None,
+            created_at=datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(days=created_days_ago),
+        )
+        db.add(t)
+        db.flush()
+        return t
+
+    def history(t, user, field, old_val, new_val, days_ago=0):
+        db.add(models.TicketHistory(
+            ticket_id=t.id, user_id=user.id,
+            field_changed=field, old_value=old_val, new_value=new_val,
+            changed_at=datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(days=days_ago),
+        ))
+
+    def comment(t, user, content, days_ago=0):
+        db.add(models.Comment(
+            ticket_id=t.id, user_id=user.id, content=content,
+            created_at=datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(days=days_ago),
+        ))
+
+    # ── Tickets ───────────────────────────────────────────────────────────────
+    print("Création des tickets...")
+
+    # ── Incidents classiques ──
+    t1 = ticket("Écran bleu au démarrage",
+        "Mon PC affiche un écran bleu (BSOD) avec le code KERNEL_SECURITY_CHECK_FAILURE "
+        "depuis ce matin. Le problème survient dès le lancement de Windows.",
+        "incident", "logiciel", "haute", "ouvert", mmartin, created_days_ago=5)
+    history(t1, mmartin, "création", None, "ouvert", days_ago=5)
+
+    t2 = ticket("VPN ne fonctionne plus depuis la mise à jour",
+        "Après la mise à jour Windows du 25/05, le client VPN Cisco AnyConnect refuse "
+        "de se connecter. Erreur : unable to establish VPN. Affecte toute l'équipe commerciale.",
+        "incident", "reseau", "critique", "en_cours", mmartin, jdupont, created_days_ago=8)
+    history(t2, mmartin,  "création",  None,       "ouvert",   days_ago=8)
+    history(t2, jdupont,  "statut",    "ouvert",   "en_cours", days_ago=7)
+    history(t2, admin,    "assigné à", "Non assigné", "jdupont", days_ago=7)
+    comment(t2, jdupont,
+        "Problème identifié : conflit entre KB5034441 et le pilote réseau. "
+        "Solution en cours de test sur un poste pilote.", days_ago=6)
+
+    t3 = ticket("Installation Adobe Acrobat Pro",
+        "Besoin d'Adobe Acrobat Pro pour créer et éditer des PDF dans le cadre "
+        "du projet contrats clients. Merci de procéder à l'installation sur mon poste.",
+        "demande", "logiciel", "normale", "resolu", mmartin, jdupont, created_days_ago=10)
+    history(t3, mmartin, "création", None,       "ouvert",   days_ago=10)
+    history(t3, jdupont, "statut",   "ouvert",   "en_cours", days_ago=9)
+    history(t3, jdupont, "statut",   "en_cours", "resolu",   days_ago=8)
+
+    t4 = ticket("Souris sans fil déconnectée en permanence",
+        "La souris Logitech MX Master se déconnecte toutes les 5 minutes. "
+        "Remplacement de la pile effectué sans amélioration. Problème présent depuis 1 semaine.",
+        "incident", "materiel", "faible", "ouvert", mmartin, created_days_ago=3)
+    history(t4, mmartin, "création", None, "ouvert", days_ago=3)
+
+    t5 = ticket("Accès refusé au dossier partagé RH",
+        "Impossible d'accéder au dossier \\\\serveur\\RH depuis hier matin. "
+        "Message : accès refusé. J'avais les droits la semaine dernière. "
+        "Besoin urgent pour préparer les fiches de paie.",
+        "incident", "reseau", "haute", "en_cours", mmartin, jdupont, created_days_ago=4)
+    history(t5, mmartin, "création",  None,       "ouvert",   days_ago=4)
+    history(t5, jdupont, "statut",    "ouvert",   "en_cours", days_ago=3)
+    history(t5, admin,   "assigné à", "Non assigné", "jdupont", days_ago=3)
+
+    t6 = ticket("Demande second écran pour télétravail",
+        "Dans le cadre de mon passage en télétravail 3 jours par semaine, je sollicite "
+        "la mise à disposition d'un second écran 24 pouces.",
+        "demande_materiel", "materiel", "faible", "ferme", mmartin, jdupont, created_days_ago=15)
+    history(t6, mmartin, "création", None,       "ouvert",   days_ago=15)
+    history(t6, jdupont, "statut",   "ouvert",   "resolu",   days_ago=12)
+    history(t6, jdupont, "statut",   "resolu",   "ferme",    days_ago=10)
+
+    t7 = ticket("Antivirus signale un fichier suspect",
+        "Windows Defender a mis en quarantaine Invoice_2026.exe reçu par email. "
+        "Alerte : Trojan:Win32/Wacatac. Le fichier a été ouvert par erreur avant la détection.",
+        "alerte_securite", "securite", "critique", "en_cours", mmartin, jdupont, created_days_ago=2)
+    history(t7, mmartin, "création",  None,       "ouvert",   days_ago=2)
+    history(t7, admin,   "statut",    "ouvert",   "en_cours", days_ago=1)
+    history(t7, admin,   "assigné à", "Non assigné", "jdupont", days_ago=1)
+    comment(t7, admin,
+        "Fichier analysé : domaine frauduleux détecté. Mot de passe utilisateur réinitialisé "
+        "par précaution. Signalement CERT en cours.", days_ago=1)
+
+    # ── Nouvelles pannes ──
+    t8 = ticket("Serveur de fichiers inaccessible depuis 8h",
+        "Le serveur NAS principal (\\\\SRV-NAS01) est totalement hors service depuis 8h. "
+        "Aucun utilisateur ne peut accéder à ses fichiers. Impact sur toute la société.",
+        "panne", "reseau", "critique", "en_cours", mmartin, admin, created_days_ago=1)
+    history(t8, mmartin, "création",  None,       "ouvert",   days_ago=1)
+    history(t8, admin,   "statut",    "ouvert",   "en_cours", days_ago=1)
+    comment(t8, admin,
+        "Intervention en cours sur le NAS. Problème identifié : disque RAID dégradé. "
+        "Reconstruction en cours, estimé 2h.", days_ago=0)
+
+    t9 = ticket("Messagerie Outlook très lente à charger",
+        "Depuis la mise à jour Outlook du 24/05, les emails mettent 2 à 3 minutes à s'afficher. "
+        "Problème touche une dizaine de postes au service comptabilité.",
+        "dysfonctionnement", "logiciel", "haute", "en_cours", mmartin, jdupont, created_days_ago=6)
+    history(t9, mmartin, "création",  None,       "ouvert",   days_ago=6)
+    history(t9, jdupont, "statut",    "ouvert",   "en_cours", days_ago=5)
+
+    t10 = ticket("Perte de connexion internet bâtiment B",
+        "Le bâtiment B est totalement coupé d'internet depuis 14h. "
+        "WiFi et filaire affectés. Le bâtiment A fonctionne normalement.",
+        "coupure_reseau", "reseau", "haute", "ouvert", mmartin, created_days_ago=0)
+    history(t10, mmartin, "création", None, "ouvert", days_ago=0)
+
+    t11 = ticket("Création compte stagiaire - Marie Lefebvre",
+        "Merci de créer un compte Active Directory pour notre stagiaire Marie Lefebvre "
+        "(marie.lefebvre@entreprise.fr). Accès : messagerie, SharePoint RH, logiciel de paie. "
+        "Arrivée le 01/06.",
+        "demande_acces", "logiciel", "normale", "resolu", mmartin, jdupont, created_days_ago=12)
+    history(t11, mmartin, "création", None,       "ouvert",   days_ago=12)
+    history(t11, jdupont, "statut",   "ouvert",   "resolu",   days_ago=10)
+
+    t12 = ticket("Installation AutoCAD 2025 poste bureau études",
+        "Le bureau des études a besoin d'AutoCAD 2025 sur le poste de M. Girard (PC-ETUDES-04). "
+        "La licence est disponible dans le gestionnaire de licences.",
+        "demande_installation", "logiciel", "normale", "resolu", admin, jdupont, created_days_ago=9)
+    history(t12, admin,   "création", None,       "ouvert",   days_ago=9)
+    history(t12, jdupont, "statut",   "ouvert",   "resolu",   days_ago=7)
+
+    t13 = ticket("Remplacement clavier défectueux",
+        "Le clavier du poste de Mme Durand (comptabilité, bureau 214) a plusieurs touches "
+        "défaillantes (E, R, T). Merci de procéder au remplacement.",
+        "demande_materiel", "materiel", "faible", "ouvert", mmartin, created_days_ago=2)
+    history(t13, mmartin, "création", None, "ouvert", days_ago=2)
+
+    t14 = ticket("Procédure sauvegarde données OneDrive",
+        "Pouvez-vous m'expliquer comment configurer la synchronisation automatique "
+        "du bureau et des documents vers OneDrive ?",
+        "demande_information", "logiciel", "faible", "ouvert", mmartin, created_days_ago=1)
+    history(t14, mmartin, "création", None, "ouvert", days_ago=1)
+
+    # ── Nouveaux types ──
+    t15 = ticket("Tentative intrusion SSH serveur production",
+        "Le firewall a bloqué 3 200 tentatives de connexion SSH en 2h sur SRV-PROD-01 "
+        "depuis une IP étrangère (185.234.x.x). Attaque bruteforce en cours.",
+        "intrusion", "securite", "critique", "en_cours", admin, admin, created_days_ago=0)
+    history(t15, admin, "création",  None,       "ouvert",   days_ago=0)
+    history(t15, admin, "statut",    "ouvert",   "en_cours", days_ago=0)
+    comment(t15, admin,
+        "IP source bannie au niveau firewall. Analyse des logs en cours. "
+        "Fail2Ban activé sur tous les serveurs exposés.")
+
+    t16 = ticket("Base de données clients corrompue après crash",
+        "Suite à une coupure de courant, la base MySQL CRM est partiellement corrompue. "
+        "3 tables inaccessibles. Dernière sauvegarde disponible : J-1. "
+        "Environ 300 enregistrements potentiellement perdus.",
+        "perte_donnees", "logiciel", "critique", "en_cours", mmartin, admin, created_days_ago=1)
+    history(t16, mmartin, "création",  None,       "ouvert",   days_ago=1)
+    history(t16, admin,   "statut",    "ouvert",   "en_cours", days_ago=1)
+    comment(t16, admin,
+        "Restauration de la sauvegarde J-1 en cours. Perte estimée à 47 enregistrements. "
+        "Les équipes métier ont été informées.")
+
+    t17 = ticket("Serveur web à 98% CPU depuis 6h",
+        "Le serveur NGINX (SRV-WEB-02) est à 98% CPU depuis 6h. "
+        "Temps de réponse : 8-12 secondes. Cause probable : script de crawling non contrôlé.",
+        "surcharge_systeme", "reseau", "haute", "en_cours", admin, jdupont, created_days_ago=0)
+    history(t17, admin,   "création",  None,       "ouvert",   days_ago=0)
+    history(t17, jdupont, "statut",    "ouvert",   "en_cours", days_ago=0)
+    comment(t17, jdupont,
+        "Script incriminé identifié (crawler.py mal configuré). Script arrêté, "
+        "CPU redescendu à 12%. Surveillance maintenue 24h.")
+
+    t18 = ticket("Onduleur salle serveur en alarme",
+        "L'onduleur APC Smart-UPS 3000 émet une alarme sonore continue. "
+        "Les serveurs fonctionnent sur batterie depuis 45 minutes. Autonomie : 20 min restantes.",
+        "panne_electrique", "materiel", "critique", "resolu", admin, admin, created_days_ago=3)
+    history(t18, admin, "création", None,       "ouvert",   days_ago=3)
+    history(t18, admin, "statut",   "ouvert",   "en_cours", days_ago=3)
+    history(t18, admin, "statut",   "en_cours", "resolu",   days_ago=2)
+    comment(t18, admin,
+        "Technicien intervenu en urgence. Module batterie remplacé. "
+        "Onduleur opérationnel. Autonomie testée : 45 min. Prévoir remplacement complet sous 6 mois.",
+        days_ago=2)
+
+    t19 = ticket("Formation Microsoft 365 pour équipe RH",
+        "L'équipe RH (8 personnes) souhaite une formation Teams, SharePoint et OneDrive. "
+        "Durée souhaitée : demi-journée. À planifier avant fin juin 2026.",
+        "demande_formation", "logiciel", "normale", "ouvert", mmartin, created_days_ago=4)
+    history(t19, mmartin, "création", None, "ouvert", days_ago=4)
+
+    t20 = ticket("Mise en place sauvegarde automatique poste direction",
+        "M. Martin (Direction) demande une sauvegarde automatique quotidienne vers le NAS. "
+        "Dossiers : Bureau, Documents, Téléchargements. Rétention souhaitée : 30 jours.",
+        "demande_sauvegarde", "logiciel", "normale", "ouvert", admin, created_days_ago=2)
+    history(t20, admin, "création", None, "ouvert", days_ago=2)
+
+    t21 = ticket("Déménagement poste bureau 304 vers open space B2",
+        "Le poste de Mme Chen doit être déplacé du bureau 304 vers l'open space B2. "
+        "Prévoir reconfiguration réseau et téléphonie. À effectuer le week-end du 07-08 juin.",
+        "demande_demenagement", "reseau", "faible", "ouvert", mmartin, created_days_ago=1)
+    history(t21, mmartin, "création", None, "ouvert", days_ago=1)
+
+    t22 = ticket("Renouvellement licences Adobe Creative Cloud x5",
+        "Les 5 licences Adobe CC du service Marketing expirent le 15 juin 2026. "
+        "Merci de procéder au renouvellement annuel et de contacter les achats pour le bon de commande.",
+        "demande_licence", "logiciel", "haute", "en_cours", mmartin, jdupont, created_days_ago=5)
+    history(t22, mmartin, "création",  None,       "ouvert",   days_ago=5)
+    history(t22, jdupont, "statut",    "ouvert",   "en_cours", days_ago=4)
+    history(t22, admin,   "assigné à", "Non assigné", "jdupont", days_ago=4)
+
+    db.commit()
+
+    # Résumé
+    nb_tickets = db.query(models.Ticket).count()
+    nb_users   = db.query(models.User).count()
+    nb_comments = db.query(models.Comment).count()
+    print(f"[OK] {nb_users} utilisateurs crees  : admin / jdupont / mmartin")
+    print(f"[OK] {nb_tickets} tickets crees")
+    print(f"[OK] {nb_comments} commentaires ajoutes")
+    print()
+    print("Comptes de test :")
+    print("  admin    / admin123  (Administrateur)")
+    print("  jdupont  / tech123   (Technicien)")
+    print("  mmartin  / user123   (Utilisateur)")
+    db.close()
+
+
+if __name__ == "__main__":
+    force = "--force" in sys.argv
+    seed(force=force)
