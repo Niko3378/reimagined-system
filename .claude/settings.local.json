@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(New-Item *)",
+      "PowerShell(cd \"C:\\\\ia\\\\Projet2\"; Start-Process python -ArgumentList \"-m uvicorn main:app --host 0.0.0.0 --port 8000 --reload\" -WindowStyle Hidden; Start-Sleep -Seconds 3; try { $r = Invoke-WebRequest -Uri \"http://localhost:8000/\" -TimeoutSec 5; \"Serveur OK - statut $\\($r.StatusCode\\)\" } catch { \"Erreur: $_\" })",
+      "PowerShell(cd \"C:\\\\ia\\\\Projet2\"; $job = Start-Job -ScriptBlock { Set-Location \"C:\\\\ia\\\\Projet2\"; python -m uvicorn main:app --host 0.0.0.0 --port 8000 }; Start-Sleep -Seconds 4; try { $r = Invoke-WebRequest -Uri \"http://localhost:8000/\" -UseBasicParsing -TimeoutSec 5; \"Serveur OK - statut $\\($r.StatusCode\\)\" } catch { \"Erreur: $_\" })",
+      "PowerShell(Get-Job *)",
+      "PowerShell(Start-Process \"http://127.0.0.1:8000\")",
+      "PowerShell(winget install *)"
+    ]
+  }
+}

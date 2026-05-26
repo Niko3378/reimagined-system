@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HelpDesk IT</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --sidebar-width: 240px;
+      --navbar-height: 56px;
+    }
+    body { background: #f0f2f5; font-family: 'Segoe UI', sans-serif; }
+
+    /* ── Auth ── */
+    #auth-section {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+    }
+    .auth-card { width: 100%; max-width: 420px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.25); }
+    .auth-logo { font-size: 2rem; color: #1565c0; }
+
+    /* ── App layout ── */
+    #app-section { display: none; min-height: 100vh; }
+    .navbar-brand span { font-weight: 700; color: #1565c0; }
+    .sidebar {
+      width: var(--sidebar-width);
+      min-height: calc(100vh - var(--navbar-height));
+      background: #fff;
+      border-right: 1px solid #e0e0e0;
+      position: fixed;
+      top: var(--navbar-height);
+      left: 0;
+      overflow-y: auto;
+      z-index: 100;
+    }
+    .sidebar .nav-link {
+      color: #424242;
+      border-radius: 8px;
+      margin: 2px 8px;
+      padding: 10px 12px;
+      transition: all .15s;
+    }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active {
+      background: #e3f2fd;
+      color: #1565c0;
+    }
+    .sidebar .nav-link i { width: 20px; text-align: center; margin-right: 8px; }
+    .main-content {
+      margin-left: var(--sidebar-width);
+      padding: 24px;
+      min-height: calc(100vh - var(--navbar-height));
+    }
+
+    /* ── Stats cards ── */
+    .stat-card { border-radius: 12px; border: none; transition: transform .15s; }
+    .stat-card:hover { transform: translateY(-2px); }
+    .stat-icon { font-size: 1.8rem; opacity: .8; }
+
+    /* ── Ticket list ── */
+    .ticket-row { cursor: pointer; transition: background .1s; }
+    .ticket-row:hover { background: #e3f2fd !important; }
+    .ticket-row td { vertical-align: middle; }
+
+    /* ── Priority / Status badges ── */
+    .badge-faible { background: #9e9e9e; }
+    .badge-normale { background: #1976d2; }
+    .badge-haute { background: #f57c00; }
+    .badge-critique { background: #c62828; }
+    .badge-ouvert { background: #1976d2; }
+    .badge-en_cours { background: #f57c00; }
+    .badge-resolu { background: #388e3c; }
+    .badge-ferme { background: #757575; }
+    .badge-demande { background: #0288d1; }
+    .badge-demande_acces { background: #00838f; }
+    .badge-demande_installation { background: #1565c0; }
+    .badge-demande_materiel { background: #4527a0; }
+    .badge-demande_information { background: #558b2f; }
+    .badge-incident { background: #d32f2f; }
+    .badge-panne { background: #b71c1c; }
+    .badge-dysfonctionnement { background: #e65100; }
+    .badge-alerte_securite { background: #880e4f; }
+    .badge-coupure_reseau { background: #4a148c; }
+
+    /* ── Ticket detail ── */
+    .modal-xl { max-width: 900px; }
+    .history-item { border-left: 3px solid #1976d2; padding-left: 12px; margin-bottom: 8px; }
+    .comment-bubble {
+      background: #f5f5f5;
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-bottom: 10px;
+    }
+    .comment-bubble.own { background: #e3f2fd; }
+    .ticket-section-title { font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; color: #757575; margin-bottom: 6px; }
+
+    /* ── Filters bar ── */
+    .filter-bar select, .filter-bar input { border-radius: 8px; font-size: .875rem; }
+
+    /* ── Empty state ── */
+    .empty-state { text-align: center; padding: 60px 20px; color: #9e9e9e; }
+    .empty-state i { font-size: 3rem; margin-bottom: 12px; }
+
+    /* ── Notification toast ── */
+    #toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; }
+    .toast { min-width: 280px; border-radius: 10px; }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     AUTH SECTION
+══════════════════════════════════════════ -->
+<div id="auth-section">
+  <div class="auth-card card p-4">
+    <!-- Login -->
+    <div id="login-view">
+      <div class="text-center mb-4">
+        <i class="fas fa-headset auth-logo"></i>
+        <h4 class="mt-2 fw-bold">HelpDesk IT</h4>
+        <p class="text-muted small">Connectez-vous à votre compte</p>
+      </div>
+      <div id="login-error" class="alert alert-danger d-none"></div>
+      <form id="login-form">
+        <div class="mb-3">
+          <label class="form-label">Nom d'utilisateur</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-user"></i></span>
+            <input type="text" class="form-control" id="login-username" required autocomplete="username">
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Mot de passe</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+            <input type="password" class="form-control" id="login-password" required autocomplete="current-password">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">
+          <i class="fas fa-sign-in-alt me-2"></i>Connexion
+        </button>
+      </form>
+      <hr>
+      <p class="text-center mb-0 small">Pas de compte ? <a href="#" id="go-register">Créer un compte</a></p>
+    </div>
+
+    <!-- Register -->
+    <div id="register-view" class="d-none">
+      <div class="text-center mb-4">
+        <i class="fas fa-headset auth-logo"></i>
+        <h4 class="mt-2 fw-bold">Nouveau compte</h4>
+        <p class="text-muted small">Créez votre accès HelpDesk</p>
+      </div>
+      <div id="register-error" class="alert alert-danger d-none"></div>
+      <form id="register-form">
+        <div class="mb-3">
+          <label class="form-label">Nom d'utilisateur</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-user"></i></span>
+            <input type="text" class="form-control" id="reg-username" required minlength="3">
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+            <input type="email" class="form-control" id="reg-email" required>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Mot de passe</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+            <input type="password" class="form-control" id="reg-password" required minlength="6">
+          </div>
+          <div class="form-text">Minimum 6 caractères</div>
+        </div>
+        <button type="submit" class="btn btn-success w-100">
+          <i class="fas fa-user-plus me-2"></i>Créer le compte
+        </button>
+      </form>
+      <hr>
+      <p class="text-center mb-0 small">Déjà un compte ? <a href="#" id="go-login">Se connecter</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     APP SECTION
+══════════════════════════════════════════ -->
+<div id="app-section">
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand navbar-light bg-white border-bottom fixed-top" style="height:var(--navbar-height)">
+    <div class="container-fluid">
+      <span class="navbar-brand">
+        <i class="fas fa-headset text-primary me-2"></i>
+        <span>HelpDesk IT</span>
+      </span>
+      <div class="ms-auto d-flex align-items-center gap-3">
+        <span class="badge bg-light text-dark border" id="nav-role-badge"></span>
+        <span class="text-muted small" id="nav-username"></span>
+        <button class="btn btn-outline-danger btn-sm" id="logout-btn">
+          <i class="fas fa-sign-out-alt me-1"></i>Déconnexion
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Sidebar -->
+  <nav class="sidebar pt-3">
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link active" href="#" data-view="dashboard">
+          <i class="fas fa-tachometer-alt"></i>Tableau de bord
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#" data-view="my-tickets">
+          <i class="fas fa-ticket-alt"></i>Mes tickets
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#" data-view="all-tickets">
+          <i class="fas fa-list"></i>Tous les tickets
+        </a>
+      </li>
+      <li class="nav-item mt-3" id="admin-nav-item" style="display:none">
+        <div class="px-3 mb-1 text-uppercase small text-muted fw-bold" style="font-size:.7rem">Administration</div>
+      </li>
+      <li class="nav-item" id="admin-users-nav" style="display:none">
+        <a class="nav-link" href="#" data-view="admin-users">
+          <i class="fas fa-users-cog"></i>Utilisateurs
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Main content -->
+  <div class="main-content mt-5 pt-3">
+
+    <!-- ── Dashboard ── -->
+    <div id="view-dashboard">
+      <h5 class="fw-bold mb-4"><i class="fas fa-tachometer-alt me-2 text-primary"></i>Tableau de bord</h5>
+      <div class="row g-3 mb-2" id="stats-row">
+        <div class="col-sm-6 col-xl-3">
+          <div class="card stat-card bg-primary text-white p-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <div class="small opacity-75">Total tickets</div>
+                <div class="fs-3 fw-bold" id="stat-total">—</div>
+              </div>
+              <i class="fas fa-ticket-alt stat-icon"></i>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+          <div class="card stat-card bg-warning text-white p-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <div class="small opacity-75">Ouverts</div>
+                <div class="fs-3 fw-bold" id="stat-ouvert">—</div>
+              </div>
+              <i class="fas fa-inbox stat-icon"></i>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+          <div class="card stat-card text-white p-3" style="background:#f57c00">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <div class="small opacity-75">En cours</div>
+                <div class="fs-3 fw-bold" id="stat-en_cours">—</div>
+              </div>
+              <i class="fas fa-spinner stat-icon"></i>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+          <div class="card stat-card bg-danger text-white p-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <div class="small opacity-75">Incidents</div>
+                <div class="fs-3 fw-bold" id="stat-incidents">—</div>
+              </div>
+              <i class="fas fa-exclamation-triangle stat-icon"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row g-3 mb-4">
+        <div class="col-lg-3">
+          <div class="card h-100 p-3">
+            <h6 class="fw-semibold text-muted mb-3"><i class="fas fa-chart-pie me-2"></i>Statuts</h6>
+            <div style="position:relative;height:190px"><canvas id="chart-status"></canvas></div>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="card h-100 p-3">
+            <h6 class="fw-semibold text-muted mb-3"><i class="fas fa-circle-half-stroke me-2"></i>Incidents vs Demandes</h6>
+            <div style="position:relative;height:190px"><canvas id="chart-inc-dem"></canvas></div>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="card h-100 p-3">
+            <h6 class="fw-semibold text-muted mb-3"><i class="fas fa-chart-bar me-2"></i>Priorités</h6>
+            <div style="position:relative;height:190px"><canvas id="chart-priority"></canvas></div>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="card h-100 p-3">
+            <h6 class="fw-semibold text-muted mb-3"><i class="fas fa-layer-group me-2"></i>Catégories</h6>
+            <div style="position:relative;height:190px"><canvas id="chart-category"></canvas></div>
+          </div>
+        </div>
+      </div>
+      <div class="row g-3 mb-4">
+        <div class="col-12">
+          <div class="card p-3">
+            <h6 class="fw-semibold text-muted mb-3"><i class="fas fa-tags me-2"></i>Tickets par type</h6>
+            <div style="position:relative;height:280px"><canvas id="chart-type"></canvas></div>
+          </div>
+        </div>
+      </div>
+      <div class="row g-3 mb-4">
+        <div class="col-12">
+          <div class="card p-3">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h6 class="fw-semibold text-muted mb-0"><i class="fas fa-chart-line me-2"></i>Évolution dans le temps</h6>
+              <div class="btn-group btn-group-sm" id="timeline-range">
+                <button class="btn btn-outline-primary" data-days="7">7 j</button>
+                <button class="btn btn-primary active" data-days="30">30 j</button>
+                <button class="btn btn-outline-primary" data-days="90">90 j</button>
+              </div>
+            </div>
+            <div style="position:relative;height:240px"><canvas id="chart-timeline"></canvas></div>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex align-items-center gap-2">
+          <h6 class="fw-bold mb-0">Tickets récents</h6>
+          <button id="dashboard-unassigned-toggle" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-user-slash me-1"></i>Non assignés
+          </button>
+        </div>
+        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createModal">
+          <i class="fas fa-plus me-1"></i>Nouveau ticket
+        </button>
+      </div>
+      <div id="dashboard-tickets-container"></div>
+    </div>
+
+    <!-- ── My tickets / All tickets ── -->
+    <div id="view-my-tickets" style="display:none">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex align-items-center gap-2">
+          <h5 class="fw-bold mb-0"><i class="fas fa-ticket-alt me-2 text-primary"></i>Mes tickets</h5>
+          <button id="my-tickets-unassigned-toggle" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-user-slash me-1"></i>Non assignés
+          </button>
+        </div>
+        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createModal">
+          <i class="fas fa-plus me-1"></i>Nouveau ticket
+        </button>
+      </div>
+      <div id="my-tickets-container"></div>
+    </div>
+
+    <div id="view-all-tickets" style="display:none">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex align-items-center gap-2">
+          <h5 class="fw-bold mb-0"><i class="fas fa-list me-2 text-primary"></i>Tous les tickets</h5>
+          <button id="all-tickets-unassigned-toggle" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-user-slash me-1"></i>Non assignés
+          </button>
+        </div>
+        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createModal">
+          <i class="fas fa-plus me-1"></i>Nouveau ticket
+        </button>
+      </div>
+      <div class="card mb-3 filter-bar">
+        <div class="card-body py-2">
+          <div class="row g-2">
+            <div class="col-md-4">
+              <input type="text" id="filter-search" class="form-control form-control-sm" placeholder="Rechercher par titre...">
+            </div>
+            <div class="col-md-2">
+              <select id="filter-status" class="form-select form-select-sm">
+                <option value="">Tous statuts</option>
+                <option value="ouvert">Ouvert</option>
+                <option value="en_cours">En cours</option>
+                <option value="resolu">Résolu</option>
+                <option value="ferme">Fermé</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <select id="filter-type" class="form-select form-select-sm">
+                <option value="">Tous types</option>
+                <optgroup label="Incidents">
+                  <option value="incident">Incident</option>
+                  <option value="panne">Panne</option>
+                  <option value="dysfonctionnement">Dysfonctionnement</option>
+                  <option value="alerte_securite">Alerte sécurité</option>
+                  <option value="coupure_reseau">Coupure réseau</option>
+                </optgroup>
+                <optgroup label="Demandes">
+                  <option value="demande">Demande</option>
+                  <option value="demande_acces">Demande d'accès</option>
+                  <option value="demande_installation">Demande d'installation</option>
+                  <option value="demande_materiel">Demande de matériel</option>
+                  <option value="demande_information">Demande d'information</option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <select id="filter-priority" class="form-select form-select-sm">
+                <option value="">Toutes priorités</option>
+                <option value="critique">Critique</option>
+                <option value="haute">Haute</option>
+                <option value="normale">Normale</option>
+                <option value="faible">Faible</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <select id="filter-category" class="form-select form-select-sm">
+                <option value="">Toutes catégories</option>
+                <option value="logiciel">Logiciel</option>
+                <option value="materiel">Matériel</option>
+                <option value="reseau">Réseau</option>
+                <option value="securite">Sécurité</option>
+                <option value="telephonie">Téléphonie</option>
+                <option value="imprimante">Imprimante</option>
+                <option value="autre">Autre</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <select id="filter-assignee" class="form-select form-select-sm">
+                <option value="">Tous les techniciens</option>
+                <option value="unassigned">— Non assigné</option>
+              </select>
+            </div>
+            <div class="col-md-8"></div>
+            <div class="col-md-4 d-flex justify-content-end gap-2 mt-1">
+              <button id="filter-reset" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-times me-1"></i>Réinitialiser
+              </button>
+              <button id="filter-apply" class="btn btn-primary btn-sm">
+                <i class="fas fa-filter me-1"></i>Filtrer
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="all-tickets-container"></div>
+    </div>
+
+    <!-- ── Admin users ── -->
+    <div id="view-admin-users" style="display:none">
+      <h5 class="fw-bold mb-4"><i class="fas fa-users-cog me-2 text-primary"></i>Gestion des utilisateurs</h5>
+      <div id="admin-users-container"></div>
+    </div>
+
+  </div><!-- /main-content -->
+</div><!-- /app-section -->
+
+<!-- ══════════════════════════════════════════
+     CREATE TICKET MODAL
+══════════════════════════════════════════ -->
+<div class="modal fade" id="createModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="fas fa-plus-circle me-2 text-primary"></i>Nouveau ticket</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div id="create-error" class="alert alert-danger d-none"></div>
+        <form id="create-form">
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Titre <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="create-title" required placeholder="Décrivez le problème en quelques mots">
+          </div>
+          <div class="row g-3 mb-3">
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Type</label>
+              <select class="form-select" id="create-type">
+                <optgroup label="── Incidents">
+                  <option value="incident">⚠️ Incident</option>
+                  <option value="panne">🔴 Panne</option>
+                  <option value="dysfonctionnement">🟠 Dysfonctionnement</option>
+                  <option value="alerte_securite">🔒 Alerte sécurité</option>
+                  <option value="coupure_reseau">📡 Coupure réseau</option>
+                </optgroup>
+                <optgroup label="── Demandes">
+                  <option value="demande">📋 Demande</option>
+                  <option value="demande_acces">🔑 Demande d'accès</option>
+                  <option value="demande_installation">💿 Demande d'installation</option>
+                  <option value="demande_materiel">🖥️ Demande de matériel</option>
+                  <option value="demande_information">❓ Demande d'information</option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Catégorie</label>
+              <select class="form-select" id="create-category">
+                <option value="logiciel">Logiciel</option>
+                <option value="materiel">Matériel</option>
+                <option value="reseau">Réseau</option>
+                <option value="securite">Sécurité</option>
+                <option value="telephonie">Téléphonie</option>
+                <option value="imprimante">Imprimante</option>
+                <option value="autre">Autre</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Priorité</label>
+              <select class="form-select" id="create-priority">
+                <option value="faible">Faible</option>
+                <option value="normale" selected>Normale</option>
+                <option value="haute">Haute</option>
+                <option value="critique">Critique</option>
+              </select>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Description <span class="text-danger">*</span></label>
+            <textarea class="form-control" id="create-description" rows="5" required
+              placeholder="Décrivez le problème en détail : contexte, message d'erreur, étapes pour reproduire..."></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button class="btn btn-primary" id="create-submit">
+          <i class="fas fa-paper-plane me-1"></i>Créer le ticket
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TICKET DETAIL MODAL
+══════════════════════════════════════════ -->
+<div class="modal fade" id="detailModal" tabindex="-1">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="detail-title-bar">Ticket #<span id="detail-id"></span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-4">
+          <!-- Left: info + description + comments -->
+          <div class="col-md-8">
+            <div class="d-flex gap-2 flex-wrap mb-3">
+              <span id="detail-type-badge" class="badge fs-6"></span>
+              <span id="detail-status-badge" class="badge fs-6"></span>
+              <span id="detail-priority-badge" class="badge fs-6"></span>
+              <span id="detail-category-badge" class="badge bg-secondary fs-6"></span>
+            </div>
+            <h5 id="detail-title" class="fw-bold"></h5>
+            <p class="text-muted small mb-3">
+              Créé par <strong id="detail-creator"></strong> le <span id="detail-date"></span>
+              — Assigné à <strong id="detail-assignee"></strong>
+            </p>
+            <div class="ticket-section-title">Description</div>
+            <div id="detail-description" class="p-3 bg-light rounded mb-4" style="white-space:pre-wrap"></div>
+
+            <!-- Comments -->
+            <div class="ticket-section-title">Commentaires (<span id="comments-count">0</span>)</div>
+            <div id="comments-list" class="mb-3"></div>
+            <div class="input-group mt-2">
+              <textarea id="new-comment" class="form-control" rows="2" placeholder="Ajouter un commentaire..."></textarea>
+              <button class="btn btn-primary" id="comment-submit">
+                <i class="fas fa-paper-plane"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Right: actions + history -->
+          <div class="col-md-4">
+            <!-- Tech/Admin actions -->
+            <div id="tech-actions" class="card border-primary mb-3" style="display:none">
+              <div class="card-header bg-primary text-white small fw-semibold py-2">
+                <i class="fas fa-tools me-1"></i>Actions technicien
+              </div>
+              <div class="card-body">
+                <div class="mb-3">
+                  <label class="form-label small fw-semibold">Statut</label>
+                  <select class="form-select form-select-sm" id="action-status">
+                    <option value="ouvert">Ouvert</option>
+                    <option value="en_cours">En cours</option>
+                    <option value="resolu">Résolu</option>
+                    <option value="ferme">Fermé</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label small fw-semibold">Priorité</label>
+                  <select class="form-select form-select-sm" id="action-priority">
+                    <option value="faible">Faible</option>
+                    <option value="normale">Normale</option>
+                    <option value="haute">Haute</option>
+                    <option value="critique">Critique</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label small fw-semibold">Assigner à</label>
+                  <select class="form-select form-select-sm" id="action-assignee">
+                    <option value="">Non assigné</option>
+                  </select>
+                </div>
+                <button class="btn btn-primary btn-sm w-100" id="action-save">
+                  <i class="fas fa-save me-1"></i>Enregistrer
+                </button>
+              </div>
+            </div>
+
+            <!-- Admin delete -->
+            <div id="admin-actions" style="display:none" class="mb-3">
+              <button class="btn btn-outline-danger btn-sm w-100" id="action-delete">
+                <i class="fas fa-trash me-1"></i>Supprimer le ticket
+              </button>
+            </div>
+
+            <!-- History -->
+            <div class="ticket-section-title">Historique</div>
+            <div id="history-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div id="toast-container"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ════════════════════════════════════════════
+// API CLIENT
+// ════════════════════════════════════════════
+const API = {
+  token: localStorage.getItem('token'),
+
+  setToken(t) {
+    this.token = t;
+    t ? localStorage.setItem('token', t) : localStorage.removeItem('token');
+  },
+
+  async req(method, path, data = null) {
+    const headers = { 'Content-Type': 'application/json' };
+    if (this.token) headers['Authorization'] = `Bearer ${this.token}`;
+    const opts = { method, headers };
+    if (data) opts.body = JSON.stringify(data);
+    const res = await fetch('/api' + path, opts);
+    if (res.status === 204) return null;
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.detail || 'Erreur serveur');
+    return json;
+  },
+
+  get(p)        { return this.req('GET', p); },
+  post(p, d)    { return this.req('POST', p, d); },
+  patch(p, d)   { return this.req('PATCH', p, d); },
+  delete(p)     { return this.req('DELETE', p); },
+
+  async login(username, password) {
+    const body = new URLSearchParams({ username, password });
+    const res = await fetch('/api/auth/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.detail || 'Erreur de connexion');
+    return json;
+  }
+};
+
+// ════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════
+const state = {
+  user: null,
+  currentTicketId: null,
+  techUsers: []
+};
+
+// ════════════════════════════════════════════
+// UTILS
+// ════════════════════════════════════════════
+function toast(msg, type = 'success') {
+  const id = 'toast-' + Date.now();
+  const icons = { success: 'check-circle', danger: 'exclamation-circle', warning: 'exclamation-triangle' };
+  const el = document.createElement('div');
+  el.className = `toast align-items-center text-white bg-${type} border-0 show mb-2`;
+  el.id = id;
+  el.innerHTML = `
+    <div class="d-flex">
+      <div class="toast-body"><i class="fas fa-${icons[type] || 'info-circle'} me-2"></i>${msg}</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" onclick="this.closest('.toast').remove()"></button>
+    </div>`;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(() => el.remove(), 4000);
+}
+
+function fmt(iso) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleString('fr-FR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+}
+
+function statusBadge(s) {
+  const labels = { ouvert:'Ouvert', en_cours:'En cours', resolu:'Résolu', ferme:'Fermé' };
+  return `<span class="badge badge-${s}">${labels[s] || s}</span>`;
+}
+
+function priorityBadge(p) {
+  const labels = { faible:'Faible', normale:'Normale', haute:'Haute', critique:'Critique' };
+  return `<span class="badge badge-${p}">${labels[p] || p}</span>`;
+}
+
+const TYPE_META = {
+  incident:             { label: 'Incident',               icon: 'exclamation-triangle' },
+  panne:                { label: 'Panne',                  icon: 'power-off' },
+  dysfonctionnement:    { label: 'Dysfonctionnement',      icon: 'exclamation-circle' },
+  alerte_securite:      { label: 'Alerte sécurité',        icon: 'shield-alt' },
+  coupure_reseau:       { label: 'Coupure réseau',         icon: 'wifi' },
+  demande:              { label: 'Demande',                icon: 'clipboard-list' },
+  demande_acces:        { label: "Demande d'accès",        icon: 'key' },
+  demande_installation: { label: "Demande d'installation", icon: 'download' },
+  demande_materiel:     { label: 'Demande de matériel',    icon: 'desktop' },
+  demande_information:  { label: "Demande d'information",  icon: 'question-circle' },
+};
+
+function typeBadge(t) {
+  const m = TYPE_META[t] || { label: t, icon: 'tag' };
+  return `<span class="badge badge-${t}"><i class="fas fa-${m.icon} me-1"></i>${m.label}</span>`;
+}
+
+function categoryLabel(c) {
+  const labels = { materiel:'Matériel', logiciel:'Logiciel', reseau:'Réseau', securite:'Sécurité', telephonie:'Téléphonie', imprimante:'Imprimante', autre:'Autre' };
+  return labels[c] || c;
+}
+
+function roleLabel(r) {
+  const labels = { user:'Utilisateur', technician:'Technicien', admin:'Administrateur' };
+  return labels[r] || r;
+}
+
+function showError(elId, msg) {
+  const el = document.getElementById(elId);
+  el.textContent = msg;
+  el.classList.remove('d-none');
+}
+
+function hideError(elId) {
+  document.getElementById(elId).classList.add('d-none');
+}
+
+// ════════════════════════════════════════════
+// AUTH SECTION
+// ════════════════════════════════════════════
+document.getElementById('go-register').addEventListener('click', e => {
+  e.preventDefault();
+  document.getElementById('login-view').classList.add('d-none');
+  document.getElementById('register-view').classList.remove('d-none');
+});
+
+document.getElementById('go-login').addEventListener('click', e => {
+  e.preventDefault();
+  document.getElementById('register-view').classList.add('d-none');
+  document.getElementById('login-view').classList.remove('d-none');
+});
+
+document.getElementById('login-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  hideError('login-error');
+  const username = document.getElementById('login-username').value.trim();
+  const password = document.getElementById('login-password').value;
+  try {
+    const data = await API.login(username, password);
+    API.setToken(data.access_token);
+    state.user = data.user;
+    enterApp();
+  } catch (err) {
+    showError('login-error', err.message);
+  }
+});
+
+document.getElementById('register-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  hideError('register-error');
+  const payload = {
+    username: document.getElementById('reg-username').value.trim(),
+    email: document.getElementById('reg-email').value.trim(),
+    password: document.getElementById('reg-password').value
+  };
+  try {
+    await API.post('/auth/register', payload);
+    toast('Compte créé ! Connectez-vous.');
+    document.getElementById('go-login').click();
+  } catch (err) {
+    showError('register-error', err.message);
+  }
+});
+
+document.getElementById('logout-btn').addEventListener('click', () => {
+  API.setToken(null);
+  state.user = null;
+  document.getElementById('app-section').style.display = 'none';
+  document.getElementById('auth-section').style.display = 'flex';
+});
+
+// ════════════════════════════════════════════
+// APP INIT
+// ════════════════════════════════════════════
+function enterApp() {
+  document.getElementById('auth-section').style.display = 'none';
+  document.getElementById('app-section').style.display = 'block';
+
+  const roleMap = { user: 'Utilisateur', technician: 'Technicien', admin: 'Administrateur' };
+  document.getElementById('nav-username').textContent = state.user.username;
+  document.getElementById('nav-role-badge').textContent = roleMap[state.user.role] || state.user.role;
+
+  const isTechAdmin = ['technician', 'admin'].includes(state.user.role);
+  const isAdmin = state.user.role === 'admin';
+  document.getElementById('admin-nav-item').style.display = isAdmin ? '' : 'none';
+  document.getElementById('admin-users-nav').style.display = isAdmin ? '' : 'none';
+
+  // Preload tech users for assignment
+  if (isTechAdmin) loadTechUsers();
+
+  showView('dashboard');
+}
+
+async function loadStaffFilter() {
+  try {
+    const staff = await API.get('/users/staff');
+    const sel = document.getElementById('filter-assignee');
+    const current = sel.value;
+    sel.innerHTML = '<option value="">Tous les techniciens</option>';
+    staff.forEach(u => {
+      const opt = document.createElement('option');
+      opt.value = u.id;
+      opt.textContent = u.username + (u.role === 'admin' ? ' (admin)' : '');
+      if (String(u.id) === current) opt.selected = true;
+      sel.appendChild(opt);
+    });
+  } catch (_) {}
+}
+
+async function loadTechUsers() {
+  try {
+    const users = await API.get('/users/');
+    state.techUsers = users.filter(u => ['technician','admin'].includes(u.role));
+  } catch (_) {}
+}
+
+// ════════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════════
+const VIEWS = ['dashboard', 'my-tickets', 'all-tickets', 'admin-users'];
+
+function showView(name) {
+  VIEWS.forEach(v => {
+    document.getElementById('view-' + v).style.display = v === name ? '' : 'none';
+  });
+  document.querySelectorAll('.sidebar .nav-link').forEach(a => {
+    a.classList.toggle('active', a.dataset.view === name);
+  });
+  loadView(name);
+}
+
+document.querySelectorAll('.sidebar .nav-link[data-view]').forEach(a => {
+  a.addEventListener('click', e => { e.preventDefault(); showView(a.dataset.view); });
+});
+
+function loadView(name) {
+  if (name === 'dashboard') loadDashboard();
+  else if (name === 'my-tickets') { myTicketsUnassignedOnly = false; syncMyTicketsToggle(); loadTicketList('my-tickets-container', { mine: true }); }
+  else if (name === 'all-tickets') { loadStaffFilter(); loadTicketList('all-tickets-container', {}); }
+  else if (name === 'admin-users') loadAdminUsers();
+}
+
+// ════════════════════════════════════════════
+// TICKET LIST RENDERING
+// ════════════════════════════════════════════
+function buildTicketTable(tickets, limit = null) {
+  if (!tickets.length) {
+    return `<div class="empty-state"><i class="fas fa-inbox d-block"></i>Aucun ticket trouvé</div>`;
+  }
+  const rows = (limit ? tickets.slice(0, limit) : tickets).map(t => `
+    <tr class="ticket-row" data-id="${t.id}">
+      <td><span class="text-muted small">#${t.id}</span></td>
+      <td>${typeBadge(t.type)}</td>
+      <td class="fw-semibold">${escHtml(t.title)}</td>
+      <td>${statusBadge(t.status)}</td>
+      <td>${priorityBadge(t.priority)}</td>
+      <td><span class="badge bg-light text-dark border">${categoryLabel(t.category)}</span></td>
+      <td class="text-muted small">${escHtml(t.creator.username)}</td>
+      <td class="text-muted small">${t.assignee ? escHtml(t.assignee.username) : '<span class="text-muted">—</span>'}</td>
+      <td class="text-muted small text-nowrap">${fmt(t.created_at)}</td>
+    </tr>`).join('');
+  return `
+    <div class="card">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>#</th><th>Type</th><th>Titre</th><th>Statut</th>
+              <th>Priorité</th><th>Catégorie</th><th>Créateur</th>
+              <th>Assigné</th><th>Date</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function attachTicketClicks(container) {
+  container.querySelectorAll('.ticket-row').forEach(row => {
+    row.addEventListener('click', () => openTicket(parseInt(row.dataset.id)));
+  });
+}
+
+const _charts = {};
+
+function destroyChart(id) {
+  if (_charts[id]) { _charts[id].destroy(); delete _charts[id]; }
+}
+
+function renderCharts(stats) {
+  // Donut — Statuts
+  destroyChart('status');
+  _charts['status'] = new Chart(document.getElementById('chart-status'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Ouvert', 'En cours', 'Résolu', 'Fermé'],
+      datasets: [{
+        data: [stats.ouvert, stats.en_cours, stats.resolu, stats.ferme],
+        backgroundColor: ['#1976d2', '#f57c00', '#388e3c', '#757575'],
+        borderWidth: 2,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } },
+      cutout: '65%',
+    }
+  });
+
+  // Camembert — Incidents vs Demandes
+  destroyChart('inc-dem');
+  _charts['inc-dem'] = new Chart(document.getElementById('chart-inc-dem'), {
+    type: 'pie',
+    data: {
+      labels: ['Incidents', 'Demandes'],
+      datasets: [{
+        data: [stats.incidents, stats.demandes],
+        backgroundColor: ['#d32f2f', '#0288d1'],
+        borderWidth: 2,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } },
+        tooltip: {
+          callbacks: {
+            label: ctx => {
+              const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+              const pct = total ? Math.round(ctx.parsed / total * 100) : 0;
+              return ` ${ctx.label} : ${ctx.parsed} (${pct}%)`;
+            }
+          }
+        }
+      },
+    }
+  });
+
+  // Barres horizontales — Priorités
+  destroyChart('priority');
+  _charts['priority'] = new Chart(document.getElementById('chart-priority'), {
+    type: 'bar',
+    data: {
+      labels: ['Faible', 'Normale', 'Haute', 'Critique'],
+      datasets: [{
+        data: [stats.faible, stats.normale, stats.haute, stats.critique],
+        backgroundColor: ['#9e9e9e', '#1976d2', '#f57c00', '#c62828'],
+        borderRadius: 4,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      indexAxis: 'y',
+      plugins: { legend: { display: false } },
+      scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } },
+    }
+  });
+
+  // Barres horizontales — Types
+  destroyChart('type');
+  const typeConfig = [
+    { key: 'incident',             label: 'Incident',               color: '#d32f2f' },
+    { key: 'panne',                label: 'Panne',                  color: '#b71c1c' },
+    { key: 'dysfonctionnement',    label: 'Dysfonctionnement',      color: '#e65100' },
+    { key: 'alerte_securite',      label: 'Alerte sécurité',        color: '#880e4f' },
+    { key: 'coupure_reseau',       label: 'Coupure réseau',         color: '#4a148c' },
+    { key: 'demande',              label: 'Demande',                color: '#0288d1' },
+    { key: 'demande_acces',        label: "Demande d'accès",        color: '#00838f' },
+    { key: 'demande_installation', label: "Demande d'installation", color: '#1565c0' },
+    { key: 'demande_materiel',     label: 'Demande de matériel',    color: '#4527a0' },
+    { key: 'demande_information',  label: "Demande d'information",  color: '#558b2f' },
+  ];
+  const typeData = typeConfig.map(c => (stats.by_type && stats.by_type[c.key]) || 0);
+  _charts['type'] = new Chart(document.getElementById('chart-type'), {
+    type: 'bar',
+    data: {
+      labels: typeConfig.map(c => c.label),
+      datasets: [{
+        data: typeData,
+        backgroundColor: typeConfig.map(c => c.color),
+        borderRadius: 5,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      indexAxis: 'y',
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { beginAtZero: true, ticks: { stepSize: 1 } },
+        y: { ticks: { font: { size: 12 } } },
+      },
+    }
+  });
+
+  // Donut — Catégories
+  destroyChart('category');
+  const catLabels = { materiel:'Matériel', logiciel:'Logiciel', reseau:'Réseau', securite:'Sécurité', telephonie:'Téléphonie', imprimante:'Imprimante', autre:'Autre' };
+  const catColors = ['#1565c0','#00838f','#558b2f','#880e4f','#4a148c','#e65100','#757575'];
+  const catKeys = Object.keys(catLabels);
+  const catData = catKeys.map(k => (stats.by_category && stats.by_category[k]) || 0);
+  _charts['category'] = new Chart(document.getElementById('chart-category'), {
+    type: 'doughnut',
+    data: {
+      labels: catKeys.map(k => catLabels[k]),
+      datasets: [{
+        data: catData,
+        backgroundColor: catColors,
+        borderWidth: 2,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } } },
+      cutout: '60%',
+    }
+  });
+}
+
+let timelineDays = 30;
+
+async function renderTimeline(days) {
+  try {
+    const data = await API.get(`/tickets/timeline?days=${days}`);
+    destroyChart('timeline');
+
+    const labels = data.dates.map(d => {
+      const [, m, day] = d.split('-');
+      return `${day}/${m}`;
+    });
+
+    _charts['timeline'] = new Chart(document.getElementById('chart-timeline'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Créés',
+            data: data.created,
+            borderColor: '#1976d2',
+            backgroundColor: 'rgba(25,118,210,0.08)',
+            fill: true,
+            tension: 0.3,
+            pointRadius: 3,
+            pointHoverRadius: 5,
+          },
+          {
+            label: 'Résolus / Fermés',
+            data: data.resolved,
+            borderColor: '#388e3c',
+            backgroundColor: 'rgba(56,142,60,0.08)',
+            fill: true,
+            tension: 0.3,
+            pointRadius: 3,
+            pointHoverRadius: 5,
+          },
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } },
+        },
+        scales: {
+          x: { ticks: { maxTicksLimit: 15, font: { size: 11 } } },
+          y: { beginAtZero: true, ticks: { stepSize: 1 } },
+        },
+      }
+    });
+  } catch (err) {
+    toast(err.message, 'danger');
+  }
+}
+
+// Sélecteur de période
+document.getElementById('timeline-range').addEventListener('click', e => {
+  const btn = e.target.closest('[data-days]');
+  if (!btn) return;
+  timelineDays = parseInt(btn.dataset.days);
+  document.querySelectorAll('#timeline-range button').forEach(b => {
+    b.classList.toggle('btn-primary', b === btn);
+    b.classList.toggle('btn-outline-primary', b !== btn);
+  });
+  renderTimeline(timelineDays);
+});
+
+let dashboardUnassignedOnly = false;
+let myTicketsUnassignedOnly = false;
+
+function syncMyTicketsToggle() {
+  const btn = document.getElementById('my-tickets-unassigned-toggle');
+  btn.classList.toggle('btn-outline-secondary', !myTicketsUnassignedOnly);
+  btn.classList.toggle('btn-warning', myTicketsUnassignedOnly);
+}
+
+document.getElementById('my-tickets-unassigned-toggle').addEventListener('click', () => {
+  myTicketsUnassignedOnly = !myTicketsUnassignedOnly;
+  syncMyTicketsToggle();
+  loadTicketList('my-tickets-container', { mine: true, unassigned: myTicketsUnassignedOnly });
+});
+
+document.getElementById('dashboard-unassigned-toggle').addEventListener('click', () => {
+  dashboardUnassignedOnly = !dashboardUnassignedOnly;
+  const btn = document.getElementById('dashboard-unassigned-toggle');
+  btn.classList.toggle('btn-outline-secondary', !dashboardUnassignedOnly);
+  btn.classList.toggle('btn-warning', dashboardUnassignedOnly);
+  loadDashboard();
+});
+
+async function loadDashboard() {
+  try {
+    const url = dashboardUnassignedOnly ? '/tickets/?unassigned=true' : '/tickets/';
+    const [stats, tickets] = await Promise.all([
+      API.get('/tickets/stats'),
+      API.get(url)
+    ]);
+    document.getElementById('stat-total').textContent = stats.total;
+    document.getElementById('stat-ouvert').textContent = stats.ouvert;
+    document.getElementById('stat-en_cours').textContent = stats.en_cours;
+    document.getElementById('stat-incidents').textContent = stats.incidents;
+    renderCharts(stats);
+    renderTimeline(timelineDays);
+
+    const c = document.getElementById('dashboard-tickets-container');
+    c.innerHTML = buildTicketTable(tickets, 10);
+    attachTicketClicks(c);
+  } catch (err) {
+    toast(err.message, 'danger');
+  }
+}
+
+async function loadTicketList(containerId, params = {}) {
+  const qs = new URLSearchParams();
+  if (params.mine) qs.set('mine', 'true');
+  if (params.status) qs.set('status', params.status);
+  if (params.type) qs.set('type', params.type);
+  if (params.priority) qs.set('priority', params.priority);
+  if (params.category) qs.set('category', params.category);
+  if (params.unassigned) qs.set('unassigned', 'true');
+  else if (params.assigned_to_id) qs.set('assigned_to_id', params.assigned_to_id);
+  if (params.search) qs.set('search', params.search);
+  try {
+    const tickets = await API.get('/tickets/?' + qs.toString());
+    const c = document.getElementById(containerId);
+    c.innerHTML = buildTicketTable(tickets);
+    attachTicketClicks(c);
+  } catch (err) {
+    toast(err.message, 'danger');
+  }
+}
+
+// Filter bar
+document.getElementById('filter-apply').addEventListener('click', () => {
+  loadTicketList('all-tickets-container', {
+    status: document.getElementById('filter-status').value,
+    type: document.getElementById('filter-type').value,
+    priority: document.getElementById('filter-priority').value,
+    category: document.getElementById('filter-category').value,
+    assigned_to_id: document.getElementById('filter-assignee').value === 'unassigned' ? '' : document.getElementById('filter-assignee').value,
+    unassigned: document.getElementById('filter-assignee').value === 'unassigned',
+    search: document.getElementById('filter-search').value.trim()
+  });
+});
+
+document.getElementById('filter-search').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('filter-apply').click();
+});
+
+document.getElementById('filter-reset').addEventListener('click', () => {
+  document.getElementById('filter-search').value = '';
+  document.getElementById('filter-status').value = '';
+  document.getElementById('filter-type').value = '';
+  document.getElementById('filter-priority').value = '';
+  document.getElementById('filter-category').value = '';
+  document.getElementById('filter-assignee').value = '';
+  syncAllTicketsToggle();
+  loadTicketList('all-tickets-container', {});
+});
+
+function syncAllTicketsToggle() {
+  const isUnassigned = document.getElementById('filter-assignee').value === 'unassigned';
+  const btn = document.getElementById('all-tickets-unassigned-toggle');
+  btn.classList.toggle('btn-outline-secondary', !isUnassigned);
+  btn.classList.toggle('btn-warning', isUnassigned);
+}
+
+document.getElementById('all-tickets-unassigned-toggle').addEventListener('click', () => {
+  const sel = document.getElementById('filter-assignee');
+  sel.value = sel.value === 'unassigned' ? '' : 'unassigned';
+  syncAllTicketsToggle();
+  document.getElementById('filter-apply').click();
+});
+
+document.getElementById('filter-assignee').addEventListener('change', syncAllTicketsToggle);
+
+// ════════════════════════════════════════════
+// CREATE TICKET
+// ════════════════════════════════════════════
+document.getElementById('create-submit').addEventListener('click', async () => {
+  hideError('create-error');
+  const payload = {
+    title: document.getElementById('create-title').value.trim(),
+    description: document.getElementById('create-description').value.trim(),
+    type: document.getElementById('create-type').value,
+    category: document.getElementById('create-category').value,
+    priority: document.getElementById('create-priority').value
+  };
+  if (!payload.title || !payload.description) {
+    showError('create-error', 'Titre et description sont obligatoires.');
+    return;
+  }
+  try {
+    await API.post('/tickets/', payload);
+    bootstrap.Modal.getInstance(document.getElementById('createModal')).hide();
+    document.getElementById('create-form').reset();
+    toast('Ticket créé avec succès !');
+    loadView(currentViewName());
+  } catch (err) {
+    showError('create-error', err.message);
+  }
+});
+
+function currentViewName() {
+  return VIEWS.find(v => document.getElementById('view-' + v).style.display !== 'none') || 'dashboard';
+}
+
+// ════════════════════════════════════════════
+// TICKET DETAIL
+// ════════════════════════════════════════════
+async function openTicket(id) {
+  state.currentTicketId = id;
+  try {
+    const t = await API.get('/tickets/' + id);
+    renderTicketDetail(t);
+    new bootstrap.Modal(document.getElementById('detailModal')).show();
+  } catch (err) {
+    toast(err.message, 'danger');
+  }
+}
+
+function renderTicketDetail(t) {
+  document.getElementById('detail-id').textContent = t.id;
+  document.getElementById('detail-title-bar').innerHTML = `Ticket #${t.id}`;
+  document.getElementById('detail-title').textContent = t.title;
+  document.getElementById('detail-description').textContent = t.description;
+  document.getElementById('detail-creator').textContent = t.creator.username;
+  document.getElementById('detail-date').textContent = fmt(t.created_at);
+  document.getElementById('detail-assignee').textContent = t.assignee ? t.assignee.username : 'Non assigné';
+
+  const tm = TYPE_META[t.type] || { label: t.type, icon: 'tag' };
+  document.getElementById('detail-type-badge').className = `badge badge-${t.type} fs-6`;
+  document.getElementById('detail-type-badge').innerHTML = `<i class="fas fa-${tm.icon} me-1"></i>${tm.label}`;
+
+  document.getElementById('detail-status-badge').className = `badge badge-${t.status} fs-6`;
+  const statusLabels = { ouvert:'Ouvert', en_cours:'En cours', resolu:'Résolu', ferme:'Fermé' };
+  document.getElementById('detail-status-badge').textContent = statusLabels[t.status] || t.status;
+
+  document.getElementById('detail-priority-badge').className = `badge badge-${t.priority} fs-6`;
+  const prioLabels = { faible:'Faible', normale:'Normale', haute:'Haute', critique:'Critique' };
+  document.getElementById('detail-priority-badge').textContent = prioLabels[t.priority] || t.priority;
+
+  document.getElementById('detail-category-badge').className = 'badge bg-secondary fs-6';
+  document.getElementById('detail-category-badge').textContent = categoryLabel(t.category);
+
+  // Comments
+  const commentsList = document.getElementById('comments-list');
+  document.getElementById('comments-count').textContent = t.comments.length;
+  if (t.comments.length === 0) {
+    commentsList.innerHTML = '<p class="text-muted small">Aucun commentaire pour l\'instant.</p>';
+  } else {
+    commentsList.innerHTML = t.comments.map(c => `
+      <div class="comment-bubble ${c.user_id === state.user.id ? 'own' : ''}">
+        <div class="d-flex justify-content-between mb-1">
+          <strong class="small">${escHtml(c.author.username)}</strong>
+          <span class="text-muted small">${fmt(c.created_at)}</span>
+        </div>
+        <div style="white-space:pre-wrap">${escHtml(c.content)}</div>
+      </div>`).join('');
+  }
+
+  // History
+  const histList = document.getElementById('history-list');
+  if (!t.history.length) {
+    histList.innerHTML = '<p class="text-muted small">Aucun historique.</p>';
+  } else {
+    histList.innerHTML = t.history.map(h => `
+      <div class="history-item mb-2">
+        <div class="small fw-semibold">${escHtml(h.field_changed)}</div>
+        <div class="small text-muted">
+          ${h.old_value ? `<span class="text-danger">${escHtml(h.old_value)}</span> → ` : ''}
+          <span class="text-success">${escHtml(h.new_value || '—')}</span>
+        </div>
+        <div class="small text-muted">${escHtml(h.changed_by.username)} · ${fmt(h.changed_at)}</div>
+      </div>`).join('');
+  }
+
+  // Tech actions
+  const isTechAdmin = ['technician','admin'].includes(state.user.role);
+  const techPanel = document.getElementById('tech-actions');
+  techPanel.style.display = isTechAdmin ? '' : 'none';
+  if (isTechAdmin) {
+    document.getElementById('action-status').value = t.status;
+    document.getElementById('action-priority').value = t.priority;
+
+    const assignSel = document.getElementById('action-assignee');
+    assignSel.innerHTML = '<option value="">Non assigné</option>';
+    state.techUsers.forEach(u => {
+      const opt = document.createElement('option');
+      opt.value = u.id;
+      opt.textContent = u.username + (u.role === 'admin' ? ' (admin)' : '');
+      if (t.assigned_to_id === u.id) opt.selected = true;
+      assignSel.appendChild(opt);
+    });
+  }
+
+  document.getElementById('admin-actions').style.display = state.user.role === 'admin' ? '' : 'none';
+}
+
+document.getElementById('action-save').addEventListener('click', async () => {
+  const payload = {
+    status: document.getElementById('action-status').value,
+    priority: document.getElementById('action-priority').value,
+  };
+  const assignVal = document.getElementById('action-assignee').value;
+  if (assignVal !== '') payload.assigned_to_id = parseInt(assignVal);
+  try {
+    const t = await API.patch('/tickets/' + state.currentTicketId, payload);
+    renderTicketDetail(t);
+    toast('Ticket mis à jour !');
+    loadView(currentViewName());
+  } catch (err) {
+    toast(err.message, 'danger');
+  }
+});
+
+document.getElementById('action-delete').addEventListener('click', async () => {
+  if (!confirm('Supprimer définitivement ce ticket ?')) return;
+  try {
+    await API.delete('/tickets/' + state.currentTicketId);
+    bootstrap.Modal.getInstance(document.getElementById('detailModal')).hide();
+    toast('Ticket supprimé.');
+    loadView(currentViewName());
+  } catch (err) {
+    toast(err.message, 'danger');
+  }
+});
+
+document.getElementById('comment-submit').addEventListener('click', async () => {
+  const content = document.getElementById('new-comment').value.trim();
+  if (!content) return;
+  try {
+    await API.post('/tickets/' + state.currentTicketId + '/comments', { content });
+    document.getElementById('new-comment').value = '';
+    const t = await API.get('/tickets/' + state.currentTicketId);
+    renderTicketDetail(t);
+    toast('Commentaire ajouté !');
+  } catch (err) {
+    toast(err.message, 'danger');
+  }
+});
+
+document.getElementById('new-comment').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.ctrlKey) document.getElementById('comment-submit').click();
+});
+
+// ════════════════════════════════════════════
+// ADMIN USERS
+// ════════════════════════════════════════════
+async function loadAdminUsers() {
+  try {
+    const users = await API.get('/users/');
+    const c = document.getElementById('admin-users-container');
+    c.innerHTML = `
+      <div class="card">
+        <div class="table-responsive">
+          <table class="table mb-0">
+            <thead class="table-light">
+              <tr><th>#</th><th>Utilisateur</th><th>Email</th><th>Rôle</th><th>Membre depuis</th><th>Action</th></tr>
+            </thead>
+            <tbody>
+              ${users.map(u => `
+                <tr>
+                  <td class="text-muted small">${u.id}</td>
+                  <td><strong>${escHtml(u.username)}</strong></td>
+                  <td class="text-muted small">${escHtml(u.email)}</td>
+                  <td>
+                    <select class="form-select form-select-sm" style="width:140px" data-uid="${u.id}" onchange="changeRole(${u.id}, this.value)">
+                      <option value="user" ${u.role==='user'?'selected':''}>Utilisateur</option>
+                      <option value="technician" ${u.role==='technician'?'selected':''}>Technicien</option>
+                      <option value="admin" ${u.role==='admin'?'selected':''}>Admin</option>
+                    </select>
+                  </td>
+                  <td class="text-muted small">${fmt(u.created_at)}</td>
+                  <td><span class="badge ${u.id===state.user.id ? 'bg-primary' : 'bg-light text-dark border'}">${u.id===state.user.id?'Vous':''}</span></td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>`;
+  } catch (err) {
+    toast(err.message, 'danger');
+  }
+}
+
+async function changeRole(userId, role) {
+  try {
+    await API.patch('/users/' + userId + '/role', { role });
+    toast(`Rôle mis à jour : ${roleLabel(role)}`);
+    await loadTechUsers();
+  } catch (err) {
+    toast(err.message, 'danger');
+  }
+}
+
+// ════════════════════════════════════════════
+// STARTUP
+// ════════════════════════════════════════════
+(async () => {
+  if (!API.token) return;
+  try {
+    state.user = await API.get('/users/me');
+    enterApp();
+  } catch (_) {
+    API.setToken(null);
+  }
+})();
+</script>
+</body>
+</html>
