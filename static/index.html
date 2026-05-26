@@ -364,9 +364,14 @@
             <i class="fas fa-user-slash me-1"></i>Non assignés
           </button>
         </div>
-        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createModal">
-          <i class="fas fa-plus me-1"></i>Nouveau ticket
-        </button>
+        <div class="d-flex gap-2">
+          <button id="export-mine-btn" class="btn btn-outline-success btn-sm">
+            <i class="fas fa-file-csv me-1"></i>Exporter CSV
+          </button>
+          <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createModal">
+            <i class="fas fa-plus me-1"></i>Nouveau ticket
+          </button>
+        </div>
       </div>
       <div id="my-tickets-container"></div>
     </div>
@@ -379,9 +384,14 @@
             <i class="fas fa-user-slash me-1"></i>Non assignés
           </button>
         </div>
-        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createModal">
-          <i class="fas fa-plus me-1"></i>Nouveau ticket
-        </button>
+        <div class="d-flex gap-2">
+          <button id="export-all-btn" class="btn btn-outline-success btn-sm">
+            <i class="fas fa-file-csv me-1"></i>Exporter CSV
+          </button>
+          <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createModal">
+            <i class="fas fa-plus me-1"></i>Nouveau ticket
+          </button>
+        </div>
       </div>
       <div class="card mb-3 filter-bar">
         <div class="card-body py-2">
@@ -1070,6 +1080,37 @@ function renderCharts(stats) {
   });
 }
 
+async function downloadCSV(params = {}) {
+  const qs = new URLSearchParams();
+  if (params.mine)          qs.set('mine', 'true');
+  if (params.status)        qs.set('status', params.status);
+  if (params.type)          qs.set('type', params.type);
+  if (params.priority)      qs.set('priority', params.priority);
+  if (params.category)      qs.set('category', params.category);
+  if (params.unassigned)    qs.set('unassigned', 'true');
+  else if (params.assigned_to_id) qs.set('assigned_to_id', params.assigned_to_id);
+  if (params.search)        qs.set('search', params.search);
+
+  try {
+    const res = await fetch('/api/tickets/export?' + qs.toString(), {
+      headers: { 'Authorization': `Bearer ${API.token}` }
+    });
+    if (!res.ok) { toast("Erreur lors de l'export", 'danger'); return; }
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `tickets_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast('Export CSV téléchargé !');
+  } catch (err) {
+    toast(err.message, 'danger');
+  }
+}
+
 let timelineDays = 30;
 
 async function renderTimeline(days) {
@@ -1246,6 +1287,23 @@ document.getElementById('all-tickets-unassigned-toggle').addEventListener('click
 });
 
 document.getElementById('filter-assignee').addEventListener('change', syncAllTicketsToggle);
+
+document.getElementById('export-all-btn').addEventListener('click', () => {
+  const assigneeVal = document.getElementById('filter-assignee').value;
+  downloadCSV({
+    status:        document.getElementById('filter-status').value,
+    type:          document.getElementById('filter-type').value,
+    priority:      document.getElementById('filter-priority').value,
+    category:      document.getElementById('filter-category').value,
+    unassigned:    assigneeVal === 'unassigned',
+    assigned_to_id: assigneeVal !== 'unassigned' ? assigneeVal : '',
+    search:        document.getElementById('filter-search').value.trim(),
+  });
+});
+
+document.getElementById('export-mine-btn').addEventListener('click', () => {
+  downloadCSV({ mine: true, unassigned: myTicketsUnassignedOnly });
+});
 
 // ════════════════════════════════════════════
 // CREATE TICKET

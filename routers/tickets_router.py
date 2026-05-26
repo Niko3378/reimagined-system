@@ -1,8 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from typing import List, Optional
 from datetime import datetime, timedelta
+import csv
+import io
 import models
 import schemas
 import auth
@@ -126,6 +129,60 @@ def get_timeline(
         resolved.append(resolved_map.get(d, 0))
 
     return {"dates": dates, "created": created, "resolved": resolved}
+
+
+@router.get("/export")
+def export_tickets(
+    status: Optional[str] = Query(None),
+    type: Optional[str] = Query(None),
+    priority: Optional[str] = Query(None),
+    category: Optional[str] = Query(None),
+    assigned_to_id: Optional[int] = Query(None),
+    unassigned: bool = Query(False),
+    mine: bool = Query(False),
+    search: Optional[str] = Query(None),
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    q = db.query(models.Ticket)
+    if mine:
+        q = q.filter(models.Ticket.created_by_id == current_user.id)
+    if status:
+        q = q.filter(models.Ticket.status == status)
+    if type:
+        q = q.filter(models.Ticket.type == type)
+    if priority:
+        q = q.filter(models.Ticket.priority == priority)
+    if category:
+        q = q.filter(models.Ticket.category == category)
+    if unassigned:
+        q = q.filter(models.Ticket.assigned_to_id == None)
+    elif assigned_to_id is not None:
+        q = q.filter(models.Ticket.assigned_to_id == assigned_to_id)
+    if search:
+        q = q.filter(models.Ticket.title.ilike(f"%{search}%"))
+    tickets = q.order_by(models.Ticket.created_at.desc()).all()
+
+    output = io.StringIO()
+    writer = csv.writer(output, delimiter=";")
+    writer.writerow(["ID", "Titre", "Type", "Catégorie", "Priorité", "Statut",
+                     "Créateur", "Assigné à", "Nb commentaires", "Date création", "Dernière MAJ"])
+    for t in tickets:
+        writer.writerow([
+            t.id, t.title, t.type, t.category, t.priority, t.status,
+            t.creator.username,
+            t.assignee.username if t.assignee else "",
+            len(t.comments),
+            t.created_at.strftime("%d/%m/%Y %H:%M") if t.created_at else "",
+            t.updated_at.strftime("%d/%m/%Y %H:%M") if t.updated_at else "",
+        ])
+
+    filename = f"tickets_{datetime.now().strftime('%Y%m%d_%H%M')}.csv"
+    return StreamingResponse(
+        iter([output.getvalue().encode("utf-8-sig")]),  # utf-8-sig = BOM pour Excel
+        media_type="text/csv",
+        headers={"Content-Disposition": f"attachment; filename={filename}"},
+    )
 
 
 @router.get("/stats")
