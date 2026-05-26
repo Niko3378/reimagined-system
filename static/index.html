@@ -81,11 +81,19 @@
     .badge-demande_installation { background: #1565c0; }
     .badge-demande_materiel { background: #4527a0; }
     .badge-demande_information { background: #558b2f; }
+    .badge-demande_formation { background: #00695c; }
+    .badge-demande_sauvegarde { background: #1b5e20; }
+    .badge-demande_demenagement { background: #33691e; }
+    .badge-demande_licence { background: #01579b; }
     .badge-incident { background: #d32f2f; }
     .badge-panne { background: #b71c1c; }
     .badge-dysfonctionnement { background: #e65100; }
     .badge-alerte_securite { background: #880e4f; }
     .badge-coupure_reseau { background: #4a148c; }
+    .badge-intrusion { background: #6a1b9a; }
+    .badge-perte_donnees { background: #bf360c; }
+    .badge-surcharge_systeme { background: #827717; }
+    .badge-panne_electrique { background: #4e342e; }
 
     /* ── Ticket detail ── */
     .modal-xl { max-width: 900px; }
@@ -429,6 +437,10 @@
                   <option value="dysfonctionnement">Dysfonctionnement</option>
                   <option value="alerte_securite">Alerte sécurité</option>
                   <option value="coupure_reseau">Coupure réseau</option>
+                  <option value="intrusion">Intrusion / Cyberattaque</option>
+                  <option value="perte_donnees">Perte de données</option>
+                  <option value="surcharge_systeme">Surcharge système</option>
+                  <option value="panne_electrique">Panne électrique / UPS</option>
                 </optgroup>
                 <optgroup label="Demandes">
                   <option value="demande">Demande</option>
@@ -436,6 +448,10 @@
                   <option value="demande_installation">Demande d'installation</option>
                   <option value="demande_materiel">Demande de matériel</option>
                   <option value="demande_information">Demande d'information</option>
+                  <option value="demande_formation">Demande de formation</option>
+                  <option value="demande_sauvegarde">Demande de sauvegarde</option>
+                  <option value="demande_demenagement">Demande de déménagement</option>
+                  <option value="demande_licence">Demande de licence</option>
                 </optgroup>
               </select>
             </div>
@@ -517,6 +533,10 @@
                   <option value="dysfonctionnement">🟠 Dysfonctionnement</option>
                   <option value="alerte_securite">🔒 Alerte sécurité</option>
                   <option value="coupure_reseau">📡 Coupure réseau</option>
+                  <option value="intrusion">🕵️ Intrusion / Cyberattaque</option>
+                  <option value="perte_donnees">💾 Perte de données</option>
+                  <option value="surcharge_systeme">📈 Surcharge système</option>
+                  <option value="panne_electrique">⚡ Panne électrique / UPS</option>
                 </optgroup>
                 <optgroup label="── Demandes">
                   <option value="demande">📋 Demande</option>
@@ -524,6 +544,10 @@
                   <option value="demande_installation">💿 Demande d'installation</option>
                   <option value="demande_materiel">🖥️ Demande de matériel</option>
                   <option value="demande_information">❓ Demande d'information</option>
+                  <option value="demande_formation">🎓 Demande de formation</option>
+                  <option value="demande_sauvegarde">💿 Demande de sauvegarde</option>
+                  <option value="demande_demenagement">📦 Demande de déménagement</option>
+                  <option value="demande_licence">📄 Demande de licence</option>
                 </optgroup>
               </select>
             </div>
@@ -749,16 +773,24 @@ function priorityBadge(p) {
 }
 
 const TYPE_META = {
-  incident:             { label: 'Incident',               icon: 'exclamation-triangle' },
-  panne:                { label: 'Panne',                  icon: 'power-off' },
-  dysfonctionnement:    { label: 'Dysfonctionnement',      icon: 'exclamation-circle' },
-  alerte_securite:      { label: 'Alerte sécurité',        icon: 'shield-alt' },
-  coupure_reseau:       { label: 'Coupure réseau',         icon: 'wifi' },
-  demande:              { label: 'Demande',                icon: 'clipboard-list' },
-  demande_acces:        { label: "Demande d'accès",        icon: 'key' },
-  demande_installation: { label: "Demande d'installation", icon: 'download' },
-  demande_materiel:     { label: 'Demande de matériel',    icon: 'desktop' },
-  demande_information:  { label: "Demande d'information",  icon: 'question-circle' },
+  incident:              { label: 'Incident',                  icon: 'exclamation-triangle' },
+  panne:                 { label: 'Panne',                     icon: 'power-off' },
+  dysfonctionnement:     { label: 'Dysfonctionnement',         icon: 'exclamation-circle' },
+  alerte_securite:       { label: 'Alerte sécurité',           icon: 'shield-alt' },
+  coupure_reseau:        { label: 'Coupure réseau',            icon: 'wifi' },
+  intrusion:             { label: 'Intrusion / Cyberattaque',  icon: 'user-secret' },
+  perte_donnees:         { label: 'Perte de données',          icon: 'database' },
+  surcharge_systeme:     { label: 'Surcharge système',         icon: 'server' },
+  panne_electrique:      { label: 'Panne électrique / UPS',    icon: 'bolt' },
+  demande:               { label: 'Demande',                   icon: 'clipboard-list' },
+  demande_acces:         { label: "Demande d'accès",           icon: 'key' },
+  demande_installation:  { label: "Demande d'installation",    icon: 'download' },
+  demande_materiel:      { label: 'Demande de matériel',       icon: 'desktop' },
+  demande_information:   { label: "Demande d'information",     icon: 'question-circle' },
+  demande_formation:     { label: 'Demande de formation',      icon: 'graduation-cap' },
+  demande_sauvegarde:    { label: 'Demande de sauvegarde',     icon: 'save' },
+  demande_demenagement:  { label: 'Demande de déménagement',   icon: 'truck' },
+  demande_licence:       { label: 'Demande de licence',        icon: 'file-contract' },
 };
 
 function typeBadge(t) {

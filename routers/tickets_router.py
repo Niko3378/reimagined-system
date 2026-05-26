@@ -17,7 +17,9 @@ VALID_STATUSES = {"ouvert", "en_cours", "resolu", "ferme"}
 VALID_PRIORITIES = {"faible", "normale", "haute", "critique"}
 VALID_TYPES = {
     "incident", "panne", "dysfonctionnement", "alerte_securite", "coupure_reseau",
-    "demande", "demande_acces", "demande_installation", "demande_materiel", "demande_information"
+    "intrusion", "perte_donnees", "surcharge_systeme", "panne_electrique",
+    "demande", "demande_acces", "demande_installation", "demande_materiel", "demande_information",
+    "demande_formation", "demande_sauvegarde", "demande_demenagement", "demande_licence",
 }
 VALID_CATEGORIES = {"materiel", "logiciel", "reseau", "securite", "telephonie", "imprimante", "autre"}
 
@@ -241,9 +243,13 @@ def export_tickets_pdf(
     TYPE_LABELS = {
         "incident": "Incident", "panne": "Panne", "dysfonctionnement": "Dysfonct.",
         "alerte_securite": "Alerte sécu.", "coupure_reseau": "Coupure réseau",
+        "intrusion": "Intrusion", "perte_donnees": "Perte données",
+        "surcharge_systeme": "Surcharge syst.", "panne_electrique": "Panne électrique",
         "demande": "Demande", "demande_acces": "D. accès",
         "demande_installation": "D. install.", "demande_materiel": "D. matériel",
-        "demande_information": "D. info",
+        "demande_information": "D. info", "demande_formation": "D. formation",
+        "demande_sauvegarde": "D. sauvegarde", "demande_demenagement": "D. déménag.",
+        "demande_licence": "D. licence",
     }
 
     buf = io.BytesIO()
