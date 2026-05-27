@@ -382,6 +382,11 @@
           </div>
         </div>
 
+        <!-- Aide -->
+        <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#helpModal" title="Aide">
+          <i class="fas fa-question-circle"></i>
+        </button>
+
         <button class="btn btn-outline-danger btn-sm" id="logout-btn">
           <i class="fas fa-sign-out-alt me-1"></i>Déconnexion
         </button>
@@ -5200,6 +5205,184 @@ function connectSSE() {
 })();
 </script>
 
+<!-- ── Modal Aide ────────────────────────────────────────────── -->
+<div class="modal fade" id="helpModal" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content border-0 shadow-lg">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold" id="helpModalLabel">
+          <i class="fas fa-question-circle text-primary me-2"></i>Aide — HelpDesk IT
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+      <div class="modal-body pt-2">
+        <!-- Onglets -->
+        <ul class="nav nav-tabs mb-3" id="helpTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="tab-guide-btn" data-bs-toggle="tab" data-bs-target="#tab-guide" type="button" role="tab">
+              <i class="fas fa-book-open me-1"></i>Guide
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-tips-btn" data-bs-toggle="tab" data-bs-target="#tab-tips" type="button" role="tab">
+              <i class="fas fa-lightbulb me-1"></i>Astuces
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-about-btn" data-bs-toggle="tab" data-bs-target="#tab-about" type="button" role="tab">
+              <i class="fas fa-info-circle me-1"></i>À propos
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-contact-btn" data-bs-toggle="tab" data-bs-target="#tab-contact" type="button" role="tab">
+              <i class="fas fa-envelope me-1"></i>Support
+            </button>
+          </li>
+        </ul>
+
+        <div class="tab-content" id="helpTabContent">
+
+          <!-- Guide d'utilisation -->
+          <div class="tab-pane fade show active" id="tab-guide" role="tabpanel">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <div class="d-flex gap-3">
+                  <div class="text-primary fs-4 pt-1"><i class="fas fa-plus-circle"></i></div>
+                  <div>
+                    <h6 class="fw-semibold mb-1">Créer un ticket</h6>
+                    <p class="text-muted small mb-0">Cliquez sur <strong>+ Nouveau ticket</strong> (bouton en haut à droite) ou utilisez le <strong>Catalogue</strong> pour partir d'un modèle pré-rempli.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="d-flex gap-3">
+                  <div class="text-success fs-4 pt-1"><i class="fas fa-th-large"></i></div>
+                  <div>
+                    <h6 class="fw-semibold mb-1">Catalogue de services</h6>
+                    <p class="text-muted small mb-0">Parcourez les modèles de tickets classés par catégorie. Sélectionnez-en un pour pré-remplir automatiquement le formulaire.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="d-flex gap-3">
+                  <div class="text-warning fs-4 pt-1"><i class="fas fa-tasks"></i></div>
+                  <div>
+                    <h6 class="fw-semibold mb-1">Processus guidés</h6>
+                    <p class="text-muted small mb-0">Certains types de tickets disposent d'un processus en étapes. Depuis un ticket, cliquez sur <strong>Attacher un processus</strong> pour suivre les étapes une à une.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="d-flex gap-3">
+                  <div class="text-info fs-4 pt-1"><i class="fas fa-filter"></i></div>
+                  <div>
+                    <h6 class="fw-semibold mb-1">Filtrer les tickets</h6>
+                    <p class="text-muted small mb-0">Dans <strong>Tous les tickets</strong>, utilisez les filtres (statut, priorité, type) pour affiner l'affichage. Cliquez sur un ticket pour l'ouvrir.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="d-flex gap-3">
+                  <div class="text-danger fs-4 pt-1"><i class="fas fa-exclamation-triangle"></i></div>
+                  <div>
+                    <h6 class="fw-semibold mb-1">Incidents</h6>
+                    <p class="text-muted small mb-0">Accédez aux incidents classés par catégorie (sécurité, réseau, système…) via le menu <strong>Incidents</strong> dans la barre latérale.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="d-flex gap-3">
+                  <div class="text-secondary fs-4 pt-1"><i class="fas fa-file-export"></i></div>
+                  <div>
+                    <h6 class="fw-semibold mb-1">Export CSV / PDF</h6>
+                    <p class="text-muted small mb-0">Dans <strong>Tous les tickets</strong>, utilisez les boutons <strong>Export CSV</strong> et <strong>Export PDF</strong> pour télécharger la liste des tickets filtrés.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Raccourcis & Astuces -->
+          <div class="tab-pane fade" id="tab-tips" role="tabpanel">
+            <h6 class="fw-semibold text-muted text-uppercase small mb-3">Raccourcis clavier</h6>
+            <div class="table-responsive mb-4">
+              <table class="table table-sm table-hover">
+                <tbody>
+                  <tr><td><kbd>N</kbd></td><td>Nouveau ticket</td></tr>
+                  <tr><td><kbd>D</kbd></td><td>Tableau de bord</td></tr>
+                  <tr><td><kbd>T</kbd></td><td>Tous les tickets</td></tr>
+                  <tr><td><kbd>C</kbd></td><td>Catalogue</td></tr>
+                  <tr><td><kbd>?</kbd></td><td>Ouvrir cette aide</td></tr>
+                  <tr><td><kbd>Échap</kbd></td><td>Fermer le modal ouvert</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <h6 class="fw-semibold text-muted text-uppercase small mb-3">Conseils</h6>
+            <ul class="list-unstyled">
+              <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Choisissez la <strong>priorité critique</strong> uniquement pour les pannes bloquant toute l'entreprise.</li>
+              <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Renseignez toujours le <strong>type de ticket</strong> pour déclencher le bon processus guidé.</li>
+              <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Ajoutez des <strong>commentaires</strong> sur un ticket pour garder l'historique des échanges.</li>
+              <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Utilisez le <strong>Catalogue</strong> pour créer un ticket rapidement avec la bonne description.</li>
+              <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Passez un ticket en <strong>Résolu</strong> dès que le problème est corrigé, puis en <strong>Fermé</strong> après validation.</li>
+            </ul>
+          </div>
+
+          <!-- À propos -->
+          <div class="tab-pane fade" id="tab-about" role="tabpanel">
+            <div class="text-center py-3">
+              <i class="fas fa-headset text-primary" style="font-size:3rem"></i>
+              <h5 class="fw-bold mt-3 mb-1">HelpDesk IT</h5>
+              <p class="text-muted mb-1">Version 1.0.0</p>
+              <p class="text-muted small mb-4">Système de gestion de tickets informatiques open source</p>
+              <div class="d-flex justify-content-center gap-3 flex-wrap mb-4">
+                <a href="https://github.com/Niko3378/reimagined-system" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark btn-sm">
+                  <i class="fab fa-github me-1"></i>Code source
+                </a>
+                <a href="https://paypal.me/Niko3378" target="_blank" rel="noopener noreferrer" class="btn btn-warning btn-sm">
+                  <i class="fab fa-paypal me-1"></i>Faire un don
+                </a>
+              </div>
+              <hr>
+              <p class="text-muted small mb-0">Développé par <strong>Niko3378</strong> — Licence libre</p>
+            </div>
+          </div>
+
+          <!-- Support -->
+          <div class="tab-pane fade" id="tab-contact" role="tabpanel">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <div class="card border-0 bg-light h-100">
+                  <div class="card-body text-center py-4">
+                    <i class="fab fa-github text-dark fs-2 mb-3"></i>
+                    <h6 class="fw-semibold">Signaler un bug</h6>
+                    <p class="text-muted small mb-3">Ouvrez une issue sur GitHub pour signaler un problème ou proposer une amélioration.</p>
+                    <a href="https://github.com/Niko3378/reimagined-system/issues" target="_blank" rel="noopener noreferrer" class="btn btn-dark btn-sm">
+                      Ouvrir une issue
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="card border-0 bg-light h-100">
+                  <div class="card-body text-center py-4">
+                    <i class="fas fa-envelope text-primary fs-2 mb-3"></i>
+                    <h6 class="fw-semibold">Contact</h6>
+                    <p class="text-muted small mb-3">Pour toute question ou demande spécifique, contactez l'équipe de support par email.</p>
+                    <a href="mailto:niko_3378@yahoo.fr" class="btn btn-primary btn-sm">
+                      Envoyer un email
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /tab-content -->
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ── Modal don ──────────────────────────────────────────────── -->
 <div class="modal fade" id="donModal" tabindex="-1" aria-labelledby="donModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
@@ -5247,6 +5430,35 @@ function connectSSE() {
     setTimeout(tick, INTERVAL_MS);
   }, INTERVAL_MS);
 })();
+</script>
+
+<script>
+// Raccourcis clavier globaux
+document.addEventListener('keydown', function (e) {
+  // Ignorer si on est dans un champ de saisie
+  if (['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) return;
+  // Ignorer si un modal est ouvert et que la touche n'est pas ?
+  const openModal = document.querySelector('.modal.show');
+  if (openModal && e.key !== '?') return;
+
+  switch (e.key) {
+    case '?':
+      bootstrap.Modal.getOrCreateInstance(document.getElementById('helpModal')).show();
+      break;
+    case 'n': case 'N':
+      bootstrap.Modal.getOrCreateInstance(document.getElementById('createModal')).show();
+      break;
+    case 'd': case 'D':
+      document.querySelector('[data-view="dashboard"]')?.click();
+      break;
+    case 't': case 'T':
+      document.querySelector('[data-view="all-tickets"]')?.click();
+      break;
+    case 'c': case 'C':
+      document.querySelector('[data-view="catalogue"]')?.click();
+      break;
+  }
+});
 </script>
 </body>
 </html>
