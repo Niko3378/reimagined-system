@@ -799,6 +799,17 @@ def seed(force=False):
              (6, "Vérifier le retour à la normale", "Confirmer la connectivité sur l'ensemble du périmètre touché. Tester les services critiques (AD, DNS, accès Internet, serveurs)."),
              (7, "Documenter et clore", "Rédiger le compte-rendu d'incident : cause, actions, durée de l'interruption. Clore le ticket et notifier les utilisateurs."),
          ]),
+        ("Migration de données", "demande_migration_donnees",
+         "Processus de planification et exécution d'une migration de données entre deux systèmes ou supports", [
+             (1, "Auditer et cartographier les données sources", "Inventorier les données à migrer (volume, type, structure, droits NTFS/ACL). Identifier les données obsolètes à ne pas migrer et les dépendances applicatives."),
+             (2, "Préparer la destination", "Configurer le système cible (NAS, serveur, cloud). Créer l'arborescence, appliquer les droits et vérifier l'espace disponible. Tester l'accessibilité depuis les postes utilisateurs."),
+             (3, "Planifier et communiquer", "Définir les fenêtres de migration (de préférence hors heures ouvrables). Informer les utilisateurs et équipes impactées. Prévoir un accès en lecture seule à la source pendant la migration."),
+             (4, "Sauvegarder les données sources", "Effectuer une sauvegarde complète des données sources avant toute opération. Vérifier l'intégrité de la sauvegarde. C'est le filet de sécurité en cas de problème."),
+             (5, "Exécuter la migration", "Lancer la migration via l'outil adapté (robocopy, rsync, SCCM, outil métier). Surveiller l'avancement, les erreurs et le taux de transfert. Journaliser les résultats."),
+             (6, "Vérifier l'intégrité des données migrées", "Comparer les volumes source et destination. Vérifier les droits d'accès, les noms de fichiers et la lisibilité d'un échantillon représentatif de fichiers."),
+             (7, "Basculer et valider avec les utilisateurs", "Rediriger les accès vers la nouvelle destination (GPO, mise à jour des chemins UNC, reconfiguration des logiciels). Faire valider par les utilisateurs clés que tout est accessible."),
+             (8, "Archiver la source et clore", "Conserver la source en lecture seule pendant une période de rétention convenue. Après validation définitive, supprimer ou archiver la source. Mettre à jour la documentation et fermer le ticket."),
+         ]),
         ("Traitement d'une demande de formation", "demande_formation",
          "Processus d'organisation et de suivi d'une demande de formation informatique", [
              (1, "Analyser le besoin de formation", "Identifier le sujet, le niveau actuel et visé, le nombre de participants, le format souhaité (présentiel, e-learning, atelier) et la date souhaitée."),
