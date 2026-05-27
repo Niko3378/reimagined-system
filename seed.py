@@ -909,6 +909,15 @@ def seed(force=False):
              (5, "Préparer et configurer le matériel", "Installer les pilotes, logiciels requis, appliquer la politique de sécurité et joindre au domaine si nécessaire."),
              (6, "Remettre le matériel à l'utilisateur", "Livrer le matériel, faire signer le bon de remise et former l'utilisateur à son utilisation si besoin."),
          ]),
+        ("Restauration de données", "demande_restauration",
+         "Processus de restauration de données depuis une sauvegarde suite à une perte ou corruption", [
+             (1, "Qualifier la demande et identifier les données perdues", "Déterminer le type de données (fichiers, base de données, VM), le volume estimé, la date approximative de la perte/corruption et la cause (suppression accidentelle, crash disque, corruption applicative)."),
+             (2, "Localiser la sauvegarde et vérifier son intégrité", "Identifier la sauvegarde la plus récente antérieure à l'incident. Vérifier que le job de sauvegarde s'est bien terminé (logs de sauvegarde, checksums). Confirmer l'intégrité du support."),
+             (3, "Préparer l'environnement de restauration", "Vérifier l'espace disque disponible sur la destination. S'assurer des droits d'accès nécessaires. Planifier la fenêtre de restauration en concertation avec l'utilisateur pour minimiser l'impact."),
+             (4, "Exécuter la restauration", "Lancer la restauration via l'outil de sauvegarde (Veeam, Windows Server Backup, etc.) en ciblant les données et la destination choisies. Surveiller l'avancement et journaliser les opérations."),
+             (5, "Vérifier l'intégrité des données restaurées", "Contrôler que les données restaurées sont complètes, lisibles et non corrompues. Ouvrir un échantillon représentatif de fichiers. Vérifier les droits NTFS si applicable."),
+             (6, "Notifier l'utilisateur et clore le ticket", "Informer l'utilisateur de la disponibilité des données restaurées et lui indiquer leur emplacement. Confirmer que les données correspondent à ses attentes et fermer le ticket."),
+         ]),
     ]
     for (name, ttype, desc, steps) in process_defs:
         pt = models.ProcessTemplate(
