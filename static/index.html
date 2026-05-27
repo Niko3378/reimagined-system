@@ -114,6 +114,13 @@
     .empty-state { text-align: center; padding: 60px 20px; color: #9e9e9e; }
     .empty-state i { font-size: 3rem; margin-bottom: 12px; }
 
+    /* ── Notifications ── */
+    .notif-item { padding: 10px 14px; border-bottom: 1px solid #f0f0f0; cursor: pointer; transition: background .1s; }
+    .notif-item:hover { background: #f5f5f5; }
+    .notif-item.unread { border-left: 3px solid #1976d2; background: #e3f2fd; }
+    .notif-item .notif-icon { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; flex-shrink: 0; }
+    .notif-time { font-size: .7rem; color: #9e9e9e; }
+
     /* ── Sidebar submenu ── */
     .collapse-icon { transition: transform .2s; }
     #collapse-incidents.show ~ * .collapse-icon,
@@ -219,6 +226,24 @@
       <div class="ms-auto d-flex align-items-center gap-3">
         <span class="badge bg-light text-dark border" id="nav-role-badge"></span>
         <span class="text-muted small" id="nav-username"></span>
+
+        <!-- Cloche notifications -->
+        <div class="dropdown">
+          <button class="btn btn-light btn-sm position-relative" id="notif-bell" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-bell"></i>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" id="notif-badge">0</span>
+          </button>
+          <div class="dropdown-menu dropdown-menu-end p-0" id="notif-dropdown" style="width:340px;max-height:400px;overflow-y:auto">
+            <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
+              <span class="fw-semibold small">Notifications</span>
+              <button class="btn btn-link btn-sm p-0 text-muted" id="notif-clear">Tout effacer</button>
+            </div>
+            <div id="notif-list">
+              <div class="text-center text-muted small py-3">Aucune notification</div>
+            </div>
+          </div>
+        </div>
+
         <button class="btn btn-outline-danger btn-sm" id="logout-btn">
           <i class="fas fa-sign-out-alt me-1"></i>Déconnexion
         </button>
@@ -1069,6 +1094,8 @@ document.getElementById('register-form').addEventListener('submit', async e => {
 });
 
 document.getElementById('logout-btn').addEventListener('click', () => {
+  disconnectSSE();
+  notifications = []; unreadCount = 0;
   API.setToken(null);
   state.user = null;
   document.getElementById('app-section').style.display = 'none';
@@ -1091,9 +1118,8 @@ function enterApp() {
   document.getElementById('admin-nav-item').style.display = isAdmin ? '' : 'none';
   document.getElementById('admin-users-nav').style.display = isAdmin ? '' : 'none';
 
-  // Preload tech users for assignment
   if (isTechAdmin) loadTechUsers();
-
+  connectSSE();
   showView('dashboard');
 }
 
@@ -1882,6 +1908,133 @@ async function changeRole(userId, role) {
   } catch (err) {
     toast(err.message, 'danger');
   }
+}
+
+// ════════════════════════════════════════════
+// NOTIFICATIONS SSE
+// ════════════════════════════════════════════
+const NOTIF_ICONS = {
+  ticket_created: { icon: 'plus-circle',  color: '#1976d2', bg: '#e3f2fd' },
+  ticket_updated: { icon: 'edit',         color: '#f57c00', bg: '#fff3e0' },
+  comment_added:  { icon: 'comment',      color: '#388e3c', bg: '#e8f5e9' },
+};
+
+let notifications = [];
+let unreadCount = 0;
+let sseSource = null;
+
+function connectSSE() {
+  if (sseSource) sseSource.close();
+  sseSource = new EventSource(`/api/notifications/stream?token=${API.token}`, { withCredentials: false });
+
+  sseSource.onmessage = e => {
+    if (!e.data || e.data.startsWith(':')) return;
+    try {
+      const notif = JSON.parse(e.data);
+      notif.time = new Date();
+      notif.read = false;
+      notifications.unshift(notif);
+      if (notifications.length > 50) notifications.pop();
+      unreadCount++;
+      renderNotifBadge();
+      renderNotifList();
+      toast(notif.message, notif.type === 'ticket_created' ? 'success' : 'warning');
+    } catch (_) {}
+  };
+
+  sseSource.onerror = () => {
+    sseSource.close();
+    setTimeout(connectSSE, 5000);
+  };
+}
+
+function disconnectSSE() {
+  if (sseSource) { sseSource.close(); sseSource = null; }
+}
+
+function renderNotifBadge() {
+  const badge = document.getElementById('notif-badge');
+  if (unreadCount > 0) {
+    badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+    badge.classList.remove('d-none');
+  } else {
+    badge.classList.add('d-none');
+  }
+}
+
+function renderNotifList() {
+  const list = document.getElementById('notif-list');
+  if (!notifications.length) {
+    list.innerHTML = '<div class="text-center text-muted small py-3">Aucune notification</div>';
+    return;
+  }
+  list.innerHTML = notifications.map((n, i) => {
+    const meta = NOTIF_ICONS[n.type] || { icon: 'bell', color: '#757575', bg: '#f5f5f5' };
+    const elapsed = formatElapsed(n.time);
+    return `
+      <div class="notif-item d-flex gap-2 align-items-start ${n.read ? '' : 'unread'}" data-index="${i}" onclick="markRead(${i})">
+        <div class="notif-icon mt-1" style="background:${meta.bg};color:${meta.color}">
+          <i class="fas fa-${meta.icon}"></i>
+        </div>
+        <div class="flex-grow-1">
+          <div class="small">${escHtml(n.message)}</div>
+          <div class="notif-time mt-1">${elapsed} · ${escHtml(n.by)}</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function markRead(index) {
+  if (!notifications[index].read) {
+    notifications[index].read = true;
+    unreadCount = Math.max(0, unreadCount - 1);
+    renderNotifBadge();
+    renderNotifList();
+  }
+  if (notifications[index].ticket_id) openTicket(notifications[index].ticket_id);
+}
+
+function formatElapsed(date) {
+  const s = Math.floor((Date.now() - new Date(date)) / 1000);
+  if (s < 60) return "À l'instant";
+  if (s < 3600) return `Il y a ${Math.floor(s/60)} min`;
+  return `Il y a ${Math.floor(s/3600)} h`;
+}
+
+document.getElementById('notif-bell').addEventListener('click', () => {
+  unreadCount = 0;
+  renderNotifBadge();
+  setTimeout(renderNotifList, 50);
+});
+
+document.getElementById('notif-clear').addEventListener('click', e => {
+  e.stopPropagation();
+  notifications = [];
+  unreadCount = 0;
+  renderNotifBadge();
+  renderNotifList();
+});
+
+// SSE needs token in URL since EventSource doesn't support custom headers
+const _origConnect = connectSSE;
+function connectSSE() {
+  if (sseSource) sseSource.close();
+  sseSource = new EventSource(`/api/notifications/stream?_token=${encodeURIComponent(API.token)}`);
+  sseSource.onmessage = e => {
+    if (!e.data || e.data.trim() === '') return;
+    try {
+      const notif = JSON.parse(e.data);
+      notif.time = new Date();
+      notif.read = false;
+      notifications.unshift(notif);
+      if (notifications.length > 50) notifications.pop();
+      unreadCount++;
+      renderNotifBadge();
+      renderNotifList();
+      toast(notif.message, notif.type === 'ticket_created' ? 'success' : 'warning');
+    } catch (_) {}
+  };
+  sseSource.onerror = () => { sseSource.close(); setTimeout(connectSSE, 5000); };
 }
 
 // ════════════════════════════════════════════

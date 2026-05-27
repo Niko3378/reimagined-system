@@ -10,6 +10,7 @@ import models
 import schemas
 import auth
 from database import get_db
+from notifications import broadcaster
 
 router = APIRouter(prefix="/api/tickets", tags=["tickets"])
 
@@ -102,6 +103,12 @@ def create_ticket(
     _record_history(db, ticket.id, current_user.id, "création", None, "ouvert")
     db.commit()
     db.refresh(ticket)
+    broadcaster.broadcast_sync({
+        "type": "ticket_created",
+        "message": f"Nouveau ticket #{ticket.id} : {ticket.title}",
+        "ticket_id": ticket.id,
+        "by": current_user.username,
+    })
     return ticket
 
 
@@ -451,6 +458,12 @@ def update_ticket(
 
     db.commit()
     db.refresh(ticket)
+    broadcaster.broadcast_sync({
+        "type": "ticket_updated",
+        "message": f"Ticket #{ticket.id} mis à jour : {ticket.title}",
+        "ticket_id": ticket.id,
+        "by": current_user.username,
+    })
     return ticket
 
 
@@ -488,4 +501,10 @@ def add_comment(
     db.add(comment)
     db.commit()
     db.refresh(comment)
+    broadcaster.broadcast_sync({
+        "type": "comment_added",
+        "message": f"Nouveau commentaire sur le ticket #{ticket_id} par {current_user.username}",
+        "ticket_id": ticket_id,
+        "by": current_user.username,
+    })
     return comment
