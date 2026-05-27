@@ -53,17 +53,23 @@ HOST = "127.0.0.1"
 URL  = f"http://{HOST}:{PORT}"
 
 
+def is_server_running():
+    """Vérifie si un serveur répond déjà sur le port."""
+    try:
+        urllib.request.urlopen(URL, timeout=1)
+        return True
+    except Exception:
+        return False
+
+
 def wait_for_server():
     """Attend que le serveur réponde, puis ouvre le navigateur."""
     for _ in range(30):
         time.sleep(1)
-        try:
-            urllib.request.urlopen(URL, timeout=1)
+        if is_server_running():
             webbrowser.open(URL)
             log("Navigateur ouvert")
             return
-        except Exception:
-            pass
     log("WARN: serveur non disponible après 30 secondes")
 
 
@@ -71,6 +77,12 @@ def start_server():
     """Lance uvicorn avec l'app importée directement (compatible PyInstaller)."""
     try:
         log(f"Démarrage — BASE_DIR={BASE_DIR} DATA_DIR={DATA_DIR}")
+
+        # Si une instance tourne déjà, on ouvre juste le navigateur et on quitte
+        if is_server_running():
+            log("Instance déjà active — ouverture du navigateur")
+            webbrowser.open(URL)
+            return
 
         # console=False (PyInstaller) met stdout/stderr à None,
         # ce qui fait planter le logging d'uvicorn — on les redirige vers le log
@@ -84,7 +96,6 @@ def start_server():
         uvicorn.run(app, host=HOST, port=PORT, log_config=None)
     except Exception:
         log("ERREUR démarrage serveur :\n" + traceback.format_exc())
-        # Afficher l'erreur dans une boîte de dialogue Windows
         try:
             import ctypes
             err = traceback.format_exc()
