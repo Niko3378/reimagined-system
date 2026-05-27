@@ -26,6 +26,10 @@ def seed(force=False):
         db.query(models.Comment).delete()
         db.query(models.Ticket).delete()
         db.query(models.TicketTemplate).delete()
+        db.query(models.TicketProcessTask).delete()
+        db.query(models.TicketProcess).delete()
+        db.query(models.ProcessTemplateStep).delete()
+        db.query(models.ProcessTemplate).delete()
         db.query(models.User).delete()
         db.commit()
 
@@ -364,6 +368,64 @@ def seed(force=False):
             author_id=jdupont.id,
         )
         db.add(tpl)
+    db.commit()
+
+    # ── Modèles de processus ──────────────────────────────────────────────────
+    print("Création des modèles de processus...")
+    process_defs = [
+        ("Onboarding nouvel employé", "demande_onboarding",
+         "Processus complet d'intégration d'un nouvel employé", [
+             (1, "Créer le compte Active Directory", "Créer l'identifiant, définir le mot de passe temporaire et affecter les groupes de sécurité."),
+             (2, "Attribuer les licences logicielles", "Office 365, antivirus, outils métier selon le profil."),
+             (3, "Configurer le poste de travail", "Installation OS, drivers, logiciels requis et jonction au domaine."),
+             (4, "Configurer la messagerie", "Créer la boîte mail, configurer Outlook, ajouter aux listes de diffusion."),
+             (5, "Créer les accès applicatifs métier", "ERP, CRM, intranet et autres applications selon le service."),
+             (6, "Remettre le matériel et former l'utilisateur", "Remise du poste, téléphone, badges et formation de prise en main."),
+         ]),
+        ("Offboarding / Départ employé", "demande_offboarding",
+         "Processus de clôture des accès lors du départ d'un employé", [
+             (1, "Désactiver le compte Active Directory", "Désactiver le compte sans le supprimer pour conserver l'historique."),
+             (2, "Révoquer les accès applicatifs", "Supprimer ou désactiver les comptes sur chaque application métier."),
+             (3, "Transférer les données et emails", "Rediriger les emails, transférer les fichiers vers le responsable."),
+             (4, "Récupérer le matériel informatique", "Collecter PC, téléphone, badge, câbles et accessoires."),
+             (5, "Archiver et supprimer le compte", "Archiver les données selon la politique de rétention puis supprimer le compte AD."),
+         ]),
+        ("Déploiement logiciel", "demande_installation",
+         "Processus standard pour le déploiement d'un nouveau logiciel", [
+             (1, "Valider les prérequis système", "Vérifier compatibilité OS, espace disque, RAM et dépendances."),
+             (2, "Tester en environnement de recette", "Déployer sur poste de test et valider le fonctionnement."),
+             (3, "Préparer le package de déploiement", "Créer/adapter le package MSI/SCCM pour déploiement silencieux."),
+             (4, "Déployer sur les postes cibles", "Déploiement via SCCM, GPO ou intervention manuelle."),
+             (5, "Vérifier et notifier les utilisateurs", "Contrôler le bon fonctionnement et informer les utilisateurs."),
+         ]),
+        ("Déménagement de poste", "demande_demenagement",
+         "Processus de déménagement d'un poste de travail", [
+             (1, "Vérifier le câblage du nouveau bureau", "S'assurer que les prises réseau, électrique et téléphonie sont disponibles."),
+             (2, "Planifier l'intervention avec l'utilisateur", "Convenir d'un créneau sans impact sur la production."),
+             (3, "Démonter et étiqueter le matériel", "Déconnecter et emballer soigneusement chaque équipement."),
+             (4, "Réinstaller et reconfigurer le poste", "Rebrancher, vérifier la connexion réseau et les paramètres."),
+             (5, "Valider avec l'utilisateur", "Tester l'accès aux ressources réseau et obtenir la validation."),
+         ]),
+        ("Réponse à incident de sécurité", "intrusion",
+         "Processus de réponse en cas d'incident de sécurité", [
+             (1, "Isoler le système compromis", "Déconnecter la machine du réseau pour stopper la propagation."),
+             (2, "Qualifier et documenter l'incident", "Collecter les logs, identifier la nature et l'étendue de l'attaque."),
+             (3, "Notifier les parties prenantes", "Informer la direction, le RSSI et si nécessaire les autorités (CNIL, ANSSI)."),
+             (4, "Remédier et nettoyer le système", "Supprimer le malware, corriger les vulnérabilités, réinstaller si nécessaire."),
+             (5, "Restaurer et valider", "Restaurer depuis une sauvegarde saine et vérifier l'intégrité."),
+             (6, "Rédiger le rapport post-incident", "Documenter le chronologie, les actions et les recommandations."),
+         ]),
+    ]
+    for (name, ttype, desc, steps) in process_defs:
+        pt = models.ProcessTemplate(
+            name=name, description=desc, ticket_type=ttype, author_id=jdupont.id
+        )
+        db.add(pt)
+        db.flush()
+        for (order, sname, sdesc) in steps:
+            db.add(models.ProcessTemplateStep(
+                template_id=pt.id, order=order, name=sname, description=sdesc
+            ))
     db.commit()
 
     # Résumé

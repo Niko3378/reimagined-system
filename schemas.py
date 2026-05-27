@@ -157,6 +157,81 @@ class TicketTemplateOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class ProcessTemplateStepCreate(BaseModel):
+    order: int
+    name: str
+    description: Optional[str] = None
+
+
+class ProcessTemplateCreate(BaseModel):
+    name: str
+    description: Optional[str] = None
+    ticket_type: Optional[str] = None
+    steps: List["ProcessTemplateStepCreate"] = []
+
+
+class ProcessTemplateUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    ticket_type: Optional[str] = None
+    steps: Optional[List["ProcessTemplateStepCreate"]] = None
+
+
+class ProcessTemplateStepOut(BaseModel):
+    id: int
+    order: int
+    name: str
+    description: Optional[str]
+
+    model_config = {"from_attributes": True}
+
+
+class ProcessTemplateOut(BaseModel):
+    id: int
+    name: str
+    description: Optional[str]
+    ticket_type: Optional[str]
+    author: UserOut
+    created_at: datetime
+    steps: List[ProcessTemplateStepOut] = []
+
+    model_config = {"from_attributes": True}
+
+
+class TicketProcessTaskOut(BaseModel):
+    id: int
+    order: int
+    name: str
+    description: Optional[str]
+    status: str
+    assignee: Optional[UserOut]
+    completed_at: Optional[datetime]
+    completed_by: Optional[UserOut]
+
+    model_config = {"from_attributes": True}
+
+
+class TicketProcessOut(BaseModel):
+    id: int
+    ticket_id: int
+    name: str
+    created_at: datetime
+    tasks: List[TicketProcessTaskOut] = []
+
+    model_config = {"from_attributes": True}
+
+
+class AttachProcessPayload(BaseModel):
+    template_id: Optional[int] = None
+    name: Optional[str] = None
+    steps: Optional[List[ProcessTemplateStepCreate]] = None
+
+
+class UpdateTaskPayload(BaseModel):
+    status: str
+    assigned_to_id: Optional[int] = None
+
+
 class StatsOut(BaseModel):
     total: int
     ouvert: int

@@ -21,6 +21,11 @@ TYPE_PRIORITY = {
     "peripherique_defaillant": "normale",
     "erreur_reseau":         "haute",
     "ransomware":            "critique",
+    "fuite_donnees":         "critique",
+    "defaillance_serveur":   "critique",
+    "vol_equipement":        "haute",
+    "coupure_telephonie":    "haute",
+    "spam_massif":           "normale",
     "probleme_impression":   "faible",
     "demande":               "faible",
     "demande_acces":         "faible",
@@ -42,6 +47,11 @@ TYPE_PRIORITY = {
     "demande_messagerie":    "faible",
     "demande_impression_config": "faible",
     "demande_badge_acces":   "faible",
+    "demande_onboarding":    "normale",
+    "demande_offboarding":   "normale",
+    "demande_audit_securite": "faible",
+    "demande_intervention_site": "normale",
+    "demande_certificat_ssl": "normale",
 }
 
 PRIORITY_ORDER = ["faible", "normale", "haute", "critique"]

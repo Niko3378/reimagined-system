@@ -18,8 +18,8 @@ router = APIRouter(prefix="/api/tickets", tags=["tickets"])
 
 VALID_STATUSES = {"ouvert", "en_cours", "resolu", "ferme"}
 VALID_PRIORITIES = {"faible", "normale", "haute", "critique"}
-INCIDENT_TYPES = {"incident","panne","dysfonctionnement","alerte_securite","coupure_reseau","intrusion","perte_donnees","surcharge_systeme","panne_electrique","virus","phishing","crash_application","corruption_donnees","indisponibilite_service","acces_refuse","ransomware","erreur_reseau","ecran_bleu","peripherique_defaillant","probleme_impression"}
-DEMANDE_TYPES  = {"demande","demande_acces","demande_installation","demande_materiel","demande_information","demande_formation","demande_sauvegarde","demande_demenagement","demande_licence","demande_reinitialisation_mdp","demande_creation_compte","demande_assistance","demande_configuration","demande_mise_a_jour","demande_archivage","demande_deblockage_compte","demande_vpn","demande_messagerie","demande_impression_config","demande_badge_acces"}
+INCIDENT_TYPES = {"incident","panne","dysfonctionnement","alerte_securite","coupure_reseau","intrusion","perte_donnees","surcharge_systeme","panne_electrique","virus","phishing","crash_application","corruption_donnees","indisponibilite_service","acces_refuse","ransomware","erreur_reseau","ecran_bleu","peripherique_defaillant","probleme_impression","vol_equipement","fuite_donnees","spam_massif","defaillance_serveur","coupure_telephonie"}
+DEMANDE_TYPES  = {"demande","demande_acces","demande_installation","demande_materiel","demande_information","demande_formation","demande_sauvegarde","demande_demenagement","demande_licence","demande_reinitialisation_mdp","demande_creation_compte","demande_assistance","demande_configuration","demande_mise_a_jour","demande_archivage","demande_deblockage_compte","demande_vpn","demande_messagerie","demande_impression_config","demande_badge_acces","demande_onboarding","demande_offboarding","demande_audit_securite","demande_intervention_site","demande_certificat_ssl"}
 VALID_TYPES = INCIDENT_TYPES | DEMANDE_TYPES
 VALID_CATEGORIES = {"materiel", "logiciel", "reseau", "securite", "telephonie", "imprimante", "autre"}
 
@@ -263,9 +263,14 @@ def export_catalogue_pdf(
         ("indisponibilite_service","Indisponibilité service","haute",      8),
         ("acces_refuse",           "Accès refusé",           "normale",   24),
         ("ransomware",             "Ransomware / Chiffrement","critique",   4),
+        ("fuite_donnees",          "Fuite de données",        "critique",   4),
+        ("defaillance_serveur",    "Défaillance serveur",     "critique",   4),
         ("erreur_reseau",          "Erreur réseau / DNS",     "haute",      8),
+        ("vol_equipement",         "Vol d'équipement",        "haute",      8),
+        ("coupure_telephonie",     "Coupure téléphonie",      "haute",      8),
         ("ecran_bleu",             "Écran bleu (BSOD)",       "normale",   24),
         ("peripherique_defaillant","Périphérique défaillant", "normale",   24),
+        ("spam_massif",            "Spam / Messagerie compromise","normale",24),
         ("probleme_impression",    "Problème d'impression",   "faible",    72),
     ]
     DEMANDE_TYPES_LIST = [
@@ -289,6 +294,11 @@ def export_catalogue_pdf(
         ("demande_messagerie",          "Messagerie / Email",          "faible", 72),
         ("demande_impression_config",   "Config. impression",          "faible", 72),
         ("demande_badge_acces",         "Badge d'accès physique",      "faible", 72),
+        ("demande_onboarding",          "Onboarding nouvel employé",   "normale",24),
+        ("demande_offboarding",         "Offboarding / Départ",        "normale",24),
+        ("demande_audit_securite",      "Audit de sécurité",           "faible", 72),
+        ("demande_intervention_site",   "Intervention sur site",       "normale",24),
+        ("demande_certificat_ssl",      "Certificat SSL / PKI",        "normale",24),
     ]
     PRIORITY_LABELS = {"critique": "Critique", "haute": "Haute", "normale": "Normale", "faible": "Faible"}
     PRIORITY_COLORS = {
@@ -821,12 +831,16 @@ def export_tickets_pdf(
         "demande_information": "D. info", "demande_formation": "D. formation",
         "demande_sauvegarde": "D. sauvegarde", "demande_demenagement": "D. déménag.",
         "demande_licence": "D. licence",
-        "ransomware": "Ransomware", "erreur_reseau": "Erreur réseau",
+        "ransomware": "Ransomware", "fuite_donnees": "Fuite données",
+        "defaillance_serveur": "Défaillance srv.", "erreur_reseau": "Erreur réseau",
+        "vol_equipement": "Vol équipement", "coupure_telephonie": "Coupure tél.",
         "ecran_bleu": "Écran bleu", "peripherique_defaillant": "Périphérique déf.",
-        "probleme_impression": "Pb. impression",
+        "spam_massif": "Spam massif", "probleme_impression": "Pb. impression",
         "demande_deblockage_compte": "D. déblocage", "demande_vpn": "D. VPN",
         "demande_messagerie": "D. messagerie", "demande_impression_config": "D. impression",
-        "demande_badge_acces": "D. badge",
+        "demande_badge_acces": "D. badge", "demande_onboarding": "D. onboarding",
+        "demande_offboarding": "D. offboarding", "demande_audit_securite": "D. audit sécu.",
+        "demande_intervention_site": "D. intervention", "demande_certificat_ssl": "D. certificat",
     }
 
     buf = io.BytesIO()

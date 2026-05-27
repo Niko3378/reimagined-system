@@ -108,6 +108,11 @@
     .badge-indisponibilite_service { background: #e65100; }
     .badge-acces_refuse { background: #546e7a; }
     .badge-ransomware { background: #7b1fa2; }
+    .badge-fuite_donnees { background: #880e4f; }
+    .badge-defaillance_serveur { background: #b71c1c; }
+    .badge-vol_equipement { background: #4e342e; }
+    .badge-coupure_telephonie { background: #0277bd; }
+    .badge-spam_massif { background: #5d4037; }
     .badge-erreur_reseau { background: #00695c; }
     .badge-ecran_bleu { background: #1565c0; }
     .badge-peripherique_defaillant { background: #4e342e; }
@@ -117,6 +122,11 @@
     .badge-demande_messagerie { background: #004d40; }
     .badge-demande_impression_config { background: #263238; }
     .badge-demande_badge_acces { background: #bf360c; }
+    .badge-demande_onboarding { background: #1b5e20; }
+    .badge-demande_offboarding { background: #4a148c; }
+    .badge-demande_audit_securite { background: #006064; }
+    .badge-demande_intervention_site { background: #e65100; }
+    .badge-demande_certificat_ssl { background: #1565c0; }
 
     /* ── Ticket detail ── */
     .modal-xl { max-width: 900px; }
@@ -366,6 +376,11 @@
             <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="ecran_bleu"><i class="fas fa-desktop me-1" style="width:14px"></i>Écran bleu (BSOD)</a></li>
             <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="peripherique_defaillant"><i class="fas fa-plug me-1" style="width:14px"></i>Périphérique défaillant</a></li>
             <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="probleme_impression"><i class="fas fa-print me-1" style="width:14px"></i>Problème d'impression</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="vol_equipement"><i class="fas fa-shopping-bag me-1" style="width:14px"></i>Vol d'équipement</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="fuite_donnees"><i class="fas fa-water me-1" style="width:14px"></i>Fuite de données</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="spam_massif"><i class="fas fa-envelope-open-text me-1" style="width:14px"></i>Spam massif</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="defaillance_serveur"><i class="fas fa-hdd me-1" style="width:14px"></i>Défaillance serveur</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="coupure_telephonie"><i class="fas fa-phone-slash me-1" style="width:14px"></i>Coupure téléphonie</a></li>
           </ul>
         </div>
       </li>
@@ -396,6 +411,11 @@
             <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_messagerie"><i class="fas fa-envelope me-1" style="width:14px"></i>Messagerie / Email</a></li>
             <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_impression_config"><i class="fas fa-print me-1" style="width:14px"></i>Config. impression</a></li>
             <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_badge_acces"><i class="fas fa-id-card me-1" style="width:14px"></i>Badge d'accès</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_onboarding"><i class="fas fa-user-check me-1" style="width:14px"></i>Onboarding</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_offboarding"><i class="fas fa-user-minus me-1" style="width:14px"></i>Offboarding</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_audit_securite"><i class="fas fa-search me-1" style="width:14px"></i>Audit de sécurité</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_intervention_site"><i class="fas fa-map-marker-alt me-1" style="width:14px"></i>Intervention site</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_certificat_ssl"><i class="fas fa-certificate me-1" style="width:14px"></i>Certificat SSL</a></li>
           </ul>
         </div>
       </li>
@@ -436,6 +456,11 @@
       <li class="nav-item" id="admin-users-nav" style="display:none">
         <a class="nav-link" href="#" data-view="admin-users">
           <i class="fas fa-users-cog"></i>Utilisateurs
+        </a>
+      </li>
+      <li class="nav-item" id="process-tpl-nav" style="display:none">
+        <a class="nav-link" href="#" onclick="openProcessTplMgr();return false">
+          <i class="fas fa-project-diagram"></i>Modèles de processus
         </a>
       </li>
     </ul>
@@ -725,6 +750,11 @@
                   <option value="ecran_bleu">Écran bleu (BSOD)</option>
                   <option value="peripherique_defaillant">Périphérique défaillant</option>
                   <option value="probleme_impression">Problème d'impression</option>
+                  <option value="vol_equipement">Vol d'équipement</option>
+                  <option value="fuite_donnees">Fuite de données</option>
+                  <option value="spam_massif">Spam massif</option>
+                  <option value="defaillance_serveur">Défaillance serveur</option>
+                  <option value="coupure_telephonie">Coupure téléphonie</option>
                 </optgroup>
                 <optgroup label="Demandes">
                   <option value="demande">Demande</option>
@@ -747,6 +777,11 @@
                   <option value="demande_messagerie">Messagerie / Email</option>
                   <option value="demande_impression_config">Config. impression</option>
                   <option value="demande_badge_acces">Badge d'accès physique</option>
+                  <option value="demande_onboarding">Onboarding nouvel employé</option>
+                  <option value="demande_offboarding">Offboarding / Départ</option>
+                  <option value="demande_audit_securite">Audit de sécurité</option>
+                  <option value="demande_intervention_site">Intervention sur site</option>
+                  <option value="demande_certificat_ssl">Certificat SSL / PKI</option>
                 </optgroup>
               </select>
             </div>
@@ -849,6 +884,11 @@
                 <option value="ecran_bleu">Écran bleu (BSOD)</option>
                 <option value="peripherique_defaillant">Périphérique défaillant</option>
                 <option value="probleme_impression">Problème d'impression</option>
+                <option value="vol_equipement">Vol d'équipement</option>
+                <option value="fuite_donnees">Fuite de données</option>
+                <option value="spam_massif">Spam massif</option>
+                <option value="defaillance_serveur">Défaillance serveur</option>
+                <option value="coupure_telephonie">Coupure téléphonie</option>
               </select>
             </div>
             <div class="col-md-2">
@@ -939,6 +979,11 @@
                 <option value="demande_messagerie">Messagerie / Email</option>
                 <option value="demande_impression_config">Config. impression</option>
                 <option value="demande_badge_acces">Badge d'accès physique</option>
+                <option value="demande_onboarding">Onboarding nouvel employé</option>
+                <option value="demande_offboarding">Offboarding / Départ</option>
+                <option value="demande_audit_securite">Audit de sécurité</option>
+                <option value="demande_intervention_site">Intervention sur site</option>
+                <option value="demande_certificat_ssl">Certificat SSL / PKI</option>
               </select>
             </div>
             <div class="col-md-2">
@@ -1487,6 +1532,111 @@
   </div>
 </div>
 
+<!-- ══ Modal attacher un processus ═════════════════════════════════════ -->
+<div class="modal fade" id="attachProcessModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold"><i class="fas fa-project-diagram me-2 text-primary"></i>Attacher un processus</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="nav nav-tabs mb-3" id="attach-tabs">
+          <li class="nav-item"><a class="nav-link active" href="#" onclick="switchAttachTab('template',this)">Depuis un modèle</a></li>
+          <li class="nav-item"><a class="nav-link" href="#" onclick="switchAttachTab('custom',this)">Processus personnalisé</a></li>
+        </ul>
+
+        <!-- From template -->
+        <div id="attach-tab-template">
+          <div id="process-template-list" class="row g-2"></div>
+        </div>
+
+        <!-- Custom process -->
+        <div id="attach-tab-custom" style="display:none">
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Nom du processus <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="custom-process-name" placeholder="Ex : Déploiement spécifique">
+          </div>
+          <div id="custom-steps-list"></div>
+          <button class="btn btn-outline-secondary btn-sm mt-2" onclick="addCustomStep()">
+            <i class="fas fa-plus me-1"></i>Ajouter une étape
+          </button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button type="button" class="btn btn-primary d-none" id="attach-custom-btn" onclick="attachCustomProcess()">
+          <i class="fas fa-project-diagram me-1"></i>Attacher ce processus
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ Modal gestion modèles de processus ══════════════════════════════ -->
+<div class="modal fade" id="processTplMgrModal" tabindex="-1">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold"><i class="fas fa-project-diagram me-2 text-primary"></i>Modèles de processus</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="d-flex justify-content-between mb-3">
+          <span class="text-muted small">Gérez les modèles de processus réutilisables.</span>
+          <button class="btn btn-primary btn-sm" onclick="openProcessTplForm()">
+            <i class="fas fa-plus me-1"></i>Nouveau modèle
+          </button>
+        </div>
+        <div id="process-tpl-mgr-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ Modal création/édition modèle de processus ══════════════════════ -->
+<div class="modal fade" id="processTplFormModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold" id="process-tpl-form-title">Nouveau modèle de processus</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-3 mb-3">
+          <div class="col-md-8">
+            <label class="form-label fw-semibold">Nom <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="ptpl-input-name" placeholder="Ex : Onboarding nouvel employé">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Type de ticket associé</label>
+            <select class="form-select" id="ptpl-input-type">
+              <option value="">Aucun (universel)</option>
+            </select>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Description</label>
+          <input type="text" class="form-control" id="ptpl-input-desc" placeholder="Description courte du processus">
+        </div>
+        <div class="mb-2">
+          <label class="form-label fw-semibold">Étapes <span class="text-danger">*</span></label>
+          <div id="ptpl-steps-list"></div>
+          <button class="btn btn-outline-secondary btn-sm mt-2" onclick="addPtplStep()">
+            <i class="fas fa-plus me-1"></i>Ajouter une étape
+          </button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button type="button" class="btn btn-primary" onclick="saveProcessTemplate()">
+          <i class="fas fa-save me-1"></i>Enregistrer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ══ Modal création/édition modèle ═══════════════════════════════════ -->
 <div class="modal fade" id="tplFormModal" tabindex="-1">
   <div class="modal-dialog modal-lg">
@@ -1586,6 +1736,11 @@
                   <option value="ecran_bleu">💙 Écran bleu (BSOD)</option>
                   <option value="peripherique_defaillant">🔌 Périphérique défaillant</option>
                   <option value="probleme_impression">🖨️ Problème d'impression</option>
+                  <option value="vol_equipement">🎒 Vol d'équipement</option>
+                  <option value="fuite_donnees">💧 Fuite de données</option>
+                  <option value="spam_massif">📨 Spam massif</option>
+                  <option value="defaillance_serveur">🖥️ Défaillance serveur</option>
+                  <option value="coupure_telephonie">📵 Coupure téléphonie</option>
                 </optgroup>
                 <optgroup label="── Demandes">
                   <option value="demande">📋 Demande</option>
@@ -1608,6 +1763,11 @@
                   <option value="demande_messagerie">📧 Messagerie / Email</option>
                   <option value="demande_impression_config">🖨️ Config. impression</option>
                   <option value="demande_badge_acces">🪪 Badge d'accès physique</option>
+                  <option value="demande_onboarding">🧑‍💼 Onboarding nouvel employé</option>
+                  <option value="demande_offboarding">👋 Offboarding / Départ</option>
+                  <option value="demande_audit_securite">🔍 Audit de sécurité</option>
+                  <option value="demande_intervention_site">📍 Intervention sur site</option>
+                  <option value="demande_certificat_ssl">🏅 Certificat SSL / PKI</option>
                 </optgroup>
               </select>
             </div>
@@ -1680,6 +1840,24 @@
             </p>
             <div class="ticket-section-title">Description</div>
             <div id="detail-description" class="p-3 bg-light rounded mb-4" style="white-space:pre-wrap"></div>
+
+            <!-- Process -->
+            <div id="detail-process-section" class="mb-4">
+              <div class="ticket-section-title d-flex justify-content-between align-items-center">
+                <span><i class="fas fa-project-diagram me-1 text-primary"></i>Processus</span>
+                <div class="d-flex gap-1">
+                  <button class="btn btn-outline-primary btn-sm d-none" id="process-attach-btn" onclick="openAttachProcess()">
+                    <i class="fas fa-plus me-1"></i>Attacher
+                  </button>
+                  <button class="btn btn-outline-danger btn-sm d-none" id="process-detach-btn" onclick="detachProcess()">
+                    <i class="fas fa-unlink me-1"></i>Retirer
+                  </button>
+                </div>
+              </div>
+              <div id="process-container">
+                <p class="text-muted small fst-italic">Aucun processus attaché.</p>
+              </div>
+            </div>
 
             <!-- Comments -->
             <div class="ticket-section-title">Commentaires (<span id="comments-count">0</span>)</div>
@@ -1891,6 +2069,11 @@ const TYPE_META = {
   indisponibilite_service:    { label: 'Indisponibilité service',        icon: 'ban' },
   acces_refuse:               { label: 'Accès refusé',                  icon: 'user-times' },
   ransomware:                 { label: 'Ransomware / Chiffrement',      icon: 'lock' },
+  fuite_donnees:              { label: 'Fuite de données',              icon: 'water' },
+  defaillance_serveur:        { label: 'Défaillance serveur',           icon: 'hdd' },
+  vol_equipement:             { label: "Vol d'équipement",              icon: 'shopping-bag' },
+  coupure_telephonie:         { label: 'Coupure téléphonie',            icon: 'phone-slash' },
+  spam_massif:                { label: 'Spam massif',                   icon: 'envelope-open-text' },
   erreur_reseau:              { label: 'Erreur réseau / DNS',           icon: 'network-wired' },
   ecran_bleu:                 { label: 'Écran bleu (BSOD)',             icon: 'desktop' },
   peripherique_defaillant:    { label: 'Périphérique défaillant',       icon: 'plug' },
@@ -1915,6 +2098,11 @@ const TYPE_META = {
   demande_messagerie:             { label: 'Messagerie / Email',              icon: 'envelope' },
   demande_impression_config:      { label: "Config. impression",              icon: 'print' },
   demande_badge_acces:            { label: "Badge d'accès physique",          icon: 'id-card' },
+  demande_onboarding:             { label: 'Onboarding nouvel employé',       icon: 'user-check' },
+  demande_offboarding:            { label: 'Offboarding / Départ',            icon: 'user-minus' },
+  demande_audit_securite:         { label: 'Audit de sécurité',              icon: 'search' },
+  demande_intervention_site:      { label: 'Intervention sur site',           icon: 'map-marker-alt' },
+  demande_certificat_ssl:         { label: 'Certificat SSL / PKI',           icon: 'certificate' },
 };
 
 function typeBadge(t) {
@@ -2011,8 +2199,9 @@ function enterApp() {
 
   const isTechAdmin = ['technician', 'admin'].includes(state.user.role);
   const isAdmin = state.user.role === 'admin';
-  document.getElementById('admin-nav-item').style.display = isAdmin ? '' : 'none';
+  document.getElementById('admin-nav-item').style.display = isTechAdmin ? '' : 'none';
   document.getElementById('admin-users-nav').style.display = isAdmin ? '' : 'none';
+  document.getElementById('process-tpl-nav').style.display = isTechAdmin ? '' : 'none';
 
   if (isTechAdmin) loadTechUsers();
   connectSSE();
@@ -2634,7 +2823,12 @@ const AUTO_PRIORITY = {
   incident: 'normale', dysfonctionnement: 'normale', crash_application: 'normale', acces_refuse: 'normale',
   ecran_bleu: 'normale', peripherique_defaillant: 'normale',
   erreur_reseau: 'haute',
-  ransomware: 'critique',
+  ransomware: 'critique', fuite_donnees: 'critique', defaillance_serveur: 'critique',
+  vol_equipement: 'haute', coupure_telephonie: 'haute',
+  spam_massif: 'normale',
+  demande_onboarding: 'normale', demande_offboarding: 'normale',
+  demande_intervention_site: 'normale', demande_certificat_ssl: 'normale',
+  demande_audit_securite: 'faible',
   demande: 'faible', demande_acces: 'faible', demande_installation: 'faible',
   demande_materiel: 'faible', demande_information: 'faible', demande_formation: 'faible',
   demande_sauvegarde: 'faible', demande_demenagement: 'faible', demande_licence: 'faible',
@@ -2697,6 +2891,7 @@ async function openTicket(id) {
     const t = await API.get('/tickets/' + id);
     renderTicketDetail(t);
     new bootstrap.Modal(document.getElementById('detailModal')).show();
+    loadTicketProcess(id);
   } catch (err) {
     toast(err.message, 'danger');
   }
@@ -3003,7 +3198,9 @@ const KB_TYPE_OPTIONS = (() => {
     ['indisponibilite_service','Indisponibilité service'],['acces_refuse','Accès refusé'],
     ['ransomware','Ransomware'],['erreur_reseau','Erreur réseau / DNS'],
     ['ecran_bleu','Écran bleu (BSOD)'],['peripherique_defaillant','Périphérique défaillant'],
-    ['probleme_impression',"Problème d'impression"],
+    ['probleme_impression',"Problème d'impression"],['vol_equipement',"Vol d'équipement"],
+    ['fuite_donnees','Fuite de données'],['spam_massif','Spam massif'],
+    ['defaillance_serveur','Défaillance serveur'],['coupure_telephonie','Coupure téléphonie'],
   ];
   const dem = [
     ['demande','Demande'],['demande_acces','Accès'],['demande_installation','Installation'],
@@ -3016,6 +3213,9 @@ const KB_TYPE_OPTIONS = (() => {
     ['demande_archivage','Archivage'],['demande_deblockage_compte','Déblocage de compte'],
     ['demande_vpn','Accès VPN'],['demande_messagerie','Messagerie / Email'],
     ['demande_impression_config','Config. impression'],['demande_badge_acces',"Badge d'accès"],
+    ['demande_onboarding','Onboarding'],['demande_offboarding','Offboarding'],
+    ['demande_audit_securite','Audit sécurité'],['demande_intervention_site','Intervention site'],
+    ['demande_certificat_ssl','Certificat SSL'],
   ];
   return { inc, dem };
 })();
@@ -3179,6 +3379,328 @@ async function deleteKBArticle(id) {
   } catch(e) {
     toast('Erreur suppression : ' + e.message, 'danger');
   }
+}
+
+// ════════════════════════════════════════════
+// PROCESSUS
+// ════════════════════════════════════════════
+let _processTplEditId = null;
+
+async function loadTicketProcess(ticketId) {
+  const isStaff = ['technician','admin'].includes(state.user?.role);
+  const container = document.getElementById('process-container');
+  const attachBtn = document.getElementById('process-attach-btn');
+  const detachBtn = document.getElementById('process-detach-btn');
+
+  attachBtn.classList.toggle('d-none', !isStaff);
+  detachBtn.classList.add('d-none');
+
+  try {
+    const res = await fetch(`/api/tickets/${ticketId}/process`, {
+      headers: { 'Authorization': `Bearer ${API.token}` }
+    });
+    if (res.status === 404) {
+      container.innerHTML = `<p class="text-muted small fst-italic">Aucun processus attaché.</p>`;
+      return;
+    }
+    if (!res.ok) return;
+    const proc = await res.json();
+    detachBtn.classList.toggle('d-none', !isStaff);
+    attachBtn.classList.add('d-none');
+    renderProcess(proc, isStaff);
+  } catch(e) {
+    container.innerHTML = `<p class="text-muted small fst-italic">Aucun processus attaché.</p>`;
+  }
+}
+
+function renderProcess(proc, isStaff) {
+  const tasks = proc.tasks;
+  const done = tasks.filter(t => t.status === 'fait').length;
+  const pct = tasks.length ? Math.round(done / tasks.length * 100) : 0;
+  const STATUS_CONF = {
+    en_attente: { label: 'En attente', cls: 'bg-secondary', icon: 'clock'    },
+    en_cours:   { label: 'En cours',   cls: 'bg-warning text-dark', icon: 'spinner' },
+    fait:       { label: 'Terminé',    cls: 'bg-success',  icon: 'check'    },
+  };
+
+  const taskHtml = tasks.map((t, idx) => {
+    const sc = STATUS_CONF[t.status] || STATUS_CONF.en_attente;
+    const prevDone = idx === 0 || tasks[idx-1].status === 'fait';
+    const locked = !prevDone && t.status === 'en_attente';
+
+    let actionBtn = '';
+    if (isStaff && !locked) {
+      if (t.status === 'en_attente')
+        actionBtn = `<button class="btn btn-outline-warning btn-sm" onclick="advanceTask(${t.id},'en_cours')"><i class="fas fa-play me-1"></i>Démarrer</button>`;
+      else if (t.status === 'en_cours')
+        actionBtn = `<button class="btn btn-outline-success btn-sm" onclick="advanceTask(${t.id},'fait')"><i class="fas fa-check me-1"></i>Terminer</button>`;
+    }
+
+    return `
+      <div class="d-flex align-items-start gap-2 py-2 border-bottom ${locked ? 'opacity-50' : ''}">
+        <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+             style="width:28px;height:28px;background:${t.status==='fait'?'#388e3c':locked?'#9e9e9e':'#1976d2'};color:white;font-size:.7rem;font-weight:bold">
+          ${locked ? '<i class="fas fa-lock" style="font-size:.6rem"></i>' : idx+1}
+        </div>
+        <div class="flex-grow-1">
+          <div class="d-flex justify-content-between align-items-start">
+            <span class="fw-semibold small ${t.status==='fait'?'text-decoration-line-through text-muted':''}">${escHtml(t.name)}</span>
+            <div class="d-flex gap-1 align-items-center">
+              <span class="badge ${sc.cls} small">${sc.label}</span>
+              ${actionBtn}
+            </div>
+          </div>
+          ${t.description ? `<div class="text-muted small mt-1">${escHtml(t.description)}</div>` : ''}
+          ${t.completed_at ? `<div class="text-success small mt-1"><i class="fas fa-check-circle me-1"></i>Terminé par ${escHtml(t.completed_by?.username||'?')} le ${fmt(t.completed_at)}</div>` : ''}
+        </div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('process-container').innerHTML = `
+    <div class="card border-0 bg-light rounded p-3">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <span class="fw-semibold"><i class="fas fa-project-diagram me-1 text-primary"></i>${escHtml(proc.name)}</span>
+        <span class="text-muted small">${done}/${tasks.length} tâches</span>
+      </div>
+      <div class="progress mb-3" style="height:8px">
+        <div class="progress-bar bg-success" style="width:${pct}%"></div>
+      </div>
+      ${taskHtml}
+    </div>`;
+}
+
+async function advanceTask(taskId, newStatus) {
+  try {
+    await API.patch(`/process-tasks/${taskId}`, { status: newStatus });
+    const ticketId = state.currentTicketId;
+    const proc = await API.get(`/tickets/${ticketId}/process`);
+    renderProcess(proc, true);
+  } catch(e) {
+    toast(e.message || 'Erreur', 'danger');
+  }
+}
+
+async function openAttachProcess() {
+  _fillTplTypeSelect('ptpl-input-type');
+  switchAttachTab('template', document.querySelector('#attach-tabs .nav-link'));
+  // Load templates
+  try {
+    const tpls = await API.get('/process-templates/');
+    const el = document.getElementById('process-template-list');
+    if (!tpls.length) {
+      el.innerHTML = `<div class="col-12 text-muted small">Aucun modèle disponible. Créez-en un via "Modèles de processus".</div>`;
+    } else {
+      el.innerHTML = tpls.map(t => `
+        <div class="col-md-6">
+          <div class="card h-100 border" style="cursor:pointer" onclick="attachFromTemplate(${t.id})">
+            <div class="card-body py-2 px-3">
+              <div class="fw-semibold small">${escHtml(t.name)}</div>
+              ${t.description ? `<div class="text-muted" style="font-size:.75rem">${escHtml(t.description)}</div>` : ''}
+              <div class="text-muted mt-1" style="font-size:.75rem"><i class="fas fa-list me-1"></i>${t.steps.length} étape(s)</div>
+              ${t.ticket_type ? `<span class="badge badge-${t.ticket_type} mt-1" style="font-size:.65rem">${TYPE_META[t.ticket_type]?.label||t.ticket_type}</span>` : ''}
+            </div>
+          </div>
+        </div>`).join('');
+    }
+  } catch(e) { toast('Erreur chargement modèles', 'danger'); }
+  new bootstrap.Modal(document.getElementById('attachProcessModal')).show();
+}
+
+async function attachFromTemplate(tplId) {
+  try {
+    await API.post(`/tickets/${state.currentTicketId}/process`, { template_id: tplId });
+    bootstrap.Modal.getInstance(document.getElementById('attachProcessModal')).hide();
+    toast('Processus attaché !');
+    const proc = await API.get(`/tickets/${state.currentTicketId}/process`);
+    renderProcess(proc, true);
+    document.getElementById('process-attach-btn').classList.add('d-none');
+    document.getElementById('process-detach-btn').classList.remove('d-none');
+  } catch(e) { toast(e.message || 'Erreur', 'danger'); }
+}
+
+function switchAttachTab(tab, el) {
+  document.querySelectorAll('#attach-tabs .nav-link').forEach(a => a.classList.remove('active'));
+  if (el) el.classList.add('active');
+  document.getElementById('attach-tab-template').style.display = tab === 'template' ? '' : 'none';
+  document.getElementById('attach-tab-custom').style.display = tab === 'custom' ? '' : 'none';
+  document.getElementById('attach-custom-btn').classList.toggle('d-none', tab !== 'custom');
+  if (tab === 'custom') resetCustomSteps();
+}
+
+let _customStepCount = 0;
+function resetCustomSteps() {
+  _customStepCount = 0;
+  document.getElementById('custom-steps-list').innerHTML = '';
+  addCustomStep();
+}
+
+function addCustomStep() {
+  _customStepCount++;
+  const n = _customStepCount;
+  const div = document.createElement('div');
+  div.className = 'input-group mb-2';
+  div.id = `custom-step-${n}`;
+  div.innerHTML = `
+    <span class="input-group-text small">${n}</span>
+    <input type="text" class="form-control form-control-sm" id="custom-step-name-${n}" placeholder="Nom de l'étape">
+    <button class="btn btn-outline-danger btn-sm" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>`;
+  document.getElementById('custom-steps-list').appendChild(div);
+}
+
+async function attachCustomProcess() {
+  const name = document.getElementById('custom-process-name').value.trim();
+  if (!name) { toast('Donnez un nom au processus', 'warning'); return; }
+  const steps = [];
+  document.querySelectorAll('#custom-steps-list input[id^=custom-step-name-]').forEach((inp, idx) => {
+    if (inp.value.trim()) steps.push({ order: idx+1, name: inp.value.trim() });
+  });
+  if (!steps.length) { toast('Ajoutez au moins une étape', 'warning'); return; }
+  try {
+    await API.post(`/tickets/${state.currentTicketId}/process`, { name, steps });
+    bootstrap.Modal.getInstance(document.getElementById('attachProcessModal')).hide();
+    toast('Processus attaché !');
+    const proc = await API.get(`/tickets/${state.currentTicketId}/process`);
+    renderProcess(proc, true);
+    document.getElementById('process-attach-btn').classList.add('d-none');
+    document.getElementById('process-detach-btn').classList.remove('d-none');
+  } catch(e) { toast(e.message || 'Erreur', 'danger'); }
+}
+
+async function detachProcess() {
+  if (!confirm('Retirer le processus de ce ticket ?')) return;
+  try {
+    const res = await fetch(`/api/tickets/${state.currentTicketId}/process`, {
+      method: 'DELETE', headers: { 'Authorization': `Bearer ${API.token}` }
+    });
+    if (!res.ok && res.status !== 204) throw new Error(await res.text());
+    toast('Processus retiré');
+    document.getElementById('process-container').innerHTML = `<p class="text-muted small fst-italic">Aucun processus attaché.</p>`;
+    document.getElementById('process-detach-btn').classList.add('d-none');
+    document.getElementById('process-attach-btn').classList.remove('d-none');
+  } catch(e) { toast(e.message || 'Erreur', 'danger'); }
+}
+
+// ── Process Template Manager ─────────────────────────────────────────────────
+async function openProcessTplMgr() {
+  await loadProcessTplMgrList();
+  new bootstrap.Modal(document.getElementById('processTplMgrModal')).show();
+}
+
+async function loadProcessTplMgrList() {
+  const el = document.getElementById('process-tpl-mgr-list');
+  const isAdmin = state.user?.role === 'admin';
+  const isStaff = ['technician','admin'].includes(state.user?.role);
+  try {
+    const tpls = await API.get('/process-templates/');
+    if (!tpls.length) { el.innerHTML = '<div class="text-muted small">Aucun modèle.</div>'; return; }
+    el.innerHTML = tpls.map(t => `
+      <div class="card mb-2">
+        <div class="card-body py-2 px-3">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <span class="fw-semibold">${escHtml(t.name)}</span>
+              ${t.ticket_type ? `<span class="badge badge-${t.ticket_type} ms-2 small">${TYPE_META[t.ticket_type]?.label||t.ticket_type}</span>` : ''}
+              ${t.description ? `<div class="text-muted small">${escHtml(t.description)}</div>` : ''}
+              <div class="mt-1">
+                ${t.steps.map((s,i) => `<span class="badge bg-light text-dark border me-1"><b>${i+1}</b> ${escHtml(s.name)}</span>`).join('')}
+              </div>
+            </div>
+            <div class="d-flex gap-1 flex-shrink-0">
+              ${(isAdmin || t.author.id === state.user.id) ? `
+                <button class="btn btn-outline-secondary btn-sm" onclick="openProcessTplForm(${t.id})"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-outline-danger btn-sm" onclick="deleteProcessTemplate(${t.id})"><i class="fas fa-trash"></i></button>
+              ` : ''}
+            </div>
+          </div>
+        </div>
+      </div>`).join('');
+  } catch(e) { el.innerHTML = `<div class="alert alert-danger">Erreur : ${e.message}</div>`; }
+}
+
+function openProcessTplForm(id = null) {
+  _processTplEditId = id;
+  _fillTplTypeSelect('ptpl-input-type');
+  document.getElementById('process-tpl-form-title').textContent = id ? 'Modifier le modèle' : 'Nouveau modèle de processus';
+  document.getElementById('ptpl-input-name').value = '';
+  document.getElementById('ptpl-input-desc').value = '';
+  document.getElementById('ptpl-input-type').value = '';
+  document.getElementById('ptpl-steps-list').innerHTML = '';
+  _ptplStepCount = 0;
+
+  if (id) {
+    API.get(`/process-templates/${id}`).then(t => {
+      document.getElementById('ptpl-input-name').value = t.name;
+      document.getElementById('ptpl-input-desc').value = t.description || '';
+      document.getElementById('ptpl-input-type').value = t.ticket_type || '';
+      t.steps.forEach(s => addPtplStep(s.name, s.description));
+    });
+  } else {
+    addPtplStep(); addPtplStep(); addPtplStep();
+  }
+  new bootstrap.Modal(document.getElementById('processTplFormModal')).show();
+}
+
+let _ptplStepCount = 0;
+function addPtplStep(name = '', desc = '') {
+  _ptplStepCount++;
+  const n = _ptplStepCount;
+  const div = document.createElement('div');
+  div.className = 'card mb-2';
+  div.id = `ptpl-step-${n}`;
+  div.innerHTML = `
+    <div class="card-body py-2 px-3">
+      <div class="d-flex gap-2 align-items-start">
+        <span class="badge bg-primary mt-1">${n}</span>
+        <div class="flex-grow-1">
+          <input type="text" class="form-control form-control-sm mb-1" id="ptpl-sname-${n}" placeholder="Nom de l'étape *" value="${escHtml(name)}">
+          <input type="text" class="form-control form-control-sm" id="ptpl-sdesc-${n}" placeholder="Description (optionnel)" value="${escHtml(desc)}">
+        </div>
+        <button class="btn btn-outline-danger btn-sm mt-1" onclick="this.closest('.card').remove()"><i class="fas fa-times"></i></button>
+      </div>
+    </div>`;
+  document.getElementById('ptpl-steps-list').appendChild(div);
+}
+
+async function saveProcessTemplate() {
+  const name = document.getElementById('ptpl-input-name').value.trim();
+  if (!name) { toast('Le nom est obligatoire', 'warning'); return; }
+  const steps = [];
+  document.querySelectorAll('#ptpl-steps-list .card').forEach((card, idx) => {
+    const n = card.id.replace('ptpl-step-', '');
+    const sname = document.getElementById(`ptpl-sname-${n}`)?.value.trim();
+    const sdesc = document.getElementById(`ptpl-sdesc-${n}`)?.value.trim();
+    if (sname) steps.push({ order: idx+1, name: sname, description: sdesc || null });
+  });
+  if (!steps.length) { toast('Ajoutez au moins une étape', 'warning'); return; }
+  const payload = {
+    name,
+    description: document.getElementById('ptpl-input-desc').value.trim() || null,
+    ticket_type: document.getElementById('ptpl-input-type').value || null,
+    steps,
+  };
+  try {
+    if (_processTplEditId) {
+      await API.patch(`/process-templates/${_processTplEditId}`, payload);
+      toast('Modèle mis à jour');
+    } else {
+      await API.post('/process-templates/', payload);
+      toast('Modèle créé');
+    }
+    bootstrap.Modal.getInstance(document.getElementById('processTplFormModal')).hide();
+    loadProcessTplMgrList();
+  } catch(e) { toast(e.message || 'Erreur', 'danger'); }
+}
+
+async function deleteProcessTemplate(id) {
+  if (!confirm('Supprimer ce modèle de processus ?')) return;
+  try {
+    const res = await fetch(`/api/process-templates/${id}`, {
+      method: 'DELETE', headers: { 'Authorization': `Bearer ${API.token}` }
+    });
+    if (!res.ok && res.status !== 204) throw new Error(await res.text());
+    toast('Modèle supprimé');
+    loadProcessTplMgrList();
+  } catch(e) { toast(e.message || 'Erreur', 'danger'); }
 }
 
 // ════════════════════════════════════════════
@@ -3462,6 +3984,11 @@ const CATALOGUE_INCIDENTS = [
   { type: 'indisponibilite_service',label: 'Indisponibilité service',  icon: 'fa-ban',             color: 'warning'   },
   { type: 'acces_refuse',           label: 'Accès refusé',            icon: 'fa-user-times',      color: 'secondary' },
   { type: 'ransomware',             label: 'Ransomware',              icon: 'fa-lock',            color: 'dark'      },
+  { type: 'fuite_donnees',          label: 'Fuite de données',        icon: 'fa-water',           color: 'danger'    },
+  { type: 'defaillance_serveur',    label: 'Défaillance serveur',     icon: 'fa-hdd',             color: 'danger'    },
+  { type: 'vol_equipement',         label: "Vol d'équipement",        icon: 'fa-shopping-bag',    color: 'warning'   },
+  { type: 'coupure_telephonie',     label: 'Coupure téléphonie',      icon: 'fa-phone-slash',     color: 'primary'   },
+  { type: 'spam_massif',            label: 'Spam massif',             icon: 'fa-envelope-open-text', color: 'secondary'},
   { type: 'erreur_reseau',          label: 'Erreur réseau / DNS',     icon: 'fa-network-wired',   color: 'info'      },
   { type: 'ecran_bleu',             label: 'Écran bleu (BSOD)',       icon: 'fa-desktop',         color: 'primary'   },
   { type: 'peripherique_defaillant',label: 'Périphérique défaillant', icon: 'fa-plug',            color: 'secondary' },
@@ -3488,6 +4015,11 @@ const CATALOGUE_DEMANDES = [
   { type: 'demande_messagerie',          label: 'Messagerie / Email',            icon: 'fa-envelope',      color: 'info'      },
   { type: 'demande_impression_config',   label: 'Config. impression',            icon: 'fa-print',         color: 'secondary' },
   { type: 'demande_badge_acces',         label: "Badge d'accès",                 icon: 'fa-id-card',       color: 'warning'   },
+  { type: 'demande_onboarding',          label: 'Onboarding',                    icon: 'fa-user-check',    color: 'success'   },
+  { type: 'demande_offboarding',         label: 'Offboarding',                   icon: 'fa-user-minus',    color: 'secondary' },
+  { type: 'demande_audit_securite',      label: 'Audit sécurité',                icon: 'fa-search',        color: 'info'      },
+  { type: 'demande_intervention_site',   label: 'Intervention site',             icon: 'fa-map-marker-alt',color: 'warning'   },
+  { type: 'demande_certificat_ssl',      label: 'Certificat SSL',                icon: 'fa-certificate',   color: 'primary'   },
 ];
 
 let _catalogueByType = {};

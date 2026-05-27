@@ -88,6 +88,64 @@ class TicketTemplate(Base):
     author = relationship("User")
 
 
+class ProcessTemplate(Base):
+    __tablename__ = "process_templates"
+
+    id          = Column(Integer, primary_key=True, index=True)
+    name        = Column(String, nullable=False)
+    description = Column(Text, nullable=True)
+    ticket_type = Column(String, nullable=True)
+    author_id   = Column(Integer, ForeignKey("users.id"), nullable=False)
+    created_at  = Column(DateTime(timezone=True), server_default=func.now())
+
+    author = relationship("User")
+    steps  = relationship("ProcessTemplateStep", order_by="ProcessTemplateStep.order",
+                          cascade="all, delete-orphan")
+
+
+class ProcessTemplateStep(Base):
+    __tablename__ = "process_template_steps"
+
+    id          = Column(Integer, primary_key=True, index=True)
+    template_id = Column(Integer, ForeignKey("process_templates.id"), nullable=False)
+    order       = Column(Integer, nullable=False)
+    name        = Column(String, nullable=False)
+    description = Column(Text, nullable=True)
+
+    template = relationship("ProcessTemplate", back_populates="steps")
+
+
+class TicketProcess(Base):
+    __tablename__ = "ticket_processes"
+
+    id         = Column(Integer, primary_key=True, index=True)
+    ticket_id  = Column(Integer, ForeignKey("tickets.id"), unique=True, nullable=False)
+    name       = Column(String, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    ticket = relationship("Ticket")
+    tasks  = relationship("TicketProcessTask", order_by="TicketProcessTask.order",
+                          cascade="all, delete-orphan")
+
+
+class TicketProcessTask(Base):
+    __tablename__ = "ticket_process_tasks"
+
+    id              = Column(Integer, primary_key=True, index=True)
+    process_id      = Column(Integer, ForeignKey("ticket_processes.id"), nullable=False)
+    order           = Column(Integer, nullable=False)
+    name            = Column(String, nullable=False)
+    description     = Column(Text, nullable=True)
+    status          = Column(String, default="en_attente")  # en_attente | en_cours | fait
+    assigned_to_id  = Column(Integer, ForeignKey("users.id"), nullable=True)
+    completed_at    = Column(DateTime(timezone=True), nullable=True)
+    completed_by_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+
+    process      = relationship("TicketProcess", back_populates="tasks")
+    assignee     = relationship("User", foreign_keys=[assigned_to_id])
+    completed_by = relationship("User", foreign_keys=[completed_by_id])
+
+
 class TicketHistory(Base):
     __tablename__ = "ticket_history"
 
