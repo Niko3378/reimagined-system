@@ -395,6 +395,26 @@ def get_stats(
     }
 
 
+@router.get("/my-stats")
+def get_my_stats(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    my = db.query(models.Ticket).filter(models.Ticket.created_by_id == current_user.id).all()
+    assigned = db.query(models.Ticket).filter(models.Ticket.assigned_to_id == current_user.id).all()
+    return {
+        "created":        len(my),
+        "ouvert":         sum(1 for t in my if t.status == "ouvert"),
+        "en_cours":       sum(1 for t in my if t.status == "en_cours"),
+        "resolu":         sum(1 for t in my if t.status == "resolu"),
+        "ferme":          sum(1 for t in my if t.status == "ferme"),
+        "critique":       sum(1 for t in my if t.priority == "critique"),
+        "assigned_to_me": len(assigned),
+        "assigned_open":  sum(1 for t in assigned if t.status in ("ouvert", "en_cours")),
+        "assigned_critique": sum(1 for t in assigned if t.priority == "critique" and t.status in ("ouvert","en_cours")),
+    }
+
+
 @router.get("/{ticket_id}", response_model=schemas.TicketDetailOut)
 def get_ticket(
     ticket_id: int,

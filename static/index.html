@@ -114,6 +114,10 @@
     .empty-state { text-align: center; padding: 60px 20px; color: #9e9e9e; }
     .empty-state i { font-size: 3rem; margin-bottom: 12px; }
 
+    /* ── Widgets ── */
+    .widget { transition: opacity .2s; }
+    .widget.widget-hidden { display: none !important; }
+
     /* ── Notifications ── */
     .notif-item { padding: 10px 14px; border-bottom: 1px solid #f0f0f0; cursor: pointer; transition: background .1s; }
     .notif-item:hover { background: #f5f5f5; }
@@ -323,114 +327,194 @@
 
     <!-- ── Dashboard ── -->
     <div id="view-dashboard">
-      <h5 class="fw-bold mb-4"><i class="fas fa-tachometer-alt me-2 text-primary"></i>Tableau de bord</h5>
-      <div class="row g-3 mb-2" id="stats-row">
-        <div class="col-sm-6 col-xl-3">
-          <div class="card stat-card bg-primary text-white p-3">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <div class="small opacity-75">Total tickets</div>
-                <div class="fs-3 fw-bold" id="stat-total">—</div>
-              </div>
-              <i class="fas fa-ticket-alt stat-icon"></i>
-            </div>
-          </div>
-        </div>
-        <div class="col-sm-6 col-xl-3">
-          <div class="card stat-card bg-warning text-white p-3">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <div class="small opacity-75">Ouverts</div>
-                <div class="fs-3 fw-bold" id="stat-ouvert">—</div>
-              </div>
-              <i class="fas fa-inbox stat-icon"></i>
-            </div>
-          </div>
-        </div>
-        <div class="col-sm-6 col-xl-3">
-          <div class="card stat-card text-white p-3" style="background:#f57c00">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <div class="small opacity-75">En cours</div>
-                <div class="fs-3 fw-bold" id="stat-en_cours">—</div>
-              </div>
-              <i class="fas fa-spinner stat-icon"></i>
-            </div>
-          </div>
-        </div>
-        <div class="col-sm-6 col-xl-3">
-          <div class="card stat-card bg-danger text-white p-3">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <div class="small opacity-75">Incidents</div>
-                <div class="fs-3 fw-bold" id="stat-incidents">—</div>
-              </div>
-              <i class="fas fa-exclamation-triangle stat-icon"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="row g-3 mb-4">
-        <div class="col-lg-3">
-          <div class="card h-100 p-3">
-            <h6 class="fw-semibold text-muted mb-3"><i class="fas fa-chart-pie me-2"></i>Statuts</h6>
-            <div style="position:relative;height:190px"><canvas id="chart-status"></canvas></div>
-          </div>
-        </div>
-        <div class="col-lg-3">
-          <div class="card h-100 p-3">
-            <h6 class="fw-semibold text-muted mb-3"><i class="fas fa-circle-half-stroke me-2"></i>Incidents vs Demandes</h6>
-            <div style="position:relative;height:190px"><canvas id="chart-inc-dem"></canvas></div>
-          </div>
-        </div>
-        <div class="col-lg-3">
-          <div class="card h-100 p-3">
-            <h6 class="fw-semibold text-muted mb-3"><i class="fas fa-chart-bar me-2"></i>Priorités</h6>
-            <div style="position:relative;height:190px"><canvas id="chart-priority"></canvas></div>
-          </div>
-        </div>
-        <div class="col-lg-3">
-          <div class="card h-100 p-3">
-            <h6 class="fw-semibold text-muted mb-3"><i class="fas fa-layer-group me-2"></i>Catégories</h6>
-            <div style="position:relative;height:190px"><canvas id="chart-category"></canvas></div>
-          </div>
-        </div>
-      </div>
-      <div class="row g-3 mb-4">
-        <div class="col-12">
-          <div class="card p-3">
-            <h6 class="fw-semibold text-muted mb-3"><i class="fas fa-tags me-2"></i>Tickets par type</h6>
-            <div style="position:relative;height:280px"><canvas id="chart-type"></canvas></div>
-          </div>
-        </div>
-      </div>
-      <div class="row g-3 mb-4">
-        <div class="col-12">
-          <div class="card p-3">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <h6 class="fw-semibold text-muted mb-0"><i class="fas fa-chart-line me-2"></i>Évolution dans le temps</h6>
-              <div class="btn-group btn-group-sm" id="timeline-range">
-                <button class="btn btn-outline-primary" data-days="7">7 j</button>
-                <button class="btn btn-primary active" data-days="30">30 j</button>
-                <button class="btn btn-outline-primary" data-days="90">90 j</button>
-              </div>
-            </div>
-            <div style="position:relative;height:240px"><canvas id="chart-timeline"></canvas></div>
-          </div>
-        </div>
-      </div>
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <div class="d-flex align-items-center gap-2">
-          <h6 class="fw-bold mb-0">Tickets récents</h6>
-          <button id="dashboard-unassigned-toggle" class="btn btn-outline-secondary btn-sm">
-            <i class="fas fa-user-slash me-1"></i>Non assignés
-          </button>
-        </div>
-        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createModal">
-          <i class="fas fa-plus me-1"></i>Nouveau ticket
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="fw-bold mb-0"><i class="fas fa-tachometer-alt me-2 text-primary"></i>Tableau de bord</h5>
+        <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#widgetModal">
+          <i class="fas fa-sliders-h me-1"></i>Personnaliser
         </button>
       </div>
-      <div id="dashboard-tickets-container"></div>
+
+      <!-- Widget : Mes statistiques personnelles -->
+      <div class="widget" data-widget="my-stats">
+        <div class="card mb-3 border-primary">
+          <div class="card-header bg-primary text-white py-2 small fw-semibold">
+            <i class="fas fa-user-circle me-1"></i>Mes statistiques
+          </div>
+          <div class="card-body py-2">
+            <div class="row g-2" id="my-stats-row">
+              <div class="col-6 col-md-3">
+                <div class="text-center p-2 rounded bg-light">
+                  <div class="fs-4 fw-bold text-primary" id="my-stat-created">—</div>
+                  <div class="small text-muted">Mes tickets</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="text-center p-2 rounded bg-light">
+                  <div class="fs-4 fw-bold text-warning" id="my-stat-open">—</div>
+                  <div class="small text-muted">Ouverts</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="text-center p-2 rounded bg-light">
+                  <div class="fs-4 fw-bold text-success" id="my-stat-resolved">—</div>
+                  <div class="small text-muted">Résolus/Fermés</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="text-center p-2 rounded bg-light">
+                  <div class="fs-4 fw-bold text-danger" id="my-stat-critical">—</div>
+                  <div class="small text-muted">Critiques</div>
+                </div>
+              </div>
+            </div>
+            <!-- Tickets assignés : visible tech/admin uniquement -->
+            <div id="my-stats-assigned" class="row g-2 mt-1" style="display:none">
+              <div class="col-6 col-md-3">
+                <div class="text-center p-2 rounded" style="background:#e3f2fd">
+                  <div class="fs-4 fw-bold text-primary" id="my-stat-assigned">—</div>
+                  <div class="small text-muted">Assignés à moi</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="text-center p-2 rounded" style="background:#fff3e0">
+                  <div class="fs-4 fw-bold text-warning" id="my-stat-assigned-open">—</div>
+                  <div class="small text-muted">Assignés ouverts</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="text-center p-2 rounded" style="background:#ffebee">
+                  <div class="fs-4 fw-bold text-danger" id="my-stat-assigned-critical">—</div>
+                  <div class="small text-muted">Assignés critiques</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Widget : Statistiques globales -->
+      <div class="widget" data-widget="global-stats">
+        <div class="row g-3 mb-2" id="stats-row">
+          <div class="col-sm-6 col-xl-3">
+            <div class="card stat-card bg-primary text-white p-3">
+              <div class="d-flex justify-content-between align-items-center">
+                <div><div class="small opacity-75">Total tickets</div><div class="fs-3 fw-bold" id="stat-total">—</div></div>
+                <i class="fas fa-ticket-alt stat-icon"></i>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 col-xl-3">
+            <div class="card stat-card bg-warning text-white p-3">
+              <div class="d-flex justify-content-between align-items-center">
+                <div><div class="small opacity-75">Ouverts</div><div class="fs-3 fw-bold" id="stat-ouvert">—</div></div>
+                <i class="fas fa-inbox stat-icon"></i>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 col-xl-3">
+            <div class="card stat-card text-white p-3" style="background:#f57c00">
+              <div class="d-flex justify-content-between align-items-center">
+                <div><div class="small opacity-75">En cours</div><div class="fs-3 fw-bold" id="stat-en_cours">—</div></div>
+                <i class="fas fa-spinner stat-icon"></i>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 col-xl-3">
+            <div class="card stat-card bg-danger text-white p-3">
+              <div class="d-flex justify-content-between align-items-center">
+                <div><div class="small opacity-75">Incidents</div><div class="fs-3 fw-bold" id="stat-incidents">—</div></div>
+                <i class="fas fa-exclamation-triangle stat-icon"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Widget : Graphiques -->
+      <div class="widget" data-widget="charts">
+        <div class="row g-3 mb-4">
+          <div class="col-lg-3">
+            <div class="card h-100 p-3">
+              <h6 class="fw-semibold text-muted mb-3"><i class="fas fa-chart-pie me-2"></i>Statuts</h6>
+              <div style="position:relative;height:190px"><canvas id="chart-status"></canvas></div>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="card h-100 p-3">
+              <h6 class="fw-semibold text-muted mb-3"><i class="fas fa-circle-half-stroke me-2"></i>Incidents vs Demandes</h6>
+              <div style="position:relative;height:190px"><canvas id="chart-inc-dem"></canvas></div>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="card h-100 p-3">
+              <h6 class="fw-semibold text-muted mb-3"><i class="fas fa-chart-bar me-2"></i>Priorités</h6>
+              <div style="position:relative;height:190px"><canvas id="chart-priority"></canvas></div>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="card h-100 p-3">
+              <h6 class="fw-semibold text-muted mb-3"><i class="fas fa-layer-group me-2"></i>Catégories</h6>
+              <div style="position:relative;height:190px"><canvas id="chart-category"></canvas></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Widget : Graphique par type -->
+      <div class="widget" data-widget="chart-type">
+        <div class="row g-3 mb-4">
+          <div class="col-12">
+            <div class="card p-3">
+              <h6 class="fw-semibold text-muted mb-3"><i class="fas fa-tags me-2"></i>Tickets par type</h6>
+              <div style="position:relative;height:280px"><canvas id="chart-type"></canvas></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Widget : Timeline -->
+      <div class="widget" data-widget="timeline">
+        <div class="row g-3 mb-4">
+          <div class="col-12">
+            <div class="card p-3">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-semibold text-muted mb-0"><i class="fas fa-chart-line me-2"></i>Évolution dans le temps</h6>
+                <div class="btn-group btn-group-sm" id="timeline-range">
+                  <button class="btn btn-outline-primary" data-days="7">7 j</button>
+                  <button class="btn btn-primary active" data-days="30">30 j</button>
+                  <button class="btn btn-outline-primary" data-days="90">90 j</button>
+                </div>
+              </div>
+              <div style="position:relative;height:240px"><canvas id="chart-timeline"></canvas></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Widget : Tickets récents -->
+      <div class="widget" data-widget="recent">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div class="d-flex align-items-center gap-2">
+            <h6 class="fw-bold mb-0">Tickets récents</h6>
+            <button id="dashboard-unassigned-toggle" class="btn btn-outline-secondary btn-sm">
+              <i class="fas fa-user-slash me-1"></i>Non assignés
+            </button>
+          </div>
+          <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createModal">
+            <i class="fas fa-plus me-1"></i>Nouveau ticket
+          </button>
+        </div>
+        <div id="dashboard-tickets-container"></div>
+      </div>
+
+      <!-- Widget : Tickets assignés à moi (tech/admin) -->
+      <div class="widget" data-widget="assigned-to-me" style="display:none">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h6 class="fw-bold mb-0"><i class="fas fa-user-check me-2 text-primary"></i>Assignés à moi</h6>
+        </div>
+        <div id="dashboard-assigned-container"></div>
+      </div>
+
     </div>
 
     <!-- ── My tickets / All tickets ── -->
@@ -915,6 +999,28 @@
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════
+     WIDGET SETTINGS MODAL
+══════════════════════════════════════════ -->
+<div class="modal fade" id="widgetModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="fas fa-sliders-h me-2 text-primary"></i>Personnaliser le tableau de bord</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted small">Activez ou désactivez les blocs à afficher sur votre tableau de bord.</p>
+        <div class="list-group" id="widget-settings-list"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline-secondary btn-sm" id="widget-reset">Réinitialiser</button>
+        <button class="btn btn-primary" data-bs-dismiss="modal">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Toast container -->
 <div id="toast-container"></div>
 
@@ -1123,6 +1229,7 @@ function enterApp() {
 
   if (isTechAdmin) loadTechUsers();
   connectSSE();
+  applyWidgets();
   showView('dashboard');
 }
 
@@ -1531,22 +1638,50 @@ document.getElementById('dashboard-unassigned-toggle').addEventListener('click',
 });
 
 async function loadDashboard() {
+  applyWidgets();
   try {
     const url = dashboardUnassignedOnly ? '/tickets/?unassigned=true' : '/tickets/';
-    const [stats, tickets] = await Promise.all([
-      API.get('/tickets/stats'),
-      API.get(url)
-    ]);
-    document.getElementById('stat-total').textContent = stats.total;
-    document.getElementById('stat-ouvert').textContent = stats.ouvert;
-    document.getElementById('stat-en_cours').textContent = stats.en_cours;
-    document.getElementById('stat-incidents').textContent = stats.incidents;
-    renderCharts(stats);
-    renderTimeline(timelineDays);
+    const isTechAdmin = ['technician','admin'].includes(state.user?.role);
 
+    const requests = [API.get('/tickets/my-stats'), API.get(url)];
+    if (isTechAdmin) requests.push(API.get('/tickets/stats'));
+
+    const results = await Promise.all(requests);
+    const myStats = results[0];
+    const tickets  = results[1];
+    const stats    = results[2] || null;
+
+    // Mes stats
+    document.getElementById('my-stat-created').textContent  = myStats.created;
+    document.getElementById('my-stat-open').textContent     = myStats.ouvert + myStats.en_cours;
+    document.getElementById('my-stat-resolved').textContent = myStats.resolu + myStats.ferme;
+    document.getElementById('my-stat-critical').textContent = myStats.critique;
+    document.getElementById('my-stat-assigned').textContent         = myStats.assigned_to_me;
+    document.getElementById('my-stat-assigned-open').textContent    = myStats.assigned_open;
+    document.getElementById('my-stat-assigned-critical').textContent= myStats.assigned_critique;
+
+    // Stats globales (tech/admin uniquement)
+    if (stats) {
+      document.getElementById('stat-total').textContent    = stats.total;
+      document.getElementById('stat-ouvert').textContent   = stats.ouvert;
+      document.getElementById('stat-en_cours').textContent = stats.en_cours;
+      document.getElementById('stat-incidents').textContent= stats.incidents;
+      renderCharts(stats);
+      renderTimeline(timelineDays);
+    }
+
+    // Tickets récents
     const c = document.getElementById('dashboard-tickets-container');
     c.innerHTML = buildTicketTable(tickets, 10);
     attachTicketClicks(c);
+
+    // Tickets assignés à moi
+    if (isTechAdmin) {
+      const assigned = await API.get('/tickets/?assigned_to_id=' + state.user.id);
+      const ca = document.getElementById('dashboard-assigned-container');
+      ca.innerHTML = buildTicketTable(assigned, 10);
+      attachTicketClicks(ca);
+    }
   } catch (err) {
     toast(err.message, 'danger');
   }
@@ -1938,6 +2073,84 @@ async function changeRole(userId, role) {
     toast(err.message, 'danger');
   }
 }
+
+// ════════════════════════════════════════════
+// WIDGETS
+// ════════════════════════════════════════════
+const WIDGET_DEFS = [
+  { id: 'my-stats',      label: 'Mes statistiques personnelles', icon: 'user-circle',  roles: ['user','technician','admin'] },
+  { id: 'global-stats',  label: 'Statistiques globales',         icon: 'chart-bar',    roles: ['technician','admin'] },
+  { id: 'charts',        label: 'Graphiques (statuts, priorités)', icon: 'chart-pie',  roles: ['technician','admin'] },
+  { id: 'chart-type',    label: 'Graphique par type',            icon: 'tags',         roles: ['technician','admin'] },
+  { id: 'timeline',      label: 'Évolution dans le temps',       icon: 'chart-line',   roles: ['technician','admin'] },
+  { id: 'recent',        label: 'Tickets récents',               icon: 'list',         roles: ['user','technician','admin'] },
+  { id: 'assigned-to-me',label: 'Assignés à moi',                icon: 'user-check',   roles: ['technician','admin'] },
+];
+
+function getWidgetPrefs() {
+  const key = `dashboard_widgets_${state.user?.id}`;
+  const saved = localStorage.getItem(key);
+  if (saved) return JSON.parse(saved);
+  // Defaults par rôle
+  const role = state.user?.role || 'user';
+  const prefs = {};
+  WIDGET_DEFS.forEach(w => {
+    prefs[w.id] = w.roles.includes(role);
+  });
+  return prefs;
+}
+
+function saveWidgetPrefs(prefs) {
+  localStorage.setItem(`dashboard_widgets_${state.user?.id}`, JSON.stringify(prefs));
+}
+
+function applyWidgets() {
+  const prefs = getWidgetPrefs();
+  const role = state.user?.role || 'user';
+  WIDGET_DEFS.forEach(w => {
+    const el = document.querySelector(`.widget[data-widget="${w.id}"]`);
+    if (!el) return;
+    const visible = prefs[w.id] && w.roles.includes(role);
+    el.classList.toggle('widget-hidden', !visible);
+  });
+  // Afficher bloc assignés pour tech/admin
+  const isTechAdmin = ['technician','admin'].includes(role);
+  const assignedRow = document.getElementById('my-stats-assigned');
+  if (assignedRow) assignedRow.style.display = isTechAdmin ? '' : 'none';
+}
+
+function renderWidgetSettings() {
+  const prefs = getWidgetPrefs();
+  const role = state.user?.role || 'user';
+  const list = document.getElementById('widget-settings-list');
+  list.innerHTML = WIDGET_DEFS
+    .filter(w => w.roles.includes(role))
+    .map(w => `
+      <label class="list-group-item d-flex align-items-center gap-3 cursor-pointer">
+        <input type="checkbox" class="form-check-input widget-toggle" data-widget="${w.id}"
+          ${prefs[w.id] ? 'checked' : ''}>
+        <i class="fas fa-${w.icon} text-primary" style="width:16px"></i>
+        <span>${w.label}</span>
+      </label>`).join('');
+
+  list.querySelectorAll('.widget-toggle').forEach(cb => {
+    cb.addEventListener('change', () => {
+      const prefs = getWidgetPrefs();
+      prefs[cb.dataset.widget] = cb.checked;
+      saveWidgetPrefs(prefs);
+      applyWidgets();
+    });
+  });
+}
+
+document.getElementById('widget-reset').addEventListener('click', () => {
+  localStorage.removeItem(`dashboard_widgets_${state.user?.id}`);
+  applyWidgets();
+  renderWidgetSettings();
+  toast('Tableau de bord réinitialisé');
+});
+
+document.getElementById('widgetModal').addEventListener('show.bs.modal', renderWidgetSettings);
 
 // ════════════════════════════════════════════
 // NOTIFICATIONS SSE
