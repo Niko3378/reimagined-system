@@ -799,6 +799,15 @@ def seed(force=False):
              (6, "Vérifier le retour à la normale", "Confirmer la connectivité sur l'ensemble du périmètre touché. Tester les services critiques (AD, DNS, accès Internet, serveurs)."),
              (7, "Documenter et clore", "Rédiger le compte-rendu d'incident : cause, actions, durée de l'interruption. Clore le ticket et notifier les utilisateurs."),
          ]),
+        ("Demande de matériel informatique", "demande_materiel",
+         "Processus de traitement d'une demande de matériel informatique", [
+             (1, "Valider le besoin avec le responsable", "Vérifier que la demande est justifiée et validée par le responsable hiérarchique de l'utilisateur."),
+             (2, "Vérifier le stock disponible", "Consulter l'inventaire du parc matériel. Si le matériel est disponible en stock, passer directement à l'étape 4."),
+             (3, "Lancer la commande fournisseur", "Établir le bon de commande, le faire valider par les achats et le transmettre au fournisseur. Suivi du délai de livraison."),
+             (4, "Réceptionner et inventorier le matériel", "Vérifier la conformité de la livraison, affecter un numéro d'inventaire et enregistrer le matériel dans l'outil de gestion du parc."),
+             (5, "Préparer et configurer le matériel", "Installer les pilotes, logiciels requis, appliquer la politique de sécurité et joindre au domaine si nécessaire."),
+             (6, "Remettre le matériel à l'utilisateur", "Livrer le matériel, faire signer le bon de remise et former l'utilisateur à son utilisation si besoin."),
+         ]),
     ]
     for (name, ttype, desc, steps) in process_defs:
         pt = models.ProcessTemplate(
