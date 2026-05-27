@@ -799,6 +799,15 @@ def seed(force=False):
              (6, "Vérifier le retour à la normale", "Confirmer la connectivité sur l'ensemble du périmètre touché. Tester les services critiques (AD, DNS, accès Internet, serveurs)."),
              (7, "Documenter et clore", "Rédiger le compte-rendu d'incident : cause, actions, durée de l'interruption. Clore le ticket et notifier les utilisateurs."),
          ]),
+        ("Demande d'accès VPN", "demande_vpn",
+         "Processus de création et configuration d'un accès VPN pour travail à distance", [
+             (1, "Valider la demande avec le responsable", "Vérifier que le besoin est justifié (télétravail, déplacement, prestataire) et obtenir la validation écrite du responsable hiérarchique."),
+             (2, "Vérifier les droits et le profil utilisateur", "Contrôler que le compte AD est actif, que le poste répond aux prérequis sécurité (antivirus à jour, BitLocker activé) et vérifier la charte informatique signée."),
+             (3, "Créer le compte VPN", "Créer ou activer le profil VPN sur le concentrateur (Cisco ASA, Fortinet, GlobalProtect). Définir le groupe d'accès, les plages horaires et les ressources accessibles."),
+             (4, "Configurer le client VPN sur le poste", "Installer et configurer le client VPN (AnyConnect, GlobalProtect, OpenVPN) avec les paramètres du serveur, le certificat et le profil de connexion."),
+             (5, "Activer et tester le MFA", "Configurer l'authentification multi-facteurs (SMS, Authenticator, token) et tester la connexion depuis un réseau externe."),
+             (6, "Former l'utilisateur et clore", "Expliquer la procédure de connexion, remettre le guide utilisateur et rappeler les règles d'usage. Fermer le ticket."),
+         ]),
         ("Demande d'accès à une ressource", "demande_acces",
          "Processus de traitement d'une demande d'accès à une ressource du système d'information", [
              (1, "Vérifier la légitimité de la demande", "Contrôler que la demande est justifiée par le besoin métier et validée par le responsable hiérarchique de l'utilisateur."),
