@@ -114,6 +114,19 @@
     .empty-state { text-align: center; padding: 60px 20px; color: #9e9e9e; }
     .empty-state i { font-size: 3rem; margin-bottom: 12px; }
 
+    /* ── Kanban ── */
+    .kanban-board { display: flex; gap: 16px; align-items: flex-start; overflow-x: auto; padding-bottom: 12px; }
+    .kanban-col { flex: 0 0 280px; background: #f5f5f5; border-radius: 10px; padding: 12px; min-height: 200px; }
+    .kanban-col-header { font-weight: 600; font-size: .85rem; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
+    .kanban-card { background: #fff; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.08); cursor: grab; border-left: 4px solid transparent; transition: box-shadow .15s, transform .1s; user-select: none; }
+    .kanban-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,.15); transform: translateY(-1px); }
+    .kanban-card.dragging { opacity: .45; cursor: grabbing; }
+    .kanban-col.drag-over { background: #e3f2fd; outline: 2px dashed #1976d2; }
+    .kanban-card[data-priority="critique"] { border-left-color: #c62828; }
+    .kanban-card[data-priority="haute"]    { border-left-color: #f57c00; }
+    .kanban-card[data-priority="normale"]  { border-left-color: #1976d2; }
+    .kanban-card[data-priority="faible"]   { border-left-color: #388e3c; }
+
     /* ── Catalogue ── */
     .catalogue-card { cursor: pointer; transition: transform .15s, box-shadow .15s; border: 1px solid #e0e0e0; }
     .catalogue-card:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,.12) !important; border-color: #90caf9; }
@@ -333,6 +346,11 @@
       <li class="nav-item">
         <a class="nav-link" href="#" data-view="advanced-search">
           <i class="fas fa-search-plus"></i>Recherche avancée
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#" data-view="kanban">
+          <i class="fas fa-columns"></i>Kanban
         </a>
       </li>
       <li class="nav-item">
@@ -1048,11 +1066,42 @@
     <div id="view-catalogue" style="display:none">
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h5 class="fw-bold mb-0"><i class="fas fa-th-large me-2 text-primary"></i>Catalogue des types</h5>
-        <button class="btn btn-outline-secondary btn-sm" onclick="loadCatalogue()">
-          <i class="fas fa-sync me-1"></i>Actualiser
-        </button>
+        <div class="d-flex gap-2">
+          <div class="dropdown">
+            <button class="btn btn-outline-success btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+              <i class="fas fa-file-export me-1"></i>Exporter
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="#" onclick="exportCatalogueCSV();return false"><i class="fas fa-file-csv me-2 text-success"></i>CSV</a></li>
+              <li><a class="dropdown-item" href="#" onclick="exportCataloguePDF();return false"><i class="fas fa-file-pdf me-2 text-danger"></i>PDF</a></li>
+            </ul>
+          </div>
+          <button class="btn btn-outline-secondary btn-sm" onclick="loadCatalogue()">
+            <i class="fas fa-sync me-1"></i>Actualiser
+          </button>
+        </div>
       </div>
       <div id="catalogue-container"></div>
+    </div>
+
+    <!-- ── Kanban ── -->
+    <div id="view-kanban" style="display:none">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="fw-bold mb-0"><i class="fas fa-columns me-2 text-primary"></i>Tableau Kanban</h5>
+        <div class="d-flex gap-2 align-items-center">
+          <select id="kanban-filter-priority" class="form-select form-select-sm" style="width:auto" onchange="loadKanban()">
+            <option value="">Toutes les priorités</option>
+            <option value="critique">Critique</option>
+            <option value="haute">Haute</option>
+            <option value="normale">Normale</option>
+            <option value="faible">Faible</option>
+          </select>
+          <button class="btn btn-outline-secondary btn-sm" onclick="loadKanban()">
+            <i class="fas fa-sync me-1"></i>Actualiser
+          </button>
+        </div>
+      </div>
+      <div id="kanban-board" class="kanban-board"></div>
     </div>
 
     <!-- ── Admin users ── -->
@@ -1523,7 +1572,7 @@ async function loadTechUsers() {
 // ════════════════════════════════════════════
 // NAVIGATION
 // ════════════════════════════════════════════
-const VIEWS = ['dashboard', 'my-tickets', 'all-tickets', 'catalogue', 'incidents', 'demandes', 'advanced-search', 'sla', 'admin-users'];
+const VIEWS = ['dashboard', 'my-tickets', 'all-tickets', 'catalogue', 'incidents', 'demandes', 'advanced-search', 'kanban', 'sla', 'admin-users'];
 
 function showView(name) {
   VIEWS.forEach(v => {
@@ -1565,6 +1614,7 @@ function loadView(name) {
   else if (name === 'incidents') loadGroupView('incidents');
   else if (name === 'demandes') loadGroupView('demandes');
   else if (name === 'catalogue') loadCatalogue();
+  else if (name === 'kanban') loadKanban();
   else if (name === 'advanced-search') loadAdvSearchUsers();
   else if (name === 'sla') loadSLA();
   else if (name === 'admin-users') loadAdminUsers();
@@ -2342,6 +2392,98 @@ async function changeRole(userId, role) {
 }
 
 // ════════════════════════════════════════════
+// KANBAN
+// ════════════════════════════════════════════
+const KANBAN_COLS = [
+  { status: 'ouvert',   label: 'Ouvert',   color: '#1976d2', icon: 'fa-inbox' },
+  { status: 'en_cours', label: 'En cours', color: '#f57c00', icon: 'fa-spinner' },
+  { status: 'resolu',   label: 'Résolu',   color: '#388e3c', icon: 'fa-check-circle' },
+  { status: 'ferme',    label: 'Fermé',    color: '#757575', icon: 'fa-lock' },
+];
+
+let _kanbanDragging = null;
+
+async function loadKanban() {
+  const board = document.getElementById('kanban-board');
+  board.innerHTML = `<div class="text-center py-5 w-100"><div class="spinner-border text-primary"></div></div>`;
+  try {
+    const priority = document.getElementById('kanban-filter-priority').value;
+    const params = new URLSearchParams({ limit: 200 });
+    if (priority) params.set('priorities', priority);
+    const tickets = await API.get('/tickets/?' + params.toString());
+
+    const byStatus = {};
+    KANBAN_COLS.forEach(c => byStatus[c.status] = []);
+    tickets.forEach(t => { if (byStatus[t.status] !== undefined) byStatus[t.status].push(t); });
+
+    board.innerHTML = '';
+    KANBAN_COLS.forEach(col => {
+      const items = byStatus[col.status];
+      const cards = items.map(t => {
+        const assigneeTxt = t.assignee ? `<span class="text-muted small"><i class="fas fa-user me-1"></i>${escHtml(t.assignee.username)}</span>` : '';
+        return `
+          <div class="kanban-card" draggable="true" data-id="${t.id}" data-priority="${t.priority}">
+            <div class="d-flex justify-content-between align-items-start mb-1">
+              <span class="text-muted small">#${t.id}</span>
+              ${priorityBadge(t.priority)}
+            </div>
+            <div class="fw-semibold mb-1" style="font-size:.85rem;line-height:1.3">${escHtml(t.title)}</div>
+            <div class="d-flex justify-content-between align-items-center mt-2">
+              ${typeBadge(t.type)}
+              ${assigneeTxt}
+            </div>
+          </div>`;
+      }).join('');
+
+      const colEl = document.createElement('div');
+      colEl.className = 'kanban-col';
+      colEl.dataset.status = col.status;
+      colEl.innerHTML = `
+        <div class="kanban-col-header" style="color:${col.color}">
+          <span><i class="fas ${col.icon} me-2"></i>${col.label}</span>
+          <span class="badge rounded-pill" style="background:${col.color}">${items.length}</span>
+        </div>
+        <div class="kanban-cards">${cards || '<div class="text-muted small text-center py-3">Aucun ticket</div>'}</div>`;
+      board.appendChild(colEl);
+
+      // Drag events on cards
+      colEl.querySelectorAll('.kanban-card').forEach(card => {
+        card.addEventListener('dragstart', e => {
+          _kanbanDragging = card;
+          card.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+        });
+        card.addEventListener('dragend', () => {
+          card.classList.remove('dragging');
+          _kanbanDragging = null;
+          document.querySelectorAll('.kanban-col').forEach(c => c.classList.remove('drag-over'));
+        });
+        card.addEventListener('click', () => openTicket(parseInt(card.dataset.id)));
+      });
+
+      // Drop events on column
+      colEl.addEventListener('dragover', e => { e.preventDefault(); colEl.classList.add('drag-over'); });
+      colEl.addEventListener('dragleave', e => { if (!colEl.contains(e.relatedTarget)) colEl.classList.remove('drag-over'); });
+      colEl.addEventListener('drop', async e => {
+        e.preventDefault();
+        colEl.classList.remove('drag-over');
+        if (!_kanbanDragging) return;
+        const ticketId = parseInt(_kanbanDragging.dataset.id);
+        const newStatus = colEl.dataset.status;
+        try {
+          await API.patch(`/tickets/${ticketId}`, { status: newStatus });
+          loadKanban();
+        } catch (err) {
+          alert('Erreur lors du déplacement : ' + (err.message || err));
+        }
+      });
+    });
+  } catch (e) {
+    board.innerHTML = `<div class="alert alert-danger">Erreur chargement : ${e.message}</div>`;
+  }
+}
+
+// ════════════════════════════════════════════
 // CATALOGUE
 // ════════════════════════════════════════════
 const CATALOGUE_INCIDENTS = [
@@ -2367,16 +2509,18 @@ const CATALOGUE_DEMANDES = [
   { type: 'demande_licence',      label: 'Licence',         icon: 'fa-file-contract',  color: 'dark'      },
 ];
 
+let _catalogueByType = {};
+
 async function loadCatalogue() {
   const el = document.getElementById('catalogue-container');
   el.innerHTML = `<div class="text-center py-5"><div class="spinner-border text-primary"></div></div>`;
   try {
     const stats = await API.get('/tickets/stats');
-    const byType = stats.by_type || {};
+    _catalogueByType = stats.by_type || {};
 
     function renderGroup(title, icon, items, viewName) {
       const cards = items.map(def => {
-        const count = byType[def.type] || 0;
+        const count = _catalogueByType[def.type] || 0;
         const colorClass = def.color === 'orange' ? 'text-warning' : `text-${def.color}`;
         return `
           <div class="col-6 col-md-4 col-lg-3">
@@ -2407,6 +2551,54 @@ async function loadCatalogue() {
   } catch (e) {
     el.innerHTML = `<div class="alert alert-danger">Erreur chargement : ${e.message}</div>`;
   }
+}
+
+function exportCatalogueCSV() {
+  const date = new Date().toISOString().slice(0, 10);
+  const rows = [['Catégorie', 'Type', 'Libellé', 'Nombre de tickets']];
+  CATALOGUE_INCIDENTS.forEach(d => rows.push(['Incident', d.type, d.label, _catalogueByType[d.type] || 0]));
+  CATALOGUE_DEMANDES.forEach(d => rows.push(['Demande', d.type, d.label, _catalogueByType[d.type] || 0]));
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `catalogue_${date}.csv`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  toast('Export CSV téléchargé !');
+}
+
+function exportCataloguePDF() {
+  const date = new Date().toLocaleDateString('fr-FR');
+  const buildRows = (items, group) => items.map(d => {
+    const count = _catalogueByType[d.type] || 0;
+    return `<tr><td>${group}</td><td>${d.label}</td><td style="text-align:center;font-weight:600">${count}</td></tr>`;
+  }).join('');
+
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8">
+    <title>Catalogue des types — ${date}</title>
+    <style>
+      body { font-family: Arial, sans-serif; font-size: 13px; color: #212121; padding: 24px; }
+      h1 { font-size: 18px; margin-bottom: 4px; }
+      .sub { color: #757575; font-size: 12px; margin-bottom: 24px; }
+      table { width: 100%; border-collapse: collapse; margin-bottom: 32px; }
+      th { background: #1976d2; color: #fff; padding: 8px 12px; text-align: left; font-size: 12px; }
+      td { padding: 7px 12px; border-bottom: 1px solid #e0e0e0; }
+      tr:hover td { background: #f5f5f5; }
+      .section { font-size: 14px; font-weight: 700; color: #1976d2; padding: 10px 0 4px; border-bottom: 2px solid #1976d2; margin: 24px 0 12px; text-transform: uppercase; letter-spacing: .05em; }
+    </style></head><body>
+    <h1>Catalogue des types de tickets</h1>
+    <div class="sub">Exporté le ${date}</div>
+    <div class="section">Incidents</div>
+    <table><thead><tr><th>Catégorie</th><th>Type</th><th style="width:120px;text-align:center">Tickets</th></tr></thead>
+    <tbody>${buildRows(CATALOGUE_INCIDENTS, 'Incident')}</tbody></table>
+    <div class="section">Demandes</div>
+    <table><thead><tr><th>Catégorie</th><th>Type</th><th style="width:120px;text-align:center">Tickets</th></tr></thead>
+    <tbody>${buildRows(CATALOGUE_DEMANDES, 'Demande')}</tbody></table>
+    <script>window.onload=()=>{window.print();}<\/script></body></html>`;
+
+  const win = window.open('', '_blank');
+  win.document.write(html);
+  win.document.close();
 }
 
 // ════════════════════════════════════════════
