@@ -15,6 +15,8 @@ router = APIRouter(prefix="/api/tickets", tags=["tickets"])
 
 VALID_STATUSES = {"ouvert", "en_cours", "resolu", "ferme"}
 VALID_PRIORITIES = {"faible", "normale", "haute", "critique"}
+INCIDENT_TYPES = {"incident","panne","dysfonctionnement","alerte_securite","coupure_reseau","intrusion","perte_donnees","surcharge_systeme","panne_electrique"}
+DEMANDE_TYPES  = {"demande","demande_acces","demande_installation","demande_materiel","demande_information","demande_formation","demande_sauvegarde","demande_demenagement","demande_licence"}
 VALID_TYPES = {
     "incident", "panne", "dysfonctionnement", "alerte_securite", "coupure_reseau",
     "intrusion", "perte_donnees", "surcharge_systeme", "panne_electrique",
@@ -39,6 +41,7 @@ def _record_history(db, ticket_id: int, user_id: int, field: str, old_val, new_v
 def list_tickets(
     status: Optional[str] = Query(None),
     type: Optional[str] = Query(None),
+    type_group: Optional[str] = Query(None),
     priority: Optional[str] = Query(None),
     category: Optional[str] = Query(None),
     assigned_to_id: Optional[int] = Query(None),
@@ -55,6 +58,10 @@ def list_tickets(
         q = q.filter(models.Ticket.status == status)
     if type:
         q = q.filter(models.Ticket.type == type)
+    if type_group == "incident":
+        q = q.filter(models.Ticket.type.in_(INCIDENT_TYPES))
+    elif type_group == "demande":
+        q = q.filter(models.Ticket.type.in_(DEMANDE_TYPES))
     if priority:
         q = q.filter(models.Ticket.priority == priority)
     if category:
@@ -137,6 +144,7 @@ def get_timeline(
 def export_tickets(
     status: Optional[str] = Query(None),
     type: Optional[str] = Query(None),
+    type_group: Optional[str] = Query(None),
     priority: Optional[str] = Query(None),
     category: Optional[str] = Query(None),
     assigned_to_id: Optional[int] = Query(None),
@@ -153,6 +161,10 @@ def export_tickets(
         q = q.filter(models.Ticket.status == status)
     if type:
         q = q.filter(models.Ticket.type == type)
+    if type_group == "incident":
+        q = q.filter(models.Ticket.type.in_(INCIDENT_TYPES))
+    elif type_group == "demande":
+        q = q.filter(models.Ticket.type.in_(DEMANDE_TYPES))
     if priority:
         q = q.filter(models.Ticket.priority == priority)
     if category:
@@ -191,6 +203,7 @@ def export_tickets(
 def export_tickets_pdf(
     status: Optional[str] = Query(None),
     type: Optional[str] = Query(None),
+    type_group: Optional[str] = Query(None),
     priority: Optional[str] = Query(None),
     category: Optional[str] = Query(None),
     assigned_to_id: Optional[int] = Query(None),
@@ -214,6 +227,10 @@ def export_tickets_pdf(
         q = q.filter(models.Ticket.status == status)
     if type:
         q = q.filter(models.Ticket.type == type)
+    if type_group == "incident":
+        q = q.filter(models.Ticket.type.in_(INCIDENT_TYPES))
+    elif type_group == "demande":
+        q = q.filter(models.Ticket.type.in_(DEMANDE_TYPES))
     if priority:
         q = q.filter(models.Ticket.priority == priority)
     if category:

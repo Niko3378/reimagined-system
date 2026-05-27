@@ -237,6 +237,16 @@
           <i class="fas fa-list"></i>Tous les tickets
         </a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#" data-view="incidents">
+          <i class="fas fa-exclamation-triangle"></i>Incidents
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#" data-view="demandes">
+          <i class="fas fa-clipboard-list"></i>Demandes
+        </a>
+      </li>
       <li class="nav-item mt-3" id="admin-nav-item" style="display:none">
         <div class="px-3 mb-1 text-uppercase small text-muted fw-bold" style="font-size:.7rem">Administration</div>
       </li>
@@ -495,6 +505,164 @@
         </div>
       </div>
       <div id="all-tickets-container"></div>
+    </div>
+
+    <!-- ── Incidents ── -->
+    <div id="view-incidents" style="display:none">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="fw-bold mb-0"><i class="fas fa-exclamation-triangle me-2 text-danger"></i>Incidents</h5>
+        <div class="d-flex gap-2">
+          <div class="dropdown">
+            <button class="btn btn-outline-success btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+              <i class="fas fa-file-export me-1"></i>Exporter
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#" id="export-incidents-csv"><i class="fas fa-file-csv me-2 text-success"></i>CSV</a></li>
+              <li><a class="dropdown-item" href="#" id="export-incidents-pdf"><i class="fas fa-file-pdf me-2 text-danger"></i>PDF</a></li>
+            </ul>
+          </div>
+          <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createModal">
+            <i class="fas fa-plus me-1"></i>Nouveau ticket
+          </button>
+        </div>
+      </div>
+      <div class="card mb-3 filter-bar">
+        <div class="card-body py-2">
+          <div class="row g-2">
+            <div class="col-md-4">
+              <input type="text" id="incidents-search" class="form-control form-control-sm" placeholder="Rechercher par titre...">
+            </div>
+            <div class="col-md-2">
+              <select id="incidents-status" class="form-select form-select-sm">
+                <option value="">Tous statuts</option>
+                <option value="ouvert">Ouvert</option>
+                <option value="en_cours">En cours</option>
+                <option value="resolu">Résolu</option>
+                <option value="ferme">Fermé</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <select id="incidents-type" class="form-select form-select-sm">
+                <option value="">Tous types</option>
+                <option value="incident">Incident</option>
+                <option value="panne">Panne</option>
+                <option value="dysfonctionnement">Dysfonctionnement</option>
+                <option value="alerte_securite">Alerte sécurité</option>
+                <option value="coupure_reseau">Coupure réseau</option>
+                <option value="intrusion">Intrusion / Cyberattaque</option>
+                <option value="perte_donnees">Perte de données</option>
+                <option value="surcharge_systeme">Surcharge système</option>
+                <option value="panne_electrique">Panne électrique / UPS</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <select id="incidents-priority" class="form-select form-select-sm">
+                <option value="">Toutes priorités</option>
+                <option value="critique">Critique</option>
+                <option value="haute">Haute</option>
+                <option value="normale">Normale</option>
+                <option value="faible">Faible</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <select id="incidents-category" class="form-select form-select-sm">
+                <option value="">Toutes catégories</option>
+                <option value="logiciel">Logiciel</option>
+                <option value="materiel">Matériel</option>
+                <option value="reseau">Réseau</option>
+                <option value="securite">Sécurité</option>
+                <option value="telephonie">Téléphonie</option>
+                <option value="imprimante">Imprimante</option>
+                <option value="autre">Autre</option>
+              </select>
+            </div>
+            <div class="col-12 d-flex justify-content-end gap-2 mt-1">
+              <button id="incidents-reset" class="btn btn-outline-secondary btn-sm"><i class="fas fa-times me-1"></i>Réinitialiser</button>
+              <button id="incidents-apply" class="btn btn-primary btn-sm"><i class="fas fa-filter me-1"></i>Filtrer</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="incidents-container"></div>
+    </div>
+
+    <!-- ── Demandes ── -->
+    <div id="view-demandes" style="display:none">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="fw-bold mb-0"><i class="fas fa-clipboard-list me-2 text-primary"></i>Demandes</h5>
+        <div class="d-flex gap-2">
+          <div class="dropdown">
+            <button class="btn btn-outline-success btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+              <i class="fas fa-file-export me-1"></i>Exporter
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#" id="export-demandes-csv"><i class="fas fa-file-csv me-2 text-success"></i>CSV</a></li>
+              <li><a class="dropdown-item" href="#" id="export-demandes-pdf"><i class="fas fa-file-pdf me-2 text-danger"></i>PDF</a></li>
+            </ul>
+          </div>
+          <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createModal">
+            <i class="fas fa-plus me-1"></i>Nouveau ticket
+          </button>
+        </div>
+      </div>
+      <div class="card mb-3 filter-bar">
+        <div class="card-body py-2">
+          <div class="row g-2">
+            <div class="col-md-4">
+              <input type="text" id="demandes-search" class="form-control form-control-sm" placeholder="Rechercher par titre...">
+            </div>
+            <div class="col-md-2">
+              <select id="demandes-status" class="form-select form-select-sm">
+                <option value="">Tous statuts</option>
+                <option value="ouvert">Ouvert</option>
+                <option value="en_cours">En cours</option>
+                <option value="resolu">Résolu</option>
+                <option value="ferme">Fermé</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <select id="demandes-type" class="form-select form-select-sm">
+                <option value="">Tous types</option>
+                <option value="demande">Demande</option>
+                <option value="demande_acces">Demande d'accès</option>
+                <option value="demande_installation">Demande d'installation</option>
+                <option value="demande_materiel">Demande de matériel</option>
+                <option value="demande_information">Demande d'information</option>
+                <option value="demande_formation">Demande de formation</option>
+                <option value="demande_sauvegarde">Demande de sauvegarde</option>
+                <option value="demande_demenagement">Demande de déménagement</option>
+                <option value="demande_licence">Demande de licence</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <select id="demandes-priority" class="form-select form-select-sm">
+                <option value="">Toutes priorités</option>
+                <option value="critique">Critique</option>
+                <option value="haute">Haute</option>
+                <option value="normale">Normale</option>
+                <option value="faible">Faible</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <select id="demandes-category" class="form-select form-select-sm">
+                <option value="">Toutes catégories</option>
+                <option value="logiciel">Logiciel</option>
+                <option value="materiel">Matériel</option>
+                <option value="reseau">Réseau</option>
+                <option value="securite">Sécurité</option>
+                <option value="telephonie">Téléphonie</option>
+                <option value="imprimante">Imprimante</option>
+                <option value="autre">Autre</option>
+              </select>
+            </div>
+            <div class="col-12 d-flex justify-content-end gap-2 mt-1">
+              <button id="demandes-reset" class="btn btn-outline-secondary btn-sm"><i class="fas fa-times me-1"></i>Réinitialiser</button>
+              <button id="demandes-apply" class="btn btn-primary btn-sm"><i class="fas fa-filter me-1"></i>Filtrer</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="demandes-container"></div>
     </div>
 
     <!-- ── Admin users ── -->
@@ -920,7 +1088,7 @@ async function loadTechUsers() {
 // ════════════════════════════════════════════
 // NAVIGATION
 // ════════════════════════════════════════════
-const VIEWS = ['dashboard', 'my-tickets', 'all-tickets', 'admin-users'];
+const VIEWS = ['dashboard', 'my-tickets', 'all-tickets', 'incidents', 'demandes', 'admin-users'];
 
 function showView(name) {
   VIEWS.forEach(v => {
@@ -940,6 +1108,8 @@ function loadView(name) {
   if (name === 'dashboard') loadDashboard();
   else if (name === 'my-tickets') { myTicketsUnassignedOnly = false; syncMyTicketsToggle(); loadTicketList('my-tickets-container', { mine: true }); }
   else if (name === 'all-tickets') { loadStaffFilter(); loadTicketList('all-tickets-container', {}); }
+  else if (name === 'incidents') loadGroupView('incidents');
+  else if (name === 'demandes') loadGroupView('demandes');
   else if (name === 'admin-users') loadAdminUsers();
 }
 
@@ -1127,6 +1297,7 @@ function renderCharts(stats) {
 async function downloadFile(endpoint, filename, params = {}) {
   const qs = new URLSearchParams();
   if (params.mine)          qs.set('mine', 'true');
+  if (params.type_group)    qs.set('type_group', params.type_group);
   if (params.status)        qs.set('status', params.status);
   if (params.type)          qs.set('type', params.type);
   if (params.priority)      qs.set('priority', params.priority);
@@ -1386,6 +1557,58 @@ document.getElementById('export-mine-csv').addEventListener('click', e => {
 });
 document.getElementById('export-mine-pdf').addEventListener('click', e => {
   e.preventDefault(); downloadFile('export/pdf', 'mes_tickets', { mine: true, unassigned: myTicketsUnassignedOnly });
+});
+
+// ════════════════════════════════════════════
+// INCIDENTS / DEMANDES VIEWS
+// ════════════════════════════════════════════
+function getGroupFilters(group) {
+  return {
+    type_group: group,
+    status:   document.getElementById(`${group}-status`).value,
+    type:     document.getElementById(`${group}-type`).value,
+    priority: document.getElementById(`${group}-priority`).value,
+    category: document.getElementById(`${group}-category`).value,
+    search:   document.getElementById(`${group}-search`).value.trim(),
+  };
+}
+
+async function loadGroupView(group, params = {}) {
+  const qs = new URLSearchParams();
+  qs.set('type_group', group);
+  if (params.status)   qs.set('status',   params.status);
+  if (params.type)     qs.set('type',     params.type);
+  if (params.priority) qs.set('priority', params.priority);
+  if (params.category) qs.set('category', params.category);
+  if (params.search)   qs.set('search',   params.search);
+  try {
+    const tickets = await API.get('/tickets/?' + qs.toString());
+    const c = document.getElementById(`${group}-container`);
+    c.innerHTML = buildTicketTable(tickets);
+    attachTicketClicks(c);
+  } catch (err) {
+    toast(err.message, 'danger');
+  }
+}
+
+['incidents', 'demandes'].forEach(group => {
+  document.getElementById(`${group}-apply`).addEventListener('click', () => {
+    loadGroupView(group, getGroupFilters(group));
+  });
+  document.getElementById(`${group}-search`).addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById(`${group}-apply`).click();
+  });
+  document.getElementById(`${group}-reset`).addEventListener('click', () => {
+    ['status','type','priority','category'].forEach(f => document.getElementById(`${group}-${f}`).value = '');
+    document.getElementById(`${group}-search`).value = '';
+    loadGroupView(group, { type_group: group });
+  });
+  document.getElementById(`export-${group}-csv`).addEventListener('click', e => {
+    e.preventDefault(); downloadFile('export', group, getGroupFilters(group));
+  });
+  document.getElementById(`export-${group}-pdf`).addEventListener('click', e => {
+    e.preventDefault(); downloadFile('export/pdf', group, getGroupFilters(group));
+  });
 });
 
 // ════════════════════════════════════════════
