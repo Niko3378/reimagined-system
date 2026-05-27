@@ -18,8 +18,8 @@ router = APIRouter(prefix="/api/tickets", tags=["tickets"])
 
 VALID_STATUSES = {"ouvert", "en_cours", "resolu", "ferme"}
 VALID_PRIORITIES = {"faible", "normale", "haute", "critique"}
-INCIDENT_TYPES = {"incident","panne","dysfonctionnement","alerte_securite","coupure_reseau","intrusion","perte_donnees","surcharge_systeme","panne_electrique","virus","phishing","crash_application","corruption_donnees","indisponibilite_service","acces_refuse"}
-DEMANDE_TYPES  = {"demande","demande_acces","demande_installation","demande_materiel","demande_information","demande_formation","demande_sauvegarde","demande_demenagement","demande_licence","demande_reinitialisation_mdp","demande_creation_compte","demande_assistance","demande_configuration","demande_mise_a_jour","demande_archivage"}
+INCIDENT_TYPES = {"incident","panne","dysfonctionnement","alerte_securite","coupure_reseau","intrusion","perte_donnees","surcharge_systeme","panne_electrique","virus","phishing","crash_application","corruption_donnees","indisponibilite_service","acces_refuse","ransomware","erreur_reseau","ecran_bleu","peripherique_defaillant","probleme_impression"}
+DEMANDE_TYPES  = {"demande","demande_acces","demande_installation","demande_materiel","demande_information","demande_formation","demande_sauvegarde","demande_demenagement","demande_licence","demande_reinitialisation_mdp","demande_creation_compte","demande_assistance","demande_configuration","demande_mise_a_jour","demande_archivage","demande_deblockage_compte","demande_vpn","demande_messagerie","demande_impression_config","demande_badge_acces"}
 VALID_TYPES = INCIDENT_TYPES | DEMANDE_TYPES
 VALID_CATEGORIES = {"materiel", "logiciel", "reseau", "securite", "telephonie", "imprimante", "autre"}
 
@@ -262,6 +262,11 @@ def export_catalogue_pdf(
         ("corruption_donnees",     "Corruption de données",  "critique",   4),
         ("indisponibilite_service","Indisponibilité service","haute",      8),
         ("acces_refuse",           "Accès refusé",           "normale",   24),
+        ("ransomware",             "Ransomware / Chiffrement","critique",   4),
+        ("erreur_reseau",          "Erreur réseau / DNS",     "haute",      8),
+        ("ecran_bleu",             "Écran bleu (BSOD)",       "normale",   24),
+        ("peripherique_defaillant","Périphérique défaillant", "normale",   24),
+        ("probleme_impression",    "Problème d'impression",   "faible",    72),
     ]
     DEMANDE_TYPES_LIST = [
         ("demande",                     "Demande générale",            "faible", 72),
@@ -279,6 +284,11 @@ def export_catalogue_pdf(
         ("demande_configuration",       "Configuration",               "faible", 72),
         ("demande_mise_a_jour",         "Mise à jour logicielle",      "faible", 72),
         ("demande_archivage",           "Archivage de données",        "faible", 72),
+        ("demande_deblockage_compte",   "Déblocage de compte",         "faible", 72),
+        ("demande_vpn",                 "Accès VPN",                   "faible", 72),
+        ("demande_messagerie",          "Messagerie / Email",          "faible", 72),
+        ("demande_impression_config",   "Config. impression",          "faible", 72),
+        ("demande_badge_acces",         "Badge d'accès physique",      "faible", 72),
     ]
     PRIORITY_LABELS = {"critique": "Critique", "haute": "Haute", "normale": "Normale", "faible": "Faible"}
     PRIORITY_COLORS = {
@@ -379,6 +389,370 @@ def export_catalogue_pdf(
     )
 
 
+@router.get("/docs/pdf")
+def export_documentation_pdf(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    from reportlab.lib import colors
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib.styles import ParagraphStyle
+    from reportlab.lib.units import cm
+    from reportlab.platypus import (SimpleDocTemplate, Paragraph, Spacer, HRFlowable,
+                                    Table, TableStyle, PageBreak)
+    from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_JUSTIFY
+
+    buf = io.BytesIO()
+    doc = SimpleDocTemplate(buf, pagesize=A4,
+                            leftMargin=2.5*cm, rightMargin=2.5*cm,
+                            topMargin=2*cm, bottomMargin=2*cm)
+
+    BLUE     = colors.HexColor("#1565c0")
+    LBLUE    = colors.HexColor("#e3f2fd")
+    DBLUE    = colors.HexColor("#0d47a1")
+    GREY     = colors.HexColor("#757575")
+    LGREY    = colors.HexColor("#f5f5f5")
+    GREEN    = colors.HexColor("#2e7d32")
+    ORANGE   = colors.HexColor("#e65100")
+    RED      = colors.HexColor("#c62828")
+
+    h_cover  = ParagraphStyle("hcover",  fontSize=28, fontName="Helvetica-Bold", textColor=BLUE,  alignment=TA_CENTER, spaceAfter=8)
+    h_sub    = ParagraphStyle("hsub",    fontSize=13, fontName="Helvetica",      textColor=GREY,  alignment=TA_CENTER, spaceAfter=4)
+    h_date   = ParagraphStyle("hdate",   fontSize=10, fontName="Helvetica",      textColor=GREY,  alignment=TA_CENTER, spaceAfter=30)
+    h1       = ParagraphStyle("h1",      fontSize=16, fontName="Helvetica-Bold", textColor=BLUE,  spaceBefore=18, spaceAfter=6)
+    h2       = ParagraphStyle("h2",      fontSize=12, fontName="Helvetica-Bold", textColor=DBLUE, spaceBefore=12, spaceAfter=4)
+    body     = ParagraphStyle("body",    fontSize=10, fontName="Helvetica",      leading=15,     alignment=TA_JUSTIFY, spaceAfter=6)
+    bullet   = ParagraphStyle("bullet",  fontSize=10, fontName="Helvetica",      leading=14,     leftIndent=16, spaceAfter=3)
+    note     = ParagraphStyle("note",    fontSize=9,  fontName="Helvetica-Oblique", textColor=GREY, spaceAfter=6)
+    code_sty = ParagraphStyle("code",    fontSize=9,  fontName="Courier",        leading=13,     leftIndent=12,
+                               backColor=LGREY, borderPadding=6, spaceAfter=8)
+
+    def h_rule():
+        return HRFlowable(width="100%", thickness=1, color=colors.HexColor("#bbdefb"), spaceAfter=8)
+
+    def section_header(title, color=BLUE):
+        tbl = Table([[Paragraph(title, ParagraphStyle("sh", fontSize=12, fontName="Helvetica-Bold",
+                                                       textColor=colors.white))]], colWidths=[15*cm])
+        tbl.setStyle(TableStyle([
+            ("BACKGROUND",    (0,0),(-1,-1), color),
+            ("TOPPADDING",    (0,0),(-1,-1), 6),
+            ("BOTTOMPADDING", (0,0),(-1,-1), 6),
+            ("LEFTPADDING",   (0,0),(-1,-1), 10),
+        ]))
+        return tbl
+
+    def badge_table(items):
+        data = []
+        for label, val, col in items:
+            data.append([
+                Paragraph(f"<b>{label}</b>",
+                          ParagraphStyle("bl", fontSize=9, fontName="Helvetica")),
+                Paragraph(val, ParagraphStyle("bv", fontSize=9, fontName="Helvetica",
+                                              textColor=col)),
+            ])
+        tbl = Table(data, colWidths=[5*cm, 10*cm])
+        tbl.setStyle(TableStyle([
+            ("GRID",       (0,0),(-1,-1), 0.4, colors.HexColor("#e0e0e0")),
+            ("BACKGROUND", (0,0),(0,-1),  LGREY),
+            ("VALIGN",     (0,0),(-1,-1), "MIDDLE"),
+            ("TOPPADDING", (0,0),(-1,-1), 4),
+            ("BOTTOMPADDING",(0,0),(-1,-1),4),
+            ("LEFTPADDING",(0,0),(-1,-1), 6),
+        ]))
+        return tbl
+
+    elems = []
+
+    # ── Cover page ──────────────────────────────────────────────
+    elems += [
+        Spacer(1, 3*cm),
+        Paragraph("HelpDesk IT", h_cover),
+        Paragraph("Documentation d'installation et d'utilisation", h_sub),
+        Spacer(1, 0.5*cm),
+        HRFlowable(width="60%", thickness=2, color=BLUE, hAlign="CENTER", spaceAfter=16),
+        Paragraph(f"Version 1.0  •  Généré le {datetime.now().strftime('%d/%m/%Y à %H:%M')}", h_date),
+        Spacer(1, 1*cm),
+        badge_table([
+            ("Application", "HelpDesk IT — Système de ticketing", BLUE),
+            ("Version",     "1.0.0", GREEN),
+            ("API",         "FastAPI (Python 3.10+)", GREY),
+            ("Base de données", "SQLite (développement) / PostgreSQL (prod)", GREY),
+            ("Interface",   "Navigateur web — Bootstrap 5", GREY),
+        ]),
+        PageBreak(),
+    ]
+
+    # ── Table of contents (manual) ───────────────────────────────
+    toc_style = ParagraphStyle("toc", fontSize=11, fontName="Helvetica", leading=20, leftIndent=10)
+    toc_sub   = ParagraphStyle("tocs", fontSize=10, fontName="Helvetica", leading=18, leftIndent=28, textColor=GREY)
+    elems += [
+        Paragraph("Table des matières", h1),
+        h_rule(),
+        Paragraph("1.  Installation", toc_style),
+        Paragraph("1.1  Prérequis système", toc_sub),
+        Paragraph("1.2  Installation depuis les sources", toc_sub),
+        Paragraph("1.3  Installation depuis l'installateur MSI (Windows)", toc_sub),
+        Paragraph("1.4  Configuration de l'environnement", toc_sub),
+        Paragraph("2.  Démarrage rapide", toc_style),
+        Paragraph("2.1  Lancement du serveur", toc_sub),
+        Paragraph("2.2  Premier accès — créer un compte administrateur", toc_sub),
+        Paragraph("3.  Guide utilisateur", toc_style),
+        Paragraph("3.1  Connexion et tableau de bord", toc_sub),
+        Paragraph("3.2  Créer un ticket", toc_sub),
+        Paragraph("3.3  Suivre ses tickets", toc_sub),
+        Paragraph("3.4  Base de connaissances", toc_sub),
+        Paragraph("4.  Guide technicien", toc_style),
+        Paragraph("4.1  Vue d'ensemble des tickets", toc_sub),
+        Paragraph("4.2  Assigner et mettre à jour un ticket", toc_sub),
+        Paragraph("4.3  Tableau Kanban", toc_sub),
+        Paragraph("4.4  SLA et escalades automatiques", toc_sub),
+        Paragraph("5.  Guide administrateur", toc_style),
+        Paragraph("5.1  Gestion des utilisateurs", toc_sub),
+        Paragraph("5.2  Rapports et statistiques", toc_sub),
+        Paragraph("5.3  Exports CSV et PDF", toc_sub),
+        PageBreak(),
+    ]
+
+    # ── Chapter 1 — Installation ─────────────────────────────────
+    elems += [
+        Paragraph("1. Installation", h1),
+        h_rule(),
+        section_header("1.1  Prérequis système"),
+        Spacer(1, 6),
+        badge_table([
+            ("Système d'exploitation", "Windows 10/11, Linux (Ubuntu 20.04+), macOS 12+", GREY),
+            ("Python",                "3.10 ou supérieur", GREEN),
+            ("Espace disque",         "Minimum 200 Mo", GREY),
+            ("RAM",                   "Minimum 512 Mo recommandés", GREY),
+            ("Navigateur",            "Chrome, Firefox, Edge (version récente)", GREY),
+        ]),
+        Spacer(1, 10),
+        section_header("1.2  Installation depuis les sources"),
+        Spacer(1, 6),
+        Paragraph("Cloner le dépôt et installer les dépendances :", body),
+        Paragraph("git clone https://github.com/votre-org/helpdesk-it.git", code_sty),
+        Paragraph("cd helpdesk-it", code_sty),
+        Paragraph("pip install -r requirements.txt", code_sty),
+        Paragraph(
+            "Les dépendances principales sont : <b>fastapi</b>, <b>uvicorn</b>, <b>sqlalchemy</b>, "
+            "<b>python-jose</b>, <b>passlib[bcrypt]</b>, <b>reportlab</b>.",
+            body),
+        Spacer(1, 10),
+        section_header("1.3  Installation depuis l'installateur MSI (Windows)"),
+        Spacer(1, 6),
+        Paragraph(
+            "Un installateur <b>HelpDesk_IT_Setup.msi</b> est disponible pour Windows. "
+            "Double-cliquez sur le fichier et suivez l'assistant d'installation. "
+            "L'application est installée dans <i>C:\\Program Files\\HelpDesk IT\\</i> "
+            "et un raccourci est créé sur le bureau.", body),
+        Paragraph("Pour désinstaller, utilisez le Panneau de configuration → Programmes → Désinstaller.", note),
+        Spacer(1, 10),
+        section_header("1.4  Configuration de l'environnement"),
+        Spacer(1, 6),
+        Paragraph("Deux variables d'environnement optionnelles permettent de personnaliser le déploiement :", body),
+        badge_table([
+            ("HELPDESK_DB_PATH",     "Chemin vers le fichier SQLite (défaut : ./ticketing.db)", GREY),
+            ("HELPDESK_STATIC_PATH", "Répertoire des fichiers statiques (défaut : static/)", GREY),
+        ]),
+        Spacer(1, 6),
+        Paragraph("Exemple sous Linux/macOS :", body),
+        Paragraph("export HELPDESK_DB_PATH=/var/data/helpdesk.db", code_sty),
+        Paragraph("Exemple sous Windows (PowerShell) :", body),
+        Paragraph("$env:HELPDESK_DB_PATH = 'C:\\Data\\helpdesk.db'", code_sty),
+        PageBreak(),
+    ]
+
+    # ── Chapter 2 — Démarrage rapide ─────────────────────────────
+    elems += [
+        Paragraph("2. Démarrage rapide", h1),
+        h_rule(),
+        section_header("2.1  Lancement du serveur"),
+        Spacer(1, 6),
+        Paragraph("Depuis le répertoire du projet :", body),
+        Paragraph("uvicorn main:app --reload --port 8000", code_sty),
+        Paragraph(
+            "L'application est accessible à l'adresse <b>http://localhost:8000</b>. "
+            "L'option <code>--reload</code> redémarre automatiquement le serveur lors de modifications "
+            "de fichiers (à utiliser uniquement en développement).", body),
+        Spacer(1, 10),
+        section_header("2.2  Premier accès — créer un compte administrateur"),
+        Spacer(1, 6),
+        Paragraph(
+            "Au premier lancement, la base de données est vide. "
+            "Utilisez le script <b>seed.py</b> pour créer des données de démonstration :", body),
+        Paragraph("python seed.py", code_sty),
+        Paragraph(
+            "Pour créer manuellement un compte administrateur, appelez l'API d'inscription "
+            "puis modifiez manuellement le rôle dans la base de données, "
+            "ou utilisez un client HTTP (curl, Postman) :", body),
+        Paragraph(
+            'curl -X POST http://localhost:8000/api/auth/register \\\n'
+            '  -H "Content-Type: application/json" \\\n'
+            '  -d \'{"username":"admin","email":"admin@example.com","password":"motdepasse"}\'',
+            code_sty),
+        PageBreak(),
+    ]
+
+    # ── Chapter 3 — Guide utilisateur ────────────────────────────
+    elems += [
+        Paragraph("3. Guide utilisateur", h1),
+        h_rule(),
+        section_header("3.1  Connexion et tableau de bord", GREEN),
+        Spacer(1, 6),
+        Paragraph(
+            "Ouvrez votre navigateur et accédez à l'URL du serveur HelpDesk. "
+            "Saisissez votre identifiant et votre mot de passe. "
+            "Après connexion, le <b>tableau de bord</b> affiche :", body),
+        Paragraph("• Les compteurs de tickets (ouverts, en cours, résolus, fermés)", bullet),
+        Paragraph("• La distribution par priorité et par catégorie", bullet),
+        Paragraph("• Le graphique d'activité sur les 30 derniers jours", bullet),
+        Paragraph("• Vos tickets personnels et les tickets qui vous sont assignés", bullet),
+        Spacer(1, 10),
+        section_header("3.2  Créer un ticket", GREEN),
+        Spacer(1, 6),
+        Paragraph(
+            "Cliquez sur le bouton <b>+ Nouveau ticket</b> dans la barre de navigation. "
+            "Remplissez les champs :", body),
+        badge_table([
+            ("Titre",       "Résumé court du problème (obligatoire)", RED),
+            ("Description", "Détails du problème ou de la demande (obligatoire)", RED),
+            ("Type",        "Sélectionnez le type parmi les 40 types disponibles", GREY),
+            ("Catégorie",   "Matériel, Logiciel, Réseau, Sécurité, Téléphonie, Imprimante, Autre", GREY),
+            ("Priorité",    "Faible, Normale, Haute, Critique — suggérée automatiquement selon le type", GREY),
+        ]),
+        Paragraph(
+            "La priorité est automatiquement suggérée selon le type de ticket sélectionné. "
+            "Vous pouvez la modifier manuellement.", note),
+        Spacer(1, 10),
+        section_header("3.3  Suivre ses tickets", GREEN),
+        Spacer(1, 6),
+        Paragraph(
+            "Dans le menu <b>Mes tickets</b>, vous visualisez tous vos tickets créés. "
+            "Cliquez sur une ligne pour ouvrir le détail : description complète, "
+            "historique des modifications, commentaires.", body),
+        Paragraph(
+            "Vous pouvez ajouter un commentaire depuis le panneau de détail. "
+            "Les changements de statut et d'assignation sont tracés automatiquement.", body),
+        Spacer(1, 10),
+        section_header("3.4  Base de connaissances", GREEN),
+        Spacer(1, 6),
+        Paragraph(
+            "La section <b>Base de connaissances</b> regroupe des articles rédigés par les techniciens. "
+            "Vous pouvez rechercher un article par mot-clé, filtrer par type de ticket ou catégorie. "
+            "Les articles supportent la mise en forme Markdown.", body),
+        PageBreak(),
+    ]
+
+    # ── Chapter 4 — Guide technicien ─────────────────────────────
+    elems += [
+        Paragraph("4. Guide technicien", h1),
+        h_rule(),
+        section_header("4.1  Vue d'ensemble des tickets", ORANGE),
+        Spacer(1, 6),
+        Paragraph(
+            "Le menu <b>Tous les tickets</b> affiche l'ensemble des tickets du système. "
+            "Des filtres permettent de trier par statut, type, priorité, catégorie, "
+            "technicien assigné et recherche textuelle.", body),
+        Paragraph(
+            "Les vues <b>Incidents</b> et <b>Demandes</b> permettent de se concentrer "
+            "sur chaque groupe avec des filtres dédiés et des exports CSV/PDF.", body),
+        Spacer(1, 10),
+        section_header("4.2  Assigner et mettre à jour un ticket", ORANGE),
+        Spacer(1, 6),
+        Paragraph(
+            "Cliquez sur un ticket pour ouvrir le panneau de détail. "
+            "En tant que technicien ou administrateur, vous pouvez :", body),
+        Paragraph("• Changer le statut : Ouvert → En cours → Résolu → Fermé", bullet),
+        Paragraph("• Modifier la priorité (escalade manuelle)", bullet),
+        Paragraph("• Assigner le ticket à un technicien", bullet),
+        Paragraph("• Ajouter un commentaire visible par le demandeur", bullet),
+        Paragraph(
+            "Chaque modification est enregistrée dans l'<b>historique</b> du ticket "
+            "avec la date et l'auteur.", note),
+        Spacer(1, 10),
+        section_header("4.3  Tableau Kanban", ORANGE),
+        Spacer(1, 6),
+        Paragraph(
+            "La vue <b>Kanban</b> affiche les tickets ouverts et en cours dans des colonnes "
+            "par statut. Glissez-déposez un ticket d'une colonne à l'autre pour changer son statut. "
+            "Utilisez les filtres de priorité et catégorie pour réduire l'affichage.", body),
+        Spacer(1, 10),
+        section_header("4.4  SLA et escalades automatiques", ORANGE),
+        Spacer(1, 6),
+        Paragraph(
+            "La vue <b>SLA</b> liste les tickets ouverts classés par urgence SLA :", body),
+        badge_table([
+            ("Critique", "SLA : 4 heures",   RED),
+            ("Haute",    "SLA : 8 heures",   ORANGE),
+            ("Normale",  "SLA : 24 heures",  BLUE),
+            ("Faible",   "SLA : 72 heures",  GREEN),
+        ]),
+        Paragraph(
+            "Un moteur d'escalade automatique vérifie toutes les heures les tickets non résolus "
+            "et élève leur priorité si le délai SLA est dépassé. "
+            "L'escalade est consignée dans l'historique du ticket.", body),
+        PageBreak(),
+    ]
+
+    # ── Chapter 5 — Guide administrateur ─────────────────────────
+    elems += [
+        Paragraph("5. Guide administrateur", h1),
+        h_rule(),
+        section_header("5.1  Gestion des utilisateurs", RED),
+        Spacer(1, 6),
+        Paragraph(
+            "La section <b>Administration</b> (accessible aux administrateurs uniquement) "
+            "liste tous les comptes utilisateurs. Vous pouvez :", body),
+        Paragraph("• Modifier le rôle d'un utilisateur : Utilisateur / Technicien / Administrateur", bullet),
+        Paragraph("• Voir les informations de profil et la date d'inscription", bullet),
+        Paragraph(
+            "Les rôles disponibles définissent les permissions :", body),
+        badge_table([
+            ("Utilisateur",    "Créer ses propres tickets, ajouter des commentaires", GREY),
+            ("Technicien",     "Tout utilisateur + assigner, changer statut/priorité, rédiger KB", ORANGE),
+            ("Administrateur", "Tout technicien + gérer les utilisateurs, supprimer des tickets", RED),
+        ]),
+        Spacer(1, 10),
+        section_header("5.2  Rapports et statistiques", RED),
+        Spacer(1, 6),
+        Paragraph(
+            "La vue <b>Rapports</b> présente :", body),
+        Paragraph("• Le taux de résolution global (tickets résolus / total)", bullet),
+        Paragraph("• Le temps moyen de résolution par priorité (en heures)", bullet),
+        Paragraph("• Le top 8 des techniciens les plus actifs", bullet),
+        Paragraph("• Le graphique chronologique des tickets créés vs résolus (7 à 90 jours)", bullet),
+        Spacer(1, 10),
+        section_header("5.3  Exports CSV et PDF", RED),
+        Spacer(1, 6),
+        Paragraph(
+            "Des boutons d'export sont disponibles dans les vues "
+            "<b>Tous les tickets</b>, <b>Mes tickets</b>, <b>Incidents</b> et <b>Demandes</b>. "
+            "Les filtres actifs sont appliqués à l'export.", body),
+        badge_table([
+            ("CSV",            "Export tableur compatible Excel (encodage UTF-8 BOM)", GREEN),
+            ("PDF",            "Export mise en page professionnelle (paysage A4)", RED),
+            ("Catalogue PDF",  "Liste complète des 40 types de tickets avec priorités et SLA", BLUE),
+            ("Documentation",  "Ce document — guide complet d'installation et d'utilisation", GREY),
+        ]),
+        Spacer(1, 20),
+        HRFlowable(width="100%", thickness=1, color=colors.HexColor("#e0e0e0"), spaceAfter=8),
+        Paragraph(
+            f"HelpDesk IT v1.0  •  Document généré automatiquement le "
+            f"{datetime.now().strftime('%d/%m/%Y à %H:%M')}  •  {current_user.username}",
+            ParagraphStyle("footer", fontSize=8, fontName="Helvetica", textColor=GREY, alignment=TA_CENTER)
+        ),
+    ]
+
+    doc.build(elems)
+    buf.seek(0)
+    filename = f"helpdesk_documentation_{datetime.now().strftime('%Y%m%d')}.pdf"
+    return StreamingResponse(
+        iter([buf.getvalue()]),
+        media_type="application/pdf",
+        headers={"Content-Disposition": f"attachment; filename={filename}"},
+    )
+
+
 @router.get("/export/pdf")
 def export_tickets_pdf(
     status: Optional[str] = Query(None),
@@ -447,6 +821,12 @@ def export_tickets_pdf(
         "demande_information": "D. info", "demande_formation": "D. formation",
         "demande_sauvegarde": "D. sauvegarde", "demande_demenagement": "D. déménag.",
         "demande_licence": "D. licence",
+        "ransomware": "Ransomware", "erreur_reseau": "Erreur réseau",
+        "ecran_bleu": "Écran bleu", "peripherique_defaillant": "Périphérique déf.",
+        "probleme_impression": "Pb. impression",
+        "demande_deblockage_compte": "D. déblocage", "demande_vpn": "D. VPN",
+        "demande_messagerie": "D. messagerie", "demande_impression_config": "D. impression",
+        "demande_badge_acces": "D. badge",
     }
 
     buf = io.BytesIO()

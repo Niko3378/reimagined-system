@@ -54,6 +54,22 @@ class Comment(Base):
     author = relationship("User", back_populates="comments")
 
 
+class KBArticle(Base):
+    __tablename__ = "kb_articles"
+
+    id         = Column(Integer, primary_key=True, index=True)
+    title      = Column(String, nullable=False)
+    content    = Column(Text, nullable=False)
+    ticket_type = Column(String, nullable=True)
+    category   = Column(String, nullable=True)
+    author_id  = Column(Integer, ForeignKey("users.id"), nullable=False)
+    views      = Column(Integer, default=0)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    author = relationship("User")
+
+
 class TicketHistory(Base):
     __tablename__ = "ticket_history"
 

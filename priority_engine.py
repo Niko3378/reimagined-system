@@ -17,6 +17,11 @@ TYPE_PRIORITY = {
     "dysfonctionnement":     "normale",
     "crash_application":     "normale",
     "acces_refuse":          "normale",
+    "ecran_bleu":            "normale",
+    "peripherique_defaillant": "normale",
+    "erreur_reseau":         "haute",
+    "ransomware":            "critique",
+    "probleme_impression":   "faible",
     "demande":               "faible",
     "demande_acces":         "faible",
     "demande_installation":  "faible",
@@ -32,6 +37,11 @@ TYPE_PRIORITY = {
     "demande_configuration": "faible",
     "demande_mise_a_jour":   "faible",
     "demande_archivage":     "faible",
+    "demande_deblockage_compte": "faible",
+    "demande_vpn":           "faible",
+    "demande_messagerie":    "faible",
+    "demande_impression_config": "faible",
+    "demande_badge_acces":   "faible",
 }
 
 PRIORITY_ORDER = ["faible", "normale", "haute", "critique"]

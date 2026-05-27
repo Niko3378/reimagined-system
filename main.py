@@ -5,7 +5,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 import models
 from database import engine, SessionLocal
-from routers import auth_router, tickets_router, users_router, notifications_router
+from routers import auth_router, tickets_router, users_router, notifications_router, kb_router
 import notifications as notif_module
 from priority_engine import should_escalate, next_priority
 
@@ -60,6 +60,7 @@ app.include_router(auth_router.router)
 app.include_router(users_router.router)
 app.include_router(tickets_router.router)
 app.include_router(notifications_router.router)
+app.include_router(kb_router.router)
 
 _static_dir = os.environ.get("HELPDESK_STATIC_PATH", "static")
 app.mount("/static", StaticFiles(directory=_static_dir), name="static")

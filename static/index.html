@@ -7,6 +7,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js"></script>
   <style>
     :root {
       --sidebar-width: 240px;
@@ -106,6 +107,16 @@
     .badge-corruption_donnees { background: #b71c1c; }
     .badge-indisponibilite_service { background: #e65100; }
     .badge-acces_refuse { background: #546e7a; }
+    .badge-ransomware { background: #7b1fa2; }
+    .badge-erreur_reseau { background: #00695c; }
+    .badge-ecran_bleu { background: #1565c0; }
+    .badge-peripherique_defaillant { background: #4e342e; }
+    .badge-probleme_impression { background: #37474f; }
+    .badge-demande_deblockage_compte { background: #006064; }
+    .badge-demande_vpn { background: #1a237e; }
+    .badge-demande_messagerie { background: #004d40; }
+    .badge-demande_impression_config { background: #263238; }
+    .badge-demande_badge_acces { background: #bf360c; }
 
     /* ── Ticket detail ── */
     .modal-xl { max-width: 900px; }
@@ -125,6 +136,17 @@
     /* ── Empty state ── */
     .empty-state { text-align: center; padding: 60px 20px; color: #9e9e9e; }
     .empty-state i { font-size: 3rem; margin-bottom: 12px; }
+
+    /* ── Base de connaissances ── */
+    .kb-card { cursor: pointer; transition: transform .15s, box-shadow .15s; border: 1px solid #e0e0e0; }
+    .kb-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,.1) !important; border-color: #90caf9; }
+    .kb-content { line-height: 1.7; }
+    .kb-content h1,.kb-content h2,.kb-content h3 { margin-top: 1.2rem; margin-bottom: .5rem; font-weight: 600; }
+    .kb-content code { background: #f5f5f5; padding: 2px 6px; border-radius: 4px; font-size: .88em; }
+    .kb-content pre { background: #263238; color: #cfd8dc; padding: 12px 16px; border-radius: 6px; overflow-x: auto; }
+    .kb-content pre code { background: none; color: inherit; padding: 0; }
+    .kb-content ul,.kb-content ol { padding-left: 1.5rem; }
+    .kb-content blockquote { border-left: 4px solid #1976d2; padding-left: 12px; color: #616161; margin: .8rem 0; }
 
     /* ── Kanban ── */
     .kanban-board { display: flex; gap: 16px; align-items: flex-start; overflow-x: auto; padding-bottom: 12px; }
@@ -339,6 +361,11 @@
             <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="corruption_donnees"><i class="fas fa-times-circle me-1" style="width:14px"></i>Corruption de données</a></li>
             <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="indisponibilite_service"><i class="fas fa-ban me-1" style="width:14px"></i>Indisponibilité service</a></li>
             <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="acces_refuse"><i class="fas fa-user-times me-1" style="width:14px"></i>Accès refusé</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="ransomware"><i class="fas fa-lock me-1" style="width:14px"></i>Ransomware</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="erreur_reseau"><i class="fas fa-network-wired me-1" style="width:14px"></i>Erreur réseau / DNS</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="ecran_bleu"><i class="fas fa-desktop me-1" style="width:14px"></i>Écran bleu (BSOD)</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="peripherique_defaillant"><i class="fas fa-plug me-1" style="width:14px"></i>Périphérique défaillant</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="probleme_impression"><i class="fas fa-print me-1" style="width:14px"></i>Problème d'impression</a></li>
           </ul>
         </div>
       </li>
@@ -364,6 +391,11 @@
             <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_configuration"><i class="fas fa-cogs me-1" style="width:14px"></i>Configuration</a></li>
             <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_mise_a_jour"><i class="fas fa-sync-alt me-1" style="width:14px"></i>Mise à jour logicielle</a></li>
             <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_archivage"><i class="fas fa-archive me-1" style="width:14px"></i>Archivage de données</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_deblockage_compte"><i class="fas fa-lock-open me-1" style="width:14px"></i>Déblocage de compte</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_vpn"><i class="fas fa-shield-alt me-1" style="width:14px"></i>Accès VPN</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_messagerie"><i class="fas fa-envelope me-1" style="width:14px"></i>Messagerie / Email</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_impression_config"><i class="fas fa-print me-1" style="width:14px"></i>Config. impression</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_badge_acces"><i class="fas fa-id-card me-1" style="width:14px"></i>Badge d'accès</a></li>
           </ul>
         </div>
       </li>
@@ -380,6 +412,11 @@
       <li class="nav-item">
         <a class="nav-link" href="#" data-view="reports">
           <i class="fas fa-chart-bar"></i>Rapports
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#" data-view="kb">
+          <i class="fas fa-book"></i>Base de connaissances
         </a>
       </li>
       <li class="nav-item">
@@ -678,6 +715,11 @@
                   <option value="corruption_donnees">Corruption de données</option>
                   <option value="indisponibilite_service">Indisponibilité service</option>
                   <option value="acces_refuse">Accès refusé</option>
+                  <option value="ransomware">Ransomware / Chiffrement</option>
+                  <option value="erreur_reseau">Erreur réseau / DNS</option>
+                  <option value="ecran_bleu">Écran bleu (BSOD)</option>
+                  <option value="peripherique_defaillant">Périphérique défaillant</option>
+                  <option value="probleme_impression">Problème d'impression</option>
                 </optgroup>
                 <optgroup label="Demandes">
                   <option value="demande">Demande</option>
@@ -695,6 +737,11 @@
                   <option value="demande_configuration">Configuration</option>
                   <option value="demande_mise_a_jour">Mise à jour logicielle</option>
                   <option value="demande_archivage">Archivage de données</option>
+                  <option value="demande_deblockage_compte">Déblocage de compte</option>
+                  <option value="demande_vpn">Accès VPN</option>
+                  <option value="demande_messagerie">Messagerie / Email</option>
+                  <option value="demande_impression_config">Config. impression</option>
+                  <option value="demande_badge_acces">Badge d'accès physique</option>
                 </optgroup>
               </select>
             </div>
@@ -792,6 +839,11 @@
                 <option value="corruption_donnees">Corruption de données</option>
                 <option value="indisponibilite_service">Indisponibilité service</option>
                 <option value="acces_refuse">Accès refusé</option>
+                <option value="ransomware">Ransomware / Chiffrement</option>
+                <option value="erreur_reseau">Erreur réseau / DNS</option>
+                <option value="ecran_bleu">Écran bleu (BSOD)</option>
+                <option value="peripherique_defaillant">Périphérique défaillant</option>
+                <option value="probleme_impression">Problème d'impression</option>
               </select>
             </div>
             <div class="col-md-2">
@@ -877,6 +929,11 @@
                 <option value="demande_configuration">Configuration</option>
                 <option value="demande_mise_a_jour">Mise à jour logicielle</option>
                 <option value="demande_archivage">Archivage de données</option>
+                <option value="demande_deblockage_compte">Déblocage de compte</option>
+                <option value="demande_vpn">Accès VPN</option>
+                <option value="demande_messagerie">Messagerie / Email</option>
+                <option value="demande_impression_config">Config. impression</option>
+                <option value="demande_badge_acces">Badge d'accès physique</option>
               </select>
             </div>
             <div class="col-md-2">
@@ -1129,6 +1186,9 @@
               <li><a class="dropdown-item" href="#" onclick="exportCataloguePDF();return false"><i class="fas fa-file-pdf me-2 text-danger"></i>PDF</a></li>
             </ul>
           </div>
+          <button class="btn btn-outline-info btn-sm" onclick="downloadDocumentation()">
+            <i class="fas fa-book me-1"></i>Documentation PDF
+          </button>
           <button class="btn btn-outline-secondary btn-sm" onclick="loadCatalogue()">
             <i class="fas fa-sync me-1"></i>Actualiser
           </button>
@@ -1237,6 +1297,49 @@
       </div>
     </div>
 
+    <!-- ── Base de connaissances ── -->
+    <div id="view-kb" style="display:none">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="fw-bold mb-0"><i class="fas fa-book me-2 text-primary"></i>Base de connaissances</h5>
+        <button class="btn btn-primary btn-sm d-none" id="kb-new-btn" onclick="openKBForm()">
+          <i class="fas fa-plus me-1"></i>Nouvel article
+        </button>
+      </div>
+
+      <!-- Filtres -->
+      <div class="card mb-4 filter-bar">
+        <div class="card-body py-2">
+          <div class="row g-2 align-items-center">
+            <div class="col-md-5">
+              <input type="text" id="kb-search" class="form-control form-control-sm" placeholder="Rechercher un article...">
+            </div>
+            <div class="col-md-3">
+              <select id="kb-filter-type" class="form-select form-select-sm">
+                <option value="">Tous les types de ticket</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <select id="kb-filter-category" class="form-select form-select-sm">
+                <option value="">Toutes les catégories</option>
+                <option value="logiciel">Logiciel</option>
+                <option value="materiel">Matériel</option>
+                <option value="reseau">Réseau</option>
+                <option value="securite">Sécurité</option>
+                <option value="telephonie">Téléphonie</option>
+                <option value="imprimante">Imprimante</option>
+                <option value="autre">Autre</option>
+              </select>
+            </div>
+            <div class="col-md-1">
+              <button class="btn btn-primary btn-sm w-100" onclick="loadKB()"><i class="fas fa-search"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="kb-container"></div>
+    </div>
+
     <!-- ── Admin users ── -->
     <div id="view-admin-users" style="display:none">
       <h5 class="fw-bold mb-4"><i class="fas fa-users-cog me-2 text-primary"></i>Gestion des utilisateurs</h5>
@@ -1249,6 +1352,93 @@
 <!-- ══════════════════════════════════════════
      CREATE TICKET MODAL
 ══════════════════════════════════════════ -->
+<!-- ══ Modal lecture article KB ══════════════════════════════════════════ -->
+<div class="modal fade" id="kbReadModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h5 class="modal-title fw-bold" id="kb-read-title"></h5>
+          <div class="text-muted small mt-1" id="kb-read-meta"></div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="kb-content" id="kb-read-content"></div>
+      </div>
+      <div class="modal-footer">
+        <div class="me-auto text-muted small" id="kb-read-views"></div>
+        <button class="btn btn-outline-secondary btn-sm d-none" id="kb-edit-btn" onclick="openKBForm(window._kbCurrentId)">
+          <i class="fas fa-edit me-1"></i>Modifier
+        </button>
+        <button class="btn btn-outline-danger btn-sm d-none" id="kb-delete-btn">
+          <i class="fas fa-trash me-1"></i>Supprimer
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ Modal création/édition article KB ═════════════════════════════════ -->
+<div class="modal fade" id="kbFormModal" tabindex="-1">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold" id="kb-form-title">Nouvel article</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Titre <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="kb-input-title" placeholder="Titre de l'article">
+        </div>
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Type de ticket associé</label>
+            <select class="form-select" id="kb-input-type">
+              <option value="">Aucun (général)</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Catégorie</label>
+            <select class="form-select" id="kb-input-category">
+              <option value="">Aucune</option>
+              <option value="logiciel">Logiciel</option>
+              <option value="materiel">Matériel</option>
+              <option value="reseau">Réseau</option>
+              <option value="securite">Sécurité</option>
+              <option value="telephonie">Téléphonie</option>
+              <option value="imprimante">Imprimante</option>
+              <option value="autre">Autre</option>
+            </select>
+          </div>
+        </div>
+        <div class="mb-2">
+          <label class="form-label fw-semibold">Contenu <span class="text-muted small">(Markdown supporté)</span></label>
+          <div class="d-flex gap-2 mb-2">
+            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="kbTogglePreview()">
+              <i class="fas fa-eye me-1"></i><span id="kb-preview-label">Aperçu</span>
+            </button>
+            <span class="text-muted small align-self-center">**gras** *italique* `code` ## Titre</span>
+          </div>
+          <textarea class="form-control font-monospace" id="kb-input-content" rows="16"
+                    placeholder="Rédigez votre article en Markdown...&#10;&#10;## Symptômes&#10;Description du problème...&#10;&#10;## Solution&#10;Étapes de résolution..."></textarea>
+          <div class="card d-none mt-2" id="kb-preview-box">
+            <div class="card-body kb-content" id="kb-preview-content"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button type="button" class="btn btn-primary" onclick="saveKBArticle()">
+          <i class="fas fa-save me-1"></i>Enregistrer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal fade" id="createModal" tabindex="-1">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
@@ -1283,6 +1473,11 @@
                   <option value="corruption_donnees">🗄️ Corruption de données</option>
                   <option value="indisponibilite_service">🚫 Indisponibilité service</option>
                   <option value="acces_refuse">🚷 Accès refusé</option>
+                  <option value="ransomware">🔐 Ransomware / Chiffrement</option>
+                  <option value="erreur_reseau">🌐 Erreur réseau / DNS</option>
+                  <option value="ecran_bleu">💙 Écran bleu (BSOD)</option>
+                  <option value="peripherique_defaillant">🔌 Périphérique défaillant</option>
+                  <option value="probleme_impression">🖨️ Problème d'impression</option>
                 </optgroup>
                 <optgroup label="── Demandes">
                   <option value="demande">📋 Demande</option>
@@ -1300,6 +1495,11 @@
                   <option value="demande_configuration">⚙️ Configuration</option>
                   <option value="demande_mise_a_jour">🔄 Mise à jour logicielle</option>
                   <option value="demande_archivage">🗃️ Archivage de données</option>
+                  <option value="demande_deblockage_compte">🔓 Déblocage de compte</option>
+                  <option value="demande_vpn">🛡️ Accès VPN</option>
+                  <option value="demande_messagerie">📧 Messagerie / Email</option>
+                  <option value="demande_impression_config">🖨️ Config. impression</option>
+                  <option value="demande_badge_acces">🪪 Badge d'accès physique</option>
                 </optgroup>
               </select>
             </div>
@@ -1582,6 +1782,11 @@ const TYPE_META = {
   corruption_donnees:         { label: 'Corruption de données',         icon: 'times-circle' },
   indisponibilite_service:    { label: 'Indisponibilité service',        icon: 'ban' },
   acces_refuse:               { label: 'Accès refusé',                  icon: 'user-times' },
+  ransomware:                 { label: 'Ransomware / Chiffrement',      icon: 'lock' },
+  erreur_reseau:              { label: 'Erreur réseau / DNS',           icon: 'network-wired' },
+  ecran_bleu:                 { label: 'Écran bleu (BSOD)',             icon: 'desktop' },
+  peripherique_defaillant:    { label: 'Périphérique défaillant',       icon: 'plug' },
+  probleme_impression:        { label: "Problème d'impression",         icon: 'print' },
   demande:               { label: 'Demande',                   icon: 'clipboard-list' },
   demande_acces:         { label: "Demande d'accès",           icon: 'key' },
   demande_installation:  { label: "Demande d'installation",    icon: 'download' },
@@ -1597,6 +1802,11 @@ const TYPE_META = {
   demande_configuration:          { label: 'Configuration',                   icon: 'cogs' },
   demande_mise_a_jour:            { label: 'Mise à jour logicielle',          icon: 'sync-alt' },
   demande_archivage:              { label: 'Archivage de données',            icon: 'archive' },
+  demande_deblockage_compte:      { label: 'Déblocage de compte',             icon: 'lock-open' },
+  demande_vpn:                    { label: 'Accès VPN',                       icon: 'shield-alt' },
+  demande_messagerie:             { label: 'Messagerie / Email',              icon: 'envelope' },
+  demande_impression_config:      { label: "Config. impression",              icon: 'print' },
+  demande_badge_acces:            { label: "Badge d'accès physique",          icon: 'id-card' },
 };
 
 function typeBadge(t) {
@@ -1730,7 +1940,7 @@ async function loadTechUsers() {
 // ════════════════════════════════════════════
 // NAVIGATION
 // ════════════════════════════════════════════
-const VIEWS = ['dashboard', 'my-tickets', 'all-tickets', 'catalogue', 'incidents', 'demandes', 'advanced-search', 'kanban', 'reports', 'sla', 'admin-users'];
+const VIEWS = ['dashboard', 'my-tickets', 'all-tickets', 'catalogue', 'incidents', 'demandes', 'advanced-search', 'kanban', 'reports', 'kb', 'sla', 'admin-users'];
 
 function showView(name) {
   VIEWS.forEach(v => {
@@ -1774,6 +1984,7 @@ function loadView(name) {
   else if (name === 'catalogue') loadCatalogue();
   else if (name === 'kanban') loadKanban();
   else if (name === 'reports') loadReports();
+  else if (name === 'kb') loadKB();
   else if (name === 'advanced-search') loadAdvSearchUsers();
   else if (name === 'sla') loadSLA();
   else if (name === 'admin-users') loadAdminUsers();
@@ -2312,9 +2523,15 @@ const AUTO_PRIORITY = {
   intrusion: 'critique', alerte_securite: 'critique', perte_donnees: 'critique', virus: 'critique', corruption_donnees: 'critique',
   panne: 'haute', coupure_reseau: 'haute', surcharge_systeme: 'haute', panne_electrique: 'haute', phishing: 'haute', indisponibilite_service: 'haute',
   incident: 'normale', dysfonctionnement: 'normale', crash_application: 'normale', acces_refuse: 'normale',
+  ecran_bleu: 'normale', peripherique_defaillant: 'normale',
+  erreur_reseau: 'haute',
+  ransomware: 'critique',
   demande: 'faible', demande_acces: 'faible', demande_installation: 'faible',
   demande_materiel: 'faible', demande_information: 'faible', demande_formation: 'faible',
   demande_sauvegarde: 'faible', demande_demenagement: 'faible', demande_licence: 'faible',
+  probleme_impression: 'faible',
+  demande_deblockage_compte: 'faible', demande_vpn: 'faible', demande_messagerie: 'faible',
+  demande_impression_config: 'faible', demande_badge_acces: 'faible',
 };
 const PRIORITY_LABELS = { faible: 'Faible', normale: 'Normale', haute: 'Haute', critique: 'Critique' };
 
@@ -2662,6 +2879,195 @@ function buildChart(id, type, data, options = {}) {
 }
 
 // ════════════════════════════════════════════
+// BASE DE CONNAISSANCES
+// ════════════════════════════════════════════
+let _kbCurrentId = null;
+
+const KB_TYPE_OPTIONS = (() => {
+  const inc = [
+    ['incident','Incident'],['panne','Panne'],['dysfonctionnement','Dysfonctionnement'],
+    ['alerte_securite','Alerte sécurité'],['coupure_reseau','Coupure réseau'],
+    ['intrusion','Intrusion'],['perte_donnees','Perte de données'],
+    ['surcharge_systeme','Surcharge système'],['panne_electrique','Panne électrique'],
+    ['virus','Virus / Malware'],['phishing','Phishing / Spam'],
+    ['crash_application','Crash application'],['corruption_donnees','Corruption de données'],
+    ['indisponibilite_service','Indisponibilité service'],['acces_refuse','Accès refusé'],
+  ];
+  const dem = [
+    ['demande','Demande'],['demande_acces','Accès'],['demande_installation','Installation'],
+    ['demande_materiel','Matériel'],['demande_information','Information'],
+    ['demande_formation','Formation'],['demande_sauvegarde','Sauvegarde'],
+    ['demande_demenagement','Déménagement'],['demande_licence','Licence'],
+    ['demande_reinitialisation_mdp','Réinit. mot de passe'],
+    ['demande_creation_compte','Création de compte'],['demande_assistance','Assistance'],
+    ['demande_configuration','Configuration'],['demande_mise_a_jour','Mise à jour'],
+    ['demande_archivage','Archivage'],
+  ];
+  return { inc, dem };
+})();
+
+function _fillKBTypeSelect(selId) {
+  const sel = document.getElementById(selId);
+  if (!sel) return;
+  const base = sel.options[0].outerHTML;
+  sel.innerHTML = base +
+    `<optgroup label="Incidents">${KB_TYPE_OPTIONS.inc.map(([v,l]) => `<option value="${v}">${l}</option>`).join('')}</optgroup>` +
+    `<optgroup label="Demandes">${KB_TYPE_OPTIONS.dem.map(([v,l]) => `<option value="${v}">${l}</option>`).join('')}</optgroup>`;
+}
+
+async function loadKB() {
+  // Afficher bouton "Nouvel article" pour staff
+  const isStaff = ['technician','admin'].includes(state.user?.role);
+  document.getElementById('kb-new-btn').classList.toggle('d-none', !isStaff);
+
+  _fillKBTypeSelect('kb-filter-type');
+  _fillKBTypeSelect('kb-input-type');
+
+  const el = document.getElementById('kb-container');
+  el.innerHTML = `<div class="text-center py-5"><div class="spinner-border text-primary"></div></div>`;
+  try {
+    const params = new URLSearchParams();
+    const search = document.getElementById('kb-search').value.trim();
+    const type   = document.getElementById('kb-filter-type').value;
+    const cat    = document.getElementById('kb-filter-category').value;
+    if (search) params.set('search', search);
+    if (type)   params.set('ticket_type', type);
+    if (cat)    params.set('category', cat);
+
+    const articles = await API.get('/kb/?' + params.toString());
+
+    if (!articles.length) {
+      el.innerHTML = `<div class="empty-state"><i class="fas fa-book d-block"></i>Aucun article trouvé${isStaff ? ' — <a href="#" onclick="openKBForm();return false">Créer le premier article</a>' : ''}</div>`;
+      return;
+    }
+
+    el.innerHTML = `<div class="row g-3">${articles.map(a => `
+      <div class="col-md-6 col-lg-4">
+        <div class="card kb-card h-100 shadow-sm" onclick="openKBArticle(${a.id})">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              ${a.ticket_type ? typeBadge(a.ticket_type) : '<span class="badge bg-secondary">Général</span>'}
+              <span class="text-muted small"><i class="fas fa-eye me-1"></i>${a.views}</span>
+            </div>
+            <h6 class="fw-bold mb-1">${escHtml(a.title)}</h6>
+            <p class="text-muted small mb-2" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">
+              ${escHtml(a.content.replace(/[#*`_>\[\]]/g, '').slice(0, 120))}
+            </p>
+            <div class="d-flex justify-content-between align-items-center mt-auto">
+              <span class="text-muted small"><i class="fas fa-user me-1"></i>${escHtml(a.author.username)}</span>
+              <span class="text-muted small">${fmt(a.created_at)}</span>
+            </div>
+          </div>
+        </div>
+      </div>`).join('')}</div>`;
+  } catch(e) {
+    el.innerHTML = `<div class="alert alert-danger">Erreur : ${e.message}</div>`;
+  }
+}
+
+async function openKBArticle(id) {
+  _kbCurrentId = id;
+  try {
+    const a = await API.get(`/kb/${id}`);
+    const isStaff = ['technician','admin'].includes(state.user?.role);
+    const canEdit = isStaff && (state.user.role === 'admin' || a.author.id === state.user.id);
+
+    document.getElementById('kb-read-title').textContent = a.title;
+    document.getElementById('kb-read-meta').innerHTML =
+      `<i class="fas fa-user me-1"></i>${escHtml(a.author.username)} &nbsp;·&nbsp; <i class="fas fa-calendar me-1"></i>${fmt(a.created_at)}` +
+      (a.ticket_type ? ` &nbsp;·&nbsp; ${typeBadge(a.ticket_type)}` : '') +
+      (a.category ? ` &nbsp;·&nbsp; <span class="badge bg-light text-dark border">${a.category}</span>` : '');
+    document.getElementById('kb-read-content').innerHTML = marked.parse(a.content);
+    document.getElementById('kb-read-views').innerHTML = `<i class="fas fa-eye me-1"></i>${a.views} vue${a.views !== 1 ? 's' : ''}`;
+
+    document.getElementById('kb-edit-btn').classList.toggle('d-none', !canEdit);
+    document.getElementById('kb-delete-btn').classList.toggle('d-none', !canEdit);
+    document.getElementById('kb-delete-btn').onclick = () => deleteKBArticle(id);
+
+    new bootstrap.Modal(document.getElementById('kbReadModal')).show();
+  } catch(e) {
+    toast('Erreur chargement article : ' + e.message, 'danger');
+  }
+}
+
+function openKBForm(id = null) {
+  bootstrap.Modal.getInstance(document.getElementById('kbReadModal'))?.hide();
+  document.getElementById('kb-form-title').textContent = id ? 'Modifier l\'article' : 'Nouvel article';
+  document.getElementById('kb-input-title').value = '';
+  document.getElementById('kb-input-content').value = '';
+  document.getElementById('kb-input-type').value = '';
+  document.getElementById('kb-input-category').value = '';
+  document.getElementById('kb-preview-box').classList.add('d-none');
+  document.getElementById('kb-preview-label').textContent = 'Aperçu';
+  _fillKBTypeSelect('kb-input-type');
+
+  if (id) {
+    API.get(`/kb/${id}`).then(a => {
+      document.getElementById('kb-input-title').value = a.title;
+      document.getElementById('kb-input-content').value = a.content;
+      document.getElementById('kb-input-type').value = a.ticket_type || '';
+      document.getElementById('kb-input-category').value = a.category || '';
+    });
+    document.getElementById('kbFormModal').dataset.editId = id;
+  } else {
+    delete document.getElementById('kbFormModal').dataset.editId;
+  }
+  new bootstrap.Modal(document.getElementById('kbFormModal')).show();
+}
+
+function kbTogglePreview() {
+  const box = document.getElementById('kb-preview-box');
+  const lbl = document.getElementById('kb-preview-label');
+  const hidden = box.classList.toggle('d-none');
+  lbl.textContent = hidden ? 'Aperçu' : 'Masquer';
+  if (!hidden) {
+    document.getElementById('kb-preview-content').innerHTML =
+      marked.parse(document.getElementById('kb-input-content').value || '*Rien à prévisualiser*');
+  }
+}
+
+async function saveKBArticle() {
+  const modal = document.getElementById('kbFormModal');
+  const editId = modal.dataset.editId ? parseInt(modal.dataset.editId) : null;
+  const payload = {
+    title:       document.getElementById('kb-input-title').value.trim(),
+    content:     document.getElementById('kb-input-content').value.trim(),
+    ticket_type: document.getElementById('kb-input-type').value || null,
+    category:    document.getElementById('kb-input-category').value || null,
+  };
+  if (!payload.title || !payload.content) { toast('Titre et contenu obligatoires', 'warning'); return; }
+  try {
+    if (editId) {
+      await API.patch(`/kb/${editId}`, payload);
+      toast('Article mis à jour !');
+    } else {
+      await API.post('/kb/', payload);
+      toast('Article créé !');
+    }
+    bootstrap.Modal.getInstance(modal).hide();
+    loadKB();
+  } catch(e) {
+    toast('Erreur : ' + e.message, 'danger');
+  }
+}
+
+async function deleteKBArticle(id) {
+  if (!confirm('Supprimer cet article ?')) return;
+  try {
+    const res = await fetch(`/api/kb/${id}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${API.token}` },
+    });
+    if (!res.ok && res.status !== 204) throw new Error(await res.text());
+    bootstrap.Modal.getInstance(document.getElementById('kbReadModal'))?.hide();
+    toast('Article supprimé');
+    loadKB();
+  } catch(e) {
+    toast('Erreur suppression : ' + e.message, 'danger');
+  }
+}
+
+// ════════════════════════════════════════════
 // KANBAN
 // ════════════════════════════════════════════
 const KANBAN_COLS = [
@@ -2772,6 +3178,11 @@ const CATALOGUE_INCIDENTS = [
   { type: 'corruption_donnees',     label: 'Corruption de données',   icon: 'fa-times-circle',    color: 'danger'    },
   { type: 'indisponibilite_service',label: 'Indisponibilité service',  icon: 'fa-ban',             color: 'warning'   },
   { type: 'acces_refuse',           label: 'Accès refusé',            icon: 'fa-user-times',      color: 'secondary' },
+  { type: 'ransomware',             label: 'Ransomware',              icon: 'fa-lock',            color: 'dark'      },
+  { type: 'erreur_reseau',          label: 'Erreur réseau / DNS',     icon: 'fa-network-wired',   color: 'info'      },
+  { type: 'ecran_bleu',             label: 'Écran bleu (BSOD)',       icon: 'fa-desktop',         color: 'primary'   },
+  { type: 'peripherique_defaillant',label: 'Périphérique défaillant', icon: 'fa-plug',            color: 'secondary' },
+  { type: 'probleme_impression',    label: "Pb. d'impression",        icon: 'fa-print',           color: 'secondary' },
 ];
 const CATALOGUE_DEMANDES = [
   { type: 'demande',              label: 'Demande',         icon: 'fa-clipboard-list', color: 'primary'   },
@@ -2789,6 +3200,11 @@ const CATALOGUE_DEMANDES = [
   { type: 'demande_configuration',       label: 'Configuration',                 icon: 'fa-cogs',          color: 'secondary' },
   { type: 'demande_mise_a_jour',         label: 'Mise à jour logicielle',        icon: 'fa-sync-alt',      color: 'info'      },
   { type: 'demande_archivage',           label: 'Archivage de données',          icon: 'fa-archive',       color: 'dark'      },
+  { type: 'demande_deblockage_compte',   label: 'Déblocage de compte',           icon: 'fa-lock-open',     color: 'success'   },
+  { type: 'demande_vpn',                 label: 'Accès VPN',                     icon: 'fa-shield-alt',    color: 'primary'   },
+  { type: 'demande_messagerie',          label: 'Messagerie / Email',            icon: 'fa-envelope',      color: 'info'      },
+  { type: 'demande_impression_config',   label: 'Config. impression',            icon: 'fa-print',         color: 'secondary' },
+  { type: 'demande_badge_acces',         label: "Badge d'accès",                 icon: 'fa-id-card',       color: 'warning'   },
 ];
 
 let _catalogueByType = {};
@@ -2863,6 +3279,25 @@ async function exportCataloguePDF() {
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     URL.revokeObjectURL(url);
     toast('Catalogue PDF téléchargé !');
+  } catch (e) {
+    toast('Erreur : ' + e.message, 'danger');
+  }
+}
+
+async function downloadDocumentation() {
+  try {
+    const res = await fetch('/api/tickets/docs/pdf', {
+      headers: { 'Authorization': `Bearer ${API.token}` },
+    });
+    if (!res.ok) { toast('Erreur lors de la génération de la documentation', 'danger'); return; }
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `helpdesk_documentation_${new Date().toISOString().slice(0,10)}.pdf`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast('Documentation PDF téléchargée !');
   } catch (e) {
     toast('Erreur : ' + e.message, 'danger');
   }

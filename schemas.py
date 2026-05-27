@@ -95,6 +95,34 @@ class Token(BaseModel):
     user: UserOut
 
 
+class KBArticleCreate(BaseModel):
+    title: str
+    content: str
+    ticket_type: Optional[str] = None
+    category: Optional[str] = None
+
+
+class KBArticleUpdate(BaseModel):
+    title: Optional[str] = None
+    content: Optional[str] = None
+    ticket_type: Optional[str] = None
+    category: Optional[str] = None
+
+
+class KBArticleOut(BaseModel):
+    id: int
+    title: str
+    content: str
+    ticket_type: Optional[str]
+    category: Optional[str]
+    author: UserOut
+    views: int
+    created_at: datetime
+    updated_at: Optional[datetime]
+
+    model_config = {"from_attributes": True}
+
+
 class StatsOut(BaseModel):
     total: int
     ouvert: int
