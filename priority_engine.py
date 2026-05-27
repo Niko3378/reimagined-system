@@ -1,0 +1,57 @@
+from datetime import datetime, timedelta
+
+# Priorité suggérée selon le type de ticket
+TYPE_PRIORITY = {
+    "intrusion":         "critique",
+    "alerte_securite":   "critique",
+    "perte_donnees":     "critique",
+    "panne":             "haute",
+    "coupure_reseau":    "haute",
+    "surcharge_systeme": "haute",
+    "panne_electrique":  "haute",
+    "incident":          "normale",
+    "dysfonctionnement": "normale",
+    "demande":           "faible",
+    "demande_acces":     "faible",
+    "demande_installation": "faible",
+    "demande_materiel":  "faible",
+    "demande_information": "faible",
+    "demande_formation": "faible",
+    "demande_sauvegarde": "faible",
+    "demande_demenagement": "faible",
+    "demande_licence":   "faible",
+}
+
+PRIORITY_ORDER = ["faible", "normale", "haute", "critique"]
+
+# Délai avant escalade (en heures)
+ESCALATION_DELAYS = {
+    "faible":  168,  # 7 jours
+    "normale":  72,  # 3 jours
+    "haute":    24,  # 24 heures
+}
+
+
+def suggest_priority(ticket_type: str) -> str:
+    return TYPE_PRIORITY.get(ticket_type, "normale")
+
+
+def next_priority(current: str) -> str | None:
+    idx = PRIORITY_ORDER.index(current)
+    if idx < len(PRIORITY_ORDER) - 1:
+        return PRIORITY_ORDER[idx + 1]
+    return None
+
+
+def should_escalate(ticket) -> bool:
+    if ticket.status in ("resolu", "ferme"):
+        return False
+    if ticket.priority == "critique":
+        return False
+    delay_hours = ESCALATION_DELAYS.get(ticket.priority)
+    if delay_hours is None:
+        return False
+    reference = ticket.updated_at or ticket.created_at
+    if reference is None:
+        return False
+    return datetime.utcnow() - reference > timedelta(hours=delay_hours)

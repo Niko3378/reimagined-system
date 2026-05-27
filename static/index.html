@@ -799,6 +799,9 @@
                 <option value="haute">Haute</option>
                 <option value="critique">Critique</option>
               </select>
+              <div id="priority-hint" class="form-text d-none">
+                <i class="fas fa-magic me-1 text-primary"></i><span id="priority-hint-text"></span>
+              </div>
             </div>
           </div>
           <div class="mb-3">
@@ -1689,6 +1692,32 @@ async function loadGroupView(group, params = {}) {
   document.getElementById(`export-${group}-pdf`).addEventListener('click', e => {
     e.preventDefault(); downloadFile('export/pdf', group, getGroupFilters(group));
   });
+});
+
+// ════════════════════════════════════════════
+// AUTO-PRIORITÉ
+// ════════════════════════════════════════════
+const AUTO_PRIORITY = {
+  intrusion: 'critique', alerte_securite: 'critique', perte_donnees: 'critique',
+  panne: 'haute', coupure_reseau: 'haute', surcharge_systeme: 'haute', panne_electrique: 'haute',
+  incident: 'normale', dysfonctionnement: 'normale',
+  demande: 'faible', demande_acces: 'faible', demande_installation: 'faible',
+  demande_materiel: 'faible', demande_information: 'faible', demande_formation: 'faible',
+  demande_sauvegarde: 'faible', demande_demenagement: 'faible', demande_licence: 'faible',
+};
+const PRIORITY_LABELS = { faible: 'Faible', normale: 'Normale', haute: 'Haute', critique: 'Critique' };
+
+document.getElementById('create-type').addEventListener('change', function () {
+  const suggested = AUTO_PRIORITY[this.value];
+  const hint = document.getElementById('priority-hint');
+  const hintText = document.getElementById('priority-hint-text');
+  if (suggested) {
+    document.getElementById('create-priority').value = suggested;
+    hintText.textContent = `Priorité suggérée : ${PRIORITY_LABELS[suggested]}`;
+    hint.classList.remove('d-none');
+  } else {
+    hint.classList.add('d-none');
+  }
 });
 
 // ════════════════════════════════════════════

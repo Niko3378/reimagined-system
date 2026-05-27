@@ -11,6 +11,7 @@ import schemas
 import auth
 from database import get_db
 from notifications import broadcaster
+from priority_engine import suggest_priority
 
 router = APIRouter(prefix="/api/tickets", tags=["tickets"])
 
@@ -86,7 +87,12 @@ def create_ticket(
         raise HTTPException(status_code=400, detail="Type invalide")
     if ticket_in.category not in VALID_CATEGORIES:
         raise HTTPException(status_code=400, detail="Catégorie invalide")
-    if ticket_in.priority not in VALID_PRIORITIES:
+
+    # Priorité automatique si non spécifiée ou laissée à "normale" (valeur par défaut)
+    auto_priority = suggest_priority(ticket_in.type)
+    final_priority = ticket_in.priority if ticket_in.priority != "normale" else auto_priority
+
+    if final_priority not in VALID_PRIORITIES:
         raise HTTPException(status_code=400, detail="Priorité invalide")
 
     ticket = models.Ticket(
@@ -94,7 +100,7 @@ def create_ticket(
         description=ticket_in.description,
         type=ticket_in.type,
         category=ticket_in.category,
-        priority=ticket_in.priority,
+        priority=final_priority,
         created_by_id=current_user.id,
     )
     db.add(ticket)
