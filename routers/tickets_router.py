@@ -763,6 +763,457 @@ def export_documentation_pdf(
     )
 
 
+@router.get("/install/pdf")
+def export_install_procedure_pdf(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    from reportlab.lib import colors
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib.styles import ParagraphStyle
+    from reportlab.lib.units import cm
+    from reportlab.platypus import (SimpleDocTemplate, Paragraph, Spacer, HRFlowable,
+                                    Table, TableStyle, PageBreak, ListFlowable, ListItem)
+    from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_JUSTIFY
+
+    buf = io.BytesIO()
+    doc = SimpleDocTemplate(buf, pagesize=A4,
+                            leftMargin=2.5*cm, rightMargin=2.5*cm,
+                            topMargin=2*cm, bottomMargin=2*cm)
+
+    BLUE   = colors.HexColor("#1565c0")
+    DBLUE  = colors.HexColor("#0d47a1")
+    LBLUE  = colors.HexColor("#e3f2fd")
+    GREY   = colors.HexColor("#757575")
+    LGREY  = colors.HexColor("#f5f5f5")
+    GREEN  = colors.HexColor("#2e7d32")
+    LGREEN = colors.HexColor("#e8f5e9")
+    ORANGE = colors.HexColor("#e65100")
+    LORAN  = colors.HexColor("#fff3e0")
+    RED    = colors.HexColor("#c62828")
+    LRED   = colors.HexColor("#ffebee")
+    WHITE  = colors.white
+    BLACK  = colors.HexColor("#212121")
+
+    def sty(name, **kw):
+        return ParagraphStyle(name, **kw)
+
+    h_cover  = sty("hcov", fontSize=30, fontName="Helvetica-Bold", textColor=WHITE, alignment=TA_CENTER, spaceAfter=6)
+    h_sub    = sty("hsub", fontSize=13, fontName="Helvetica",      textColor=colors.HexColor("#bbdefb"), alignment=TA_CENTER, spaceAfter=4)
+    h_date   = sty("hdat", fontSize=10, fontName="Helvetica",      textColor=colors.HexColor("#90caf9"), alignment=TA_CENTER, spaceAfter=30)
+    h1       = sty("h1",   fontSize=16, fontName="Helvetica-Bold", textColor=BLUE, spaceBefore=20, spaceAfter=6)
+    h2       = sty("h2",   fontSize=12, fontName="Helvetica-Bold", textColor=DBLUE, spaceBefore=12, spaceAfter=4)
+    h3       = sty("h3",   fontSize=10, fontName="Helvetica-Bold", textColor=BLACK, spaceBefore=8, spaceAfter=3)
+    body     = sty("bd",   fontSize=10, fontName="Helvetica",      leading=15, alignment=TA_JUSTIFY, spaceAfter=5)
+    bullet   = sty("bu",   fontSize=10, fontName="Helvetica",      leading=14, leftIndent=18, spaceAfter=3)
+    code_sty = sty("co",   fontSize=9,  fontName="Courier",        leading=13, leftIndent=10,
+                   backColor=LGREY, borderPadding=6, spaceAfter=8)
+    note_ok  = sty("nok",  fontSize=9,  fontName="Helvetica",      textColor=GREEN,  leftIndent=14, spaceAfter=4)
+    note_warn= sty("nwa",  fontSize=9,  fontName="Helvetica",      textColor=ORANGE, leftIndent=14, spaceAfter=4)
+    note_err = sty("ner",  fontSize=9,  fontName="Helvetica",      textColor=RED,    leftIndent=14, spaceAfter=4)
+    toc_sty  = sty("toc",  fontSize=11, fontName="Helvetica",      leading=22, leftIndent=8)
+    toc_sub  = sty("tocs", fontSize=10, fontName="Helvetica",      leading=18, leftIndent=26, textColor=GREY)
+
+    def hr(): return HRFlowable(width="100%", thickness=1, color=colors.HexColor("#bbdefb"), spaceAfter=8)
+
+    def section_hdr(title, bg=BLUE):
+        t = Table([[Paragraph(title, sty("sh", fontSize=12, fontName="Helvetica-Bold", textColor=WHITE))]], colWidths=[15*cm])
+        t.setStyle(TableStyle([("BACKGROUND",(0,0),(-1,-1),bg),("TOPPADDING",(0,0),(-1,-1),7),
+                                ("BOTTOMPADDING",(0,0),(-1,-1),7),("LEFTPADDING",(0,0),(-1,-1),12)]))
+        return t
+
+    def step_box(n, title, content, color=LBLUE, border=BLUE):
+        inner = [
+            [Paragraph(f"<b>Étape {n}</b>", sty("sn", fontSize=9, fontName="Helvetica-Bold", textColor=border)),
+             Paragraph(f"<b>{title}</b>", sty("st", fontSize=10, fontName="Helvetica-Bold", textColor=BLACK))],
+            ["", Paragraph(content, body)],
+        ]
+        t = Table(inner, colWidths=[1.8*cm, 13.2*cm])
+        t.setStyle(TableStyle([
+            ("BACKGROUND", (0,0),(-1,-1), color),
+            ("BOX",        (0,0),(-1,-1), 1, border),
+            ("LINEAFTER",  (0,0),(0,-1),  1, border),
+            ("VALIGN",     (0,0),(-1,-1), "TOP"),
+            ("TOPPADDING", (0,0),(-1,-1), 6),("BOTTOMPADDING",(0,0),(-1,-1),6),
+            ("LEFTPADDING",(0,0),(-1,-1), 8),("RIGHTPADDING",(0,0),(-1,-1),8),
+            ("SPAN",       (0,1),(0,1)),
+        ]))
+        return t
+
+    def alert(icon, text, bg, border):
+        t = Table([[Paragraph(f"<b>{icon}  {text}</b>", sty("al", fontSize=9, fontName="Helvetica", textColor=border))]], colWidths=[15*cm])
+        t.setStyle(TableStyle([("BACKGROUND",(0,0),(-1,-1),bg),("BOX",(0,0),(-1,-1),1,border),
+                                ("TOPPADDING",(0,0),(-1,-1),5),("BOTTOMPADDING",(0,0),(-1,-1),5),
+                                ("LEFTPADDING",(0,0),(-1,-1),10)]))
+        return t
+
+    def info_table(rows):
+        data = [[Paragraph(f"<b>{k}</b>", sty("ik", fontSize=9, fontName="Helvetica")),
+                 Paragraph(v, sty("iv", fontSize=9, fontName="Helvetica"))] for k,v in rows]
+        t = Table(data, colWidths=[5*cm, 10*cm])
+        t.setStyle(TableStyle([("GRID",(0,0),(-1,-1),0.4,colors.HexColor("#e0e0e0")),
+                                ("BACKGROUND",(0,0),(0,-1),LGREY),("VALIGN",(0,0),(-1,-1),"MIDDLE"),
+                                ("TOPPADDING",(0,0),(-1,-1),4),("BOTTOMPADDING",(0,0),(-1,-1),4),
+                                ("LEFTPADDING",(0,0),(-1,-1),6)]))
+        return t
+
+    elems = []
+
+    # ══ Page de couverture ═══════════════════════════════════════════════════
+    cover_bg = Table(
+        [[Paragraph("HelpDesk IT", h_cover)],
+         [Paragraph("Procédure d'installation et de lancement", h_sub)],
+         [Paragraph(f"Installation MSI  •  Windows 10 / 11", h_sub)],
+         [Spacer(1, 0.3*cm)],
+         [HRFlowable(width="50%", thickness=2, color=colors.HexColor("#90caf9"), hAlign="CENTER", spaceAfter=10)],
+         [Paragraph(f"Généré le {datetime.now().strftime('%d/%m/%Y à %H:%M')}  •  {current_user.username}", h_date)],
+         [Spacer(1, 0.5*cm)],
+         [info_table([
+             ("Version",        "1.0.0"),
+             ("Fichier",        "HelpDesk_IT_Setup.msi"),
+             ("Système cible",  "Windows 10 (1903+) / Windows 11"),
+             ("Architecture",   "x64"),
+             ("Espace requis",  "≈ 120 Mo"),
+             ("Droits requis",  "Administrateur local (installation), Utilisateur standard (lancement)"),
+         ])],
+        ],
+        colWidths=[15*cm]
+    )
+    cover_bg.setStyle(TableStyle([
+        ("BACKGROUND", (0,0),(-1,-1), BLUE),
+        ("TOPPADDING", (0,0),(-1,-1), 12),
+        ("LEFTPADDING",(0,0),(-1,-1), 20),
+        ("RIGHTPADDING",(0,0),(-1,-1),20),
+        ("BOTTOMPADDING",(0,0),(-1,-1),20),
+    ]))
+    elems += [cover_bg, PageBreak()]
+
+    # ══ Table des matières ════════════════════════════════════════════════════
+    elems += [
+        Paragraph("Table des matières", h1), hr(),
+        Paragraph("1.  Prérequis système", toc_sty),
+        Paragraph("2.  Obtenir le fichier MSI", toc_sty),
+        Paragraph("3.  Installation pas à pas", toc_sty),
+        Paragraph("3.1  Lancement de l'assistant", toc_sub),
+        Paragraph("3.2  Acceptation de la licence", toc_sub),
+        Paragraph("3.3  Choix du répertoire d'installation", toc_sub),
+        Paragraph("3.4  Installation et création des raccourcis", toc_sub),
+        Paragraph("3.5  Fin de l'assistant", toc_sub),
+        Paragraph("4.  Premier lancement", toc_sty),
+        Paragraph("4.1  Depuis le raccourci bureau", toc_sub),
+        Paragraph("4.2  Depuis le menu Démarrer", toc_sub),
+        Paragraph("4.3  Comportement au démarrage", toc_sub),
+        Paragraph("5.  Accès à l'interface web", toc_sty),
+        Paragraph("6.  Connexion et configuration initiale", toc_sty),
+        Paragraph("6.1  Comptes par défaut", toc_sub),
+        Paragraph("6.2  Changer le mot de passe administrateur", toc_sub),
+        Paragraph("7.  Lancement en arrière-plan / au démarrage Windows", toc_sty),
+        Paragraph("8.  Résolution des problèmes courants", toc_sty),
+        Paragraph("9.  Désinstallation", toc_sty),
+        PageBreak(),
+    ]
+
+    # ══ Chapitre 1 — Prérequis ════════════════════════════════════════════════
+    elems += [
+        Paragraph("1.  Prérequis système", h1), hr(),
+        body and None or Spacer(1, 1),
+        Paragraph(
+            "Avant d'installer HelpDesk IT, vérifiez que votre poste remplit les conditions suivantes :", body),
+        info_table([
+            ("Système d'exploitation", "Windows 10 (version 1903 ou supérieure) ou Windows 11"),
+            ("Architecture",          "64 bits (x64) — obligatoire"),
+            ("RAM",                   "Minimum 512 Mo disponibles (1 Go recommandé)"),
+            ("Espace disque",         "120 Mo pour l'installation + 50 Mo pour les données"),
+            ("Droits",                "Compte <b>Administrateur local</b> pour l'installation"),
+            ("Navigateur",            "Chrome 90+, Firefox 88+, Edge 90+ ou tout navigateur moderne"),
+            ("Port réseau",           "Port TCP <b>8000</b> disponible sur 127.0.0.1 (localhost uniquement)"),
+        ]),
+        Spacer(1, 8),
+        alert("ℹ️", "Aucune connexion Internet n'est requise. HelpDesk IT fonctionne entièrement en local.", LBLUE, BLUE),
+        alert("⚠️", "Si le port 8000 est déjà utilisé, arrêtez l'application conflictuelle avant de lancer HelpDesk IT.", LORAN, ORANGE),
+        PageBreak(),
+    ]
+
+    # ══ Chapitre 2 — Obtenir le MSI ══════════════════════════════════════════
+    elems += [
+        Paragraph("2.  Obtenir le fichier MSI", h1), hr(),
+        Paragraph(
+            "Le fichier <b>HelpDesk_IT_Setup.msi</b> peut être obtenu de deux façons :", body),
+        Paragraph("<b>Option A — Depuis le référentiel de déploiement interne</b>", h3),
+        Paragraph(
+            "Contactez votre administrateur système ou téléchargez le fichier depuis le partage réseau "
+            "ou l'intranet de votre organisation.", body),
+        Paragraph("<b>Option B — Compilation depuis les sources</b>", h3),
+        Paragraph("Si vous disposez des sources du projet, exécutez le script de build :", body),
+        Paragraph("build_msi.bat", code_sty),
+        Paragraph(
+            "Ce script effectue automatiquement les étapes suivantes :", body),
+        Paragraph("1. Vérifie et installe PyInstaller si absent", bullet),
+        Paragraph("2. Vérifie la présence de WiX Toolset v3 (ouvre la page de téléchargement si absent)", bullet),
+        Paragraph("3. Crée l'exécutable autonome avec PyInstaller", bullet),
+        Paragraph("4. Génère le catalogue de fichiers (heat.exe)", bullet),
+        Paragraph("5. Compile et lie le MSI (candle.exe + light.exe)", bullet),
+        Paragraph(
+            "À la fin du build, le fichier <b>HelpDesk_IT_Setup.msi</b> est créé à la racine du projet "
+            "et la fenêtre Explorateur l'affiche automatiquement.", body),
+        alert("ℹ️", "WiX Toolset v3 est requis pour le build. Téléchargez-le sur : https://github.com/wixtoolset/wix3/releases/latest", LBLUE, BLUE),
+        PageBreak(),
+    ]
+
+    # ══ Chapitre 3 — Installation pas à pas ══════════════════════════════════
+    elems += [
+        Paragraph("3.  Installation pas à pas", h1), hr(),
+        Paragraph(
+            "L'installation se fait via un assistant graphique Windows Installer standard. "
+            "Suivez les étapes ci-dessous.", body),
+        Spacer(1, 6),
+        section_hdr("3.1  Lancement de l'assistant"),
+        Spacer(1, 6),
+        step_box("1", "Localiser le fichier MSI",
+            "Naviguez jusqu'au fichier <b>HelpDesk_IT_Setup.msi</b> dans l'Explorateur Windows."),
+        Spacer(1, 4),
+        step_box("2", "Exécuter en tant qu'administrateur",
+            "Clic droit sur <b>HelpDesk_IT_Setup.msi</b> → <b>« Exécuter en tant qu'administrateur »</b>.<br/>"
+            "Si le Contrôle de compte d'utilisateur (UAC) s'affiche, cliquez sur <b>Oui</b>."),
+        Spacer(1, 4),
+        step_box("3", "Écran d'accueil",
+            "L'assistant d'installation s'ouvre. Cliquez sur <b>Suivant</b> pour commencer."),
+        Spacer(1, 10),
+        section_hdr("3.2  Acceptation de la licence"),
+        Spacer(1, 6),
+        step_box("4", "Contrat de licence",
+            "Lisez le contrat de licence utilisateur final (CLUF).<br/>"
+            "Sélectionnez <b>« J'accepte les termes de ce contrat de licence »</b>, puis cliquez sur <b>Suivant</b>."),
+        Spacer(1, 10),
+        section_hdr("3.3  Choix du répertoire d'installation"),
+        Spacer(1, 6),
+        step_box("5", "Répertoire d'installation",
+            "Le répertoire par défaut est :<br/>"
+            "<b>C:\\Program Files\\HelpDesk IT\\</b><br/><br/>"
+            "Pour modifier ce chemin, cliquez sur <b>Parcourir…</b> et sélectionnez le dossier souhaité.<br/>"
+            "Cliquez sur <b>Suivant</b> une fois le chemin défini."),
+        Spacer(1, 4),
+        alert("ℹ️", "Les données utilisateur (base de données) sont stockées séparément dans : "
+              "%APPDATA%\\HelpDesk IT\\  — ce dossier est conservé lors d'une mise à jour.", LBLUE, BLUE),
+        Spacer(1, 10),
+        section_hdr("3.4  Installation et création des raccourcis"),
+        Spacer(1, 6),
+        step_box("6", "Lancer l'installation",
+            "Cliquez sur <b>Installer</b> pour démarrer la copie des fichiers.<br/>"
+            "Une barre de progression indique l'avancement. L'opération dure généralement <b>30 à 60 secondes</b>."),
+        Spacer(1, 4),
+        Paragraph("L'installateur crée automatiquement :", body),
+        Paragraph("• Un raccourci <b>HelpDesk IT</b> sur le Bureau", bullet),
+        Paragraph("• Un raccourci dans le menu <b>Démarrer → HelpDesk IT</b>", bullet),
+        Paragraph("• Une entrée dans <b>Panneau de configuration → Programmes</b> pour la désinstallation", bullet),
+        Spacer(1, 10),
+        section_hdr("3.5  Fin de l'assistant"),
+        Spacer(1, 6),
+        step_box("7", "Terminer l'installation",
+            "Une fois l'installation terminée, cliquez sur <b>Terminer</b>.<br/>"
+            "L'application peut être lancée immédiatement depuis le raccourci bureau."),
+        PageBreak(),
+    ]
+
+    # ══ Chapitre 4 — Premier lancement ════════════════════════════════════════
+    elems += [
+        Paragraph("4.  Premier lancement", h1), hr(),
+        Spacer(1, 4),
+        section_hdr("4.1  Depuis le raccourci bureau"),
+        Spacer(1, 6),
+        step_box("1", "Double-clic sur le raccourci",
+            "Double-cliquez sur l'icône <b>HelpDesk IT</b> présente sur le Bureau.<br/>"
+            "Une fenêtre de console peut apparaître brièvement — c'est normal, le serveur démarre."),
+        Spacer(1, 10),
+        section_hdr("4.2  Depuis le menu Démarrer"),
+        Spacer(1, 6),
+        step_box("2", "Menu Démarrer",
+            "Cliquez sur <b>Démarrer (⊞)</b> → tapez <b>HelpDesk IT</b> → cliquez sur l'application."),
+        Spacer(1, 10),
+        section_hdr("4.3  Comportement au démarrage"),
+        Spacer(1, 6),
+        Paragraph("Au lancement, l'application effectue les opérations suivantes :", body),
+        info_table([
+            ("1. Initialisation",    "Le serveur FastAPI/uvicorn démarre sur <b>127.0.0.1:8000</b>"),
+            ("2. Base de données",   "La base SQLite est créée dans <b>%APPDATA%\\HelpDesk IT\\helpdesk.db</b> si elle n'existe pas"),
+            ("3. Attente serveur",   "L'application attend jusqu'à 30 secondes que le serveur réponde"),
+            ("4. Ouverture navigateur", "Le navigateur par défaut s'ouvre automatiquement sur <b>http://127.0.0.1:8000</b>"),
+        ]),
+        Spacer(1, 8),
+        alert("✅", "Le délai de démarrage habituel est de 3 à 8 secondes selon les performances du poste.", LGREEN, GREEN),
+        alert("⚠️", "Ne fermez pas la fenêtre de console : elle héberge le serveur. "
+              "La fermer arrête l'application.", LORAN, ORANGE),
+        PageBreak(),
+    ]
+
+    # ══ Chapitre 5 — Accès à l'interface ═════════════════════════════════════
+    elems += [
+        Paragraph("5.  Accès à l'interface web", h1), hr(),
+        Paragraph(
+            "HelpDesk IT est une application web accessible depuis n'importe quel navigateur "
+            "installé sur le poste :", body),
+        info_table([
+            ("URL locale",      "<b>http://127.0.0.1:8000</b>  ou  <b>http://localhost:8000</b>"),
+            ("Navigateurs",     "Chrome, Firefox, Edge, Opera (versions récentes)"),
+            ("Accès réseau",    "Par défaut, l'accès est limité à la machine locale (127.0.0.1)"),
+            ("HTTPS",           "Non activé par défaut — utilisation en réseau local uniquement"),
+        ]),
+        Spacer(1, 8),
+        Paragraph(
+            "Si le navigateur ne s'ouvre pas automatiquement, ouvrez-le manuellement "
+            "et saisissez l'URL suivante dans la barre d'adresse :", body),
+        Paragraph("http://127.0.0.1:8000", code_sty),
+        alert("ℹ️", "Pour un accès depuis d'autres postes du réseau, remplacez 127.0.0.1 par l'adresse IP "
+              "du poste hébergeant HelpDesk IT et assurez-vous que le pare-feu autorise le port 8000.", LBLUE, BLUE),
+        PageBreak(),
+    ]
+
+    # ══ Chapitre 6 — Connexion et configuration initiale ═════════════════════
+    elems += [
+        Paragraph("6.  Connexion et configuration initiale", h1), hr(),
+        Spacer(1, 4),
+        section_hdr("6.1  Comptes par défaut"),
+        Spacer(1, 6),
+        Paragraph(
+            "Au premier lancement, la base de données est vide. Exécutez le script de données de test "
+            "pour créer les comptes initiaux (facultatif, démo uniquement) :", body),
+        Paragraph("python seed.py", code_sty),
+        Paragraph("Les comptes créés par seed.py sont :", body),
+        info_table([
+            ("admin  / admin123",   "Administrateur — accès complet"),
+            ("jdupont / tech123",   "Technicien — gestion des tickets"),
+            ("mmartin / user123",   "Utilisateur standard — création de tickets"),
+        ]),
+        Spacer(1, 8),
+        alert("🔴", "IMPORTANT : Changez impérativement le mot de passe administrateur avant toute mise en production.", LRED, RED),
+        Spacer(1, 10),
+        section_hdr("6.2  Créer le premier compte administrateur manuellement"),
+        Spacer(1, 6),
+        Paragraph(
+            "Pour créer un compte sans passer par seed.py, utilisez l'API directement :", body),
+        Paragraph(
+            'Ouvrez PowerShell et exécutez :', body),
+        Paragraph(
+            'Invoke-RestMethod -Method POST -Uri "http://127.0.0.1:8000/api/auth/register" '
+            '-ContentType "application/json" '
+            '-Body \'{"username":"admin","email":"admin@entreprise.fr","password":"MotDePasse!123"}\'',
+            code_sty),
+        Paragraph(
+            "Ensuite, depuis la base SQLite (outil DB Browser for SQLite), "
+            "modifiez la valeur du champ <b>role</b> à <b>admin</b> pour ce compte.", body),
+        alert("ℹ️", "La gestion des rôles est disponible directement dans l'interface pour les administrateurs "
+              "(menu Administration → Utilisateurs).", LBLUE, BLUE),
+        PageBreak(),
+    ]
+
+    # ══ Chapitre 7 — Lancement automatique ═══════════════════════════════════
+    elems += [
+        Paragraph("7.  Lancement en arrière-plan / au démarrage Windows", h1), hr(),
+        Paragraph(
+            "Pour que HelpDesk IT démarre automatiquement avec Windows, "
+            "vous pouvez créer une tâche planifiée :", body),
+        Paragraph("<b>Via l'interface graphique (Planificateur de tâches Windows) :</b>", h3),
+        Paragraph("1. Ouvrez le Planificateur de tâches (taskschd.msc)", bullet),
+        Paragraph('2. Cliquez sur "Créer une tâche de base…"', bullet),
+        Paragraph('3. Nom : <b>HelpDesk IT</b>', bullet),
+        Paragraph('4. Déclencheur : <b>Au démarrage de l\'ordinateur</b>', bullet),
+        Paragraph('5. Action : <b>Démarrer un programme</b>', bullet),
+        Paragraph(r'6. Programme : <b>C:\Program Files\HelpDesk IT\HelpDesk IT.exe</b>', bullet),
+        Paragraph('7. Cochez "Exécuter avec les autorisations maximales"', bullet),
+        Paragraph('8. Validez et testez en redémarrant le poste', bullet),
+        Spacer(1, 8),
+        Paragraph("<b>Via PowerShell (en tant qu'Administrateur) :</b>", h3),
+        Paragraph(
+            r'$action = New-ScheduledTaskAction -Execute "C:\Program Files\HelpDesk IT\HelpDesk IT.exe"' + '\n' +
+            r'$trigger = New-ScheduledTaskTrigger -AtStartup' + '\n' +
+            r'Register-ScheduledTask -TaskName "HelpDesk IT" -Action $action -Trigger $trigger -RunLevel Highest',
+            code_sty),
+        alert("ℹ️", "Le service écoute uniquement sur 127.0.0.1 par défaut. "
+              "Il ne sera pas accessible depuis le réseau sans modification de la configuration.", LBLUE, BLUE),
+        PageBreak(),
+    ]
+
+    # ══ Chapitre 8 — Résolution des problèmes ════════════════════════════════
+    elems += [
+        Paragraph("8.  Résolution des problèmes courants", h1), hr(),
+        Spacer(1, 6),
+    ]
+    issues = [
+        ("Le navigateur ne s'ouvre pas automatiquement",
+         "Ouvrez manuellement votre navigateur et accédez à http://127.0.0.1:8000. "
+         "Vérifiez qu'aucun logiciel de sécurité ne bloque l'ouverture automatique.",
+         LBLUE, BLUE),
+        ("Erreur « Port 8000 déjà utilisé »",
+         "Un autre service utilise le port 8000. Identifiez-le avec la commande PowerShell : "
+         "netstat -ano | findstr :8000\n"
+         "Arrêtez le processus concerné ou modifiez le port dans launcher.py.",
+         LORAN, ORANGE),
+        ("Page blanche ou erreur 502 au chargement",
+         "Le serveur n'a pas encore démarré. Patientez 10 secondes puis rafraîchissez la page (F5). "
+         "Si le problème persiste, relancez l'application.",
+         LORAN, ORANGE),
+        ("Erreur « Impossible de trouver la base de données »",
+         "Vérifiez que le dossier %APPDATA%\\HelpDesk IT\\ existe et est accessible en écriture. "
+         "Ce problème peut survenir si le profil utilisateur est redirigé vers un partage réseau lent.",
+         LORAN, ORANGE),
+        ("L'installation MSI échoue avec le code 1603",
+         "Erreur d'installation générique Windows. Assurez-vous d'exécuter le MSI en tant "
+         "qu'Administrateur (clic droit → Exécuter en tant qu'administrateur). "
+         "Consultez les journaux dans %TEMP%\\MSI*.log.",
+         LRED, RED),
+        ("Antivirus bloque l'exécution",
+         "L'exécutable PyInstaller peut déclencher une fausse alerte. Ajoutez une exclusion "
+         r"dans votre antivirus pour C:\Program Files\HelpDesk IT\.",
+         LORAN, ORANGE),
+    ]
+    for (prob, sol, bg, bd) in issues:
+        elems += [
+            Paragraph(f"<b>Problème :</b> {prob}", h3),
+            alert("→", f"Solution : {sol}", bg, bd),
+            Spacer(1, 6),
+        ]
+
+    elems.append(PageBreak())
+
+    # ══ Chapitre 9 — Désinstallation ═════════════════════════════════════════
+    elems += [
+        Paragraph("9.  Désinstallation", h1), hr(),
+        Paragraph("<b>Méthode 1 — Via le Panneau de configuration :</b>", h3),
+        Paragraph("1. Ouvrez <b>Panneau de configuration → Programmes → Programmes et fonctionnalités</b>", bullet),
+        Paragraph("2. Sélectionnez <b>HelpDesk IT</b> dans la liste", bullet),
+        Paragraph("3. Cliquez sur <b>Désinstaller</b> et confirmez", bullet),
+        Spacer(1, 6),
+        Paragraph("<b>Méthode 2 — Via les Paramètres Windows 11 :</b>", h3),
+        Paragraph("1. <b>Démarrer → Paramètres → Applications → Applications installées</b>", bullet),
+        Paragraph("2. Recherchez <b>HelpDesk IT</b>", bullet),
+        Paragraph("3. Cliquez sur les trois points ⋮ → <b>Désinstaller</b>", bullet),
+        Spacer(1, 6),
+        Paragraph("<b>Méthode 3 — Via PowerShell (silencieux) :</b>", h3),
+        Paragraph('$app = Get-WmiObject Win32_Product | Where-Object { $_.Name -eq "HelpDesk IT" }\n$app.Uninstall()', code_sty),
+        Spacer(1, 8),
+        alert("ℹ️", "La désinstallation supprime les fichiers du programme mais conserve "
+              "les données dans %APPDATA%\\HelpDesk IT\\ (base de données et configuration). "
+              "Supprimez ce dossier manuellement pour effacer toutes les données.", LBLUE, BLUE),
+        alert("⚠️", "Fermez HelpDesk IT avant de désinstaller pour éviter les fichiers verrouillés.", LORAN, ORANGE),
+        Spacer(1, 20),
+        HRFlowable(width="100%", thickness=1, color=colors.HexColor("#e0e0e0"), spaceAfter=8),
+        Paragraph(
+            f"HelpDesk IT v1.0  •  Procédure d'installation  •  "
+            f"Généré le {datetime.now().strftime('%d/%m/%Y à %H:%M')}  •  {current_user.username}",
+            sty("ft", fontSize=8, fontName="Helvetica", textColor=GREY, alignment=TA_CENTER)
+        ),
+    ]
+
+    doc.build(elems)
+    buf.seek(0)
+    filename = f"helpdesk_installation_{datetime.now().strftime('%Y%m%d')}.pdf"
+    return StreamingResponse(
+        iter([buf.getvalue()]),
+        media_type="application/pdf",
+        headers={"Content-Disposition": f"attachment; filename={filename}"},
+    )
+
+
 @router.get("/export/pdf")
 def export_tickets_pdf(
     status: Optional[str] = Query(None),

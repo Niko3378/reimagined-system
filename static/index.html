@@ -1239,6 +1239,9 @@
           <button class="btn btn-outline-info btn-sm" onclick="downloadDocumentation()">
             <i class="fas fa-book me-1"></i>Documentation PDF
           </button>
+          <button class="btn btn-outline-success btn-sm" onclick="downloadInstallPDF()">
+            <i class="fas fa-download me-1"></i>Guide d'installation PDF
+          </button>
           <button class="btn btn-outline-secondary btn-sm" onclick="loadCatalogue()">
             <i class="fas fa-sync me-1"></i>Actualiser
           </button>
@@ -4113,6 +4116,25 @@ async function downloadDocumentation() {
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     URL.revokeObjectURL(url);
     toast('Documentation PDF téléchargée !');
+  } catch (e) {
+    toast('Erreur : ' + e.message, 'danger');
+  }
+}
+
+async function downloadInstallPDF() {
+  try {
+    const res = await fetch('/api/tickets/install/pdf', {
+      headers: { 'Authorization': `Bearer ${API.token}` },
+    });
+    if (!res.ok) { toast('Erreur lors de la génération du guide d\'installation', 'danger'); return; }
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `helpdesk_installation_${new Date().toISOString().slice(0,10)}.pdf`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast('Guide d\'installation PDF téléchargé !');
   } catch (e) {
     toast('Erreur : ' + e.message, 'danger');
   }
