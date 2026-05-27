@@ -799,6 +799,17 @@ def seed(force=False):
              (6, "Vérifier le retour à la normale", "Confirmer la connectivité sur l'ensemble du périmètre touché. Tester les services critiques (AD, DNS, accès Internet, serveurs)."),
              (7, "Documenter et clore", "Rédiger le compte-rendu d'incident : cause, actions, durée de l'interruption. Clore le ticket et notifier les utilisateurs."),
          ]),
+        ("Prise en charge virus et malware", "virus",
+         "Processus de traitement d'une infection virale ou malware sur un poste ou serveur", [
+             (1, "Isoler immédiatement le poste infecté", "Déconnecter le poste du réseau (câble et WiFi) sans l'éteindre pour préserver les traces en mémoire. Bloquer le compte utilisateur en parallèle."),
+             (2, "Identifier et qualifier la menace", "Relever le nom du malware détecté, sa famille et son vecteur d'infection (email, clé USB, téléchargement). Évaluer si d'autres postes sont potentiellement touchés."),
+             (3, "Analyser l'étendue de la compromission", "Inspecter les logs de l'antivirus, du firewall et de l'AD pour détecter des mouvements latéraux, des connexions suspectes ou des transferts de données."),
+             (4, "Notifier les parties prenantes", "Informer le RSSI, la direction et si nécessaire la CNIL (en cas de fuite de données personnelles sous 72h). Documenter toutes les actions horodatées."),
+             (5, "Nettoyer ou réinstaller le système", "Tenter une désinfection via l'antivirus en mode sans échec. En cas d'échec ou de doute, réinstaller proprement l'OS depuis une image saine."),
+             (6, "Restaurer les données et vérifier", "Restaurer les fichiers depuis une sauvegarde antérieure à l'infection. Vérifier l'intégrité des données restaurées avant reconnexion au réseau."),
+             (7, "Reconnecter et surveiller", "Reconnecter le poste au réseau après validation. Renforcer la surveillance (EDR, logs) pendant 72h et changer les mots de passe de l'utilisateur concerné."),
+             (8, "Rédiger le rapport et corriger les failles", "Documenter l'incident complet, identifier la faille exploitée et appliquer les correctifs (patch, politique, sensibilisation) pour éviter la récidive."),
+         ]),
         ("Demande d'accès VPN", "demande_vpn",
          "Processus de création et configuration d'un accès VPN pour travail à distance", [
              (1, "Valider la demande avec le responsable", "Vérifier que le besoin est justifié (télétravail, déplacement, prestataire) et obtenir la validation écrite du responsable hiérarchique."),
