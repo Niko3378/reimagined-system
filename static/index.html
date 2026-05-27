@@ -311,6 +311,11 @@
           </ul>
         </div>
       </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#" data-view="advanced-search">
+          <i class="fas fa-search-plus"></i>Recherche avancée
+        </a>
+      </li>
       <li class="nav-item mt-3" id="admin-nav-item" style="display:none">
         <div class="px-3 mb-1 text-uppercase small text-muted fw-bold" style="font-size:.7rem">Administration</div>
       </li>
@@ -809,6 +814,149 @@
       <div id="demandes-container"></div>
     </div>
 
+    <!-- ── Recherche avancée ── -->
+    <div id="view-advanced-search" style="display:none">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="fw-bold mb-0"><i class="fas fa-search-plus me-2 text-primary"></i>Recherche avancée</h5>
+        <div class="d-flex gap-2">
+          <button class="btn btn-outline-secondary btn-sm" id="adv-load-saved" data-bs-toggle="modal" data-bs-target="#savedSearchModal">
+            <i class="fas fa-bookmark me-1"></i>Recherches sauvegardées
+          </button>
+          <button class="btn btn-outline-primary btn-sm" id="adv-save-search">
+            <i class="fas fa-save me-1"></i>Sauvegarder
+          </button>
+        </div>
+      </div>
+
+      <div class="card mb-3">
+        <div class="card-body">
+          <div class="row g-3">
+
+            <!-- Recherche full-text -->
+            <div class="col-12">
+              <label class="form-label fw-semibold small">Recherche (titre et description)</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                <input type="text" class="form-control" id="adv-fulltext" placeholder="Mot-clé dans le titre ou la description...">
+              </div>
+            </div>
+
+            <!-- Statuts (multi) -->
+            <div class="col-md-6">
+              <label class="form-label fw-semibold small">Statuts</label>
+              <div class="d-flex flex-wrap gap-2" id="adv-statuses">
+                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" value="ouvert" id="adv-s-ouvert"><label class="form-check-label" for="adv-s-ouvert"><span class="badge badge-ouvert">Ouvert</span></label></div>
+                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" value="en_cours" id="adv-s-en_cours"><label class="form-check-label" for="adv-s-en_cours"><span class="badge badge-en_cours">En cours</span></label></div>
+                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" value="resolu" id="adv-s-resolu"><label class="form-check-label" for="adv-s-resolu"><span class="badge badge-resolu">Résolu</span></label></div>
+                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" value="ferme" id="adv-s-ferme"><label class="form-check-label" for="adv-s-ferme"><span class="badge badge-ferme">Fermé</span></label></div>
+              </div>
+            </div>
+
+            <!-- Priorités (multi) -->
+            <div class="col-md-6">
+              <label class="form-label fw-semibold small">Priorités</label>
+              <div class="d-flex flex-wrap gap-2" id="adv-priorities">
+                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" value="faible" id="adv-p-faible"><label class="form-check-label" for="adv-p-faible"><span class="badge badge-faible">Faible</span></label></div>
+                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" value="normale" id="adv-p-normale"><label class="form-check-label" for="adv-p-normale"><span class="badge badge-normale">Normale</span></label></div>
+                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" value="haute" id="adv-p-haute"><label class="form-check-label" for="adv-p-haute"><span class="badge badge-haute">Haute</span></label></div>
+                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" value="critique" id="adv-p-critique"><label class="form-check-label" for="adv-p-critique"><span class="badge badge-critique">Critique</span></label></div>
+              </div>
+            </div>
+
+            <!-- Type -->
+            <div class="col-md-4">
+              <label class="form-label fw-semibold small">Type</label>
+              <select class="form-select form-select-sm" id="adv-type">
+                <option value="">Tous les types</option>
+                <optgroup label="Incidents">
+                  <option value="incident">Incident</option>
+                  <option value="panne">Panne</option>
+                  <option value="dysfonctionnement">Dysfonctionnement</option>
+                  <option value="alerte_securite">Alerte sécurité</option>
+                  <option value="coupure_reseau">Coupure réseau</option>
+                  <option value="intrusion">Intrusion</option>
+                  <option value="perte_donnees">Perte de données</option>
+                  <option value="surcharge_systeme">Surcharge système</option>
+                  <option value="panne_electrique">Panne électrique</option>
+                </optgroup>
+                <optgroup label="Demandes">
+                  <option value="demande">Demande</option>
+                  <option value="demande_acces">Demande d'accès</option>
+                  <option value="demande_installation">Demande d'installation</option>
+                  <option value="demande_materiel">Demande de matériel</option>
+                  <option value="demande_information">Demande d'information</option>
+                  <option value="demande_formation">Demande de formation</option>
+                  <option value="demande_sauvegarde">Demande de sauvegarde</option>
+                  <option value="demande_demenagement">Demande de déménagement</option>
+                  <option value="demande_licence">Demande de licence</option>
+                </optgroup>
+              </select>
+            </div>
+
+            <!-- Catégorie -->
+            <div class="col-md-4">
+              <label class="form-label fw-semibold small">Catégorie</label>
+              <select class="form-select form-select-sm" id="adv-category">
+                <option value="">Toutes catégories</option>
+                <option value="logiciel">Logiciel</option>
+                <option value="materiel">Matériel</option>
+                <option value="reseau">Réseau</option>
+                <option value="securite">Sécurité</option>
+                <option value="telephonie">Téléphonie</option>
+                <option value="imprimante">Imprimante</option>
+                <option value="autre">Autre</option>
+              </select>
+            </div>
+
+            <!-- Assigné -->
+            <div class="col-md-4">
+              <label class="form-label fw-semibold small">Assigné à</label>
+              <select class="form-select form-select-sm" id="adv-assignee">
+                <option value="">Tous</option>
+                <option value="unassigned">— Non assigné</option>
+              </select>
+            </div>
+
+            <!-- Créateur -->
+            <div class="col-md-4">
+              <label class="form-label fw-semibold small">Créé par</label>
+              <select class="form-select form-select-sm" id="adv-creator">
+                <option value="">Tous les utilisateurs</option>
+              </select>
+            </div>
+
+            <!-- Date de -->
+            <div class="col-md-4">
+              <label class="form-label fw-semibold small">Créé du</label>
+              <input type="date" class="form-control form-control-sm" id="adv-date-from">
+            </div>
+
+            <!-- Date à -->
+            <div class="col-md-4">
+              <label class="form-label fw-semibold small">Au</label>
+              <input type="date" class="form-control form-control-sm" id="adv-date-to">
+            </div>
+
+            <!-- Actions -->
+            <div class="col-12 d-flex justify-content-between align-items-center mt-2">
+              <button class="btn btn-outline-secondary btn-sm" id="adv-reset">
+                <i class="fas fa-times me-1"></i>Réinitialiser
+              </button>
+              <button class="btn btn-primary" id="adv-search">
+                <i class="fas fa-search me-1"></i>Rechercher
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Résultats -->
+      <div id="adv-results-header" class="d-none mb-2">
+        <span class="text-muted small" id="adv-results-count"></span>
+      </div>
+      <div id="adv-results-container"></div>
+    </div>
+
     <!-- ── Admin users ── -->
     <div id="view-admin-users" style="display:none">
       <h5 class="fw-bold mb-4"><i class="fas fa-users-cog me-2 text-primary"></i>Gestion des utilisateurs</h5>
@@ -994,6 +1142,23 @@
             <div id="history-list"></div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SAVED SEARCHES MODAL
+══════════════════════════════════════════ -->
+<div class="modal fade" id="savedSearchModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="fas fa-bookmark me-2 text-primary"></i>Recherches sauvegardées</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="saved-searches-list">
+        <p class="text-muted small text-center">Aucune recherche sauvegardée.</p>
       </div>
     </div>
   </div>
@@ -1259,7 +1424,7 @@ async function loadTechUsers() {
 // ════════════════════════════════════════════
 // NAVIGATION
 // ════════════════════════════════════════════
-const VIEWS = ['dashboard', 'my-tickets', 'all-tickets', 'incidents', 'demandes', 'admin-users'];
+const VIEWS = ['dashboard', 'my-tickets', 'all-tickets', 'incidents', 'demandes', 'advanced-search', 'admin-users'];
 
 function showView(name) {
   VIEWS.forEach(v => {
@@ -1300,6 +1465,7 @@ function loadView(name) {
   else if (name === 'all-tickets') { loadStaffFilter(); loadTicketList('all-tickets-container', {}); }
   else if (name === 'incidents') loadGroupView('incidents');
   else if (name === 'demandes') loadGroupView('demandes');
+  else if (name === 'advanced-search') loadAdvSearchUsers();
   else if (name === 'admin-users') loadAdminUsers();
 }
 
@@ -2072,6 +2238,193 @@ async function changeRole(userId, role) {
   } catch (err) {
     toast(err.message, 'danger');
   }
+}
+
+// ════════════════════════════════════════════
+// RECHERCHE AVANCÉE
+// ════════════════════════════════════════════
+function getAdvFilters() {
+  const statuses   = [...document.querySelectorAll('#adv-statuses input:checked')].map(i => i.value);
+  const priorities = [...document.querySelectorAll('#adv-priorities input:checked')].map(i => i.value);
+  const assigneeVal = document.getElementById('adv-assignee').value;
+  return {
+    full_text:  document.getElementById('adv-fulltext').value.trim(),
+    statuses:   statuses.join(','),
+    priorities: priorities.join(','),
+    type:       document.getElementById('adv-type').value,
+    category:   document.getElementById('adv-category').value,
+    unassigned: assigneeVal === 'unassigned',
+    assigned_to_id: assigneeVal !== 'unassigned' ? assigneeVal : '',
+    creator_id: document.getElementById('adv-creator').value,
+    date_from:  document.getElementById('adv-date-from').value,
+    date_to:    document.getElementById('adv-date-to').value,
+  };
+}
+
+function applyAdvFilters(filters) {
+  if (filters.statuses) {
+    filters.statuses.split(',').forEach(v => {
+      const el = document.getElementById(`adv-s-${v}`);
+      if (el) el.checked = true;
+    });
+  }
+  if (filters.priorities) {
+    filters.priorities.split(',').forEach(v => {
+      const el = document.getElementById(`adv-p-${v}`);
+      if (el) el.checked = true;
+    });
+  }
+  document.getElementById('adv-fulltext').value        = filters.full_text || '';
+  document.getElementById('adv-type').value            = filters.type || '';
+  document.getElementById('adv-category').value        = filters.category || '';
+  document.getElementById('adv-date-from').value       = filters.date_from || '';
+  document.getElementById('adv-date-to').value         = filters.date_to || '';
+  document.getElementById('adv-creator').value         = filters.creator_id || '';
+  const assigneeSel = document.getElementById('adv-assignee');
+  if (filters.unassigned) assigneeSel.value = 'unassigned';
+  else assigneeSel.value = filters.assigned_to_id || '';
+}
+
+async function runAdvSearch(filters) {
+  const qs = new URLSearchParams();
+  if (filters.full_text)    qs.set('full_text',    filters.full_text);
+  if (filters.statuses)     qs.set('statuses',     filters.statuses);
+  if (filters.priorities)   qs.set('priorities',   filters.priorities);
+  if (filters.type)         qs.set('type',         filters.type);
+  if (filters.category)     qs.set('category',     filters.category);
+  if (filters.unassigned)   qs.set('unassigned',   'true');
+  else if (filters.assigned_to_id) qs.set('assigned_to_id', filters.assigned_to_id);
+  if (filters.creator_id)   qs.set('creator_id',   filters.creator_id);
+  if (filters.date_from)    qs.set('date_from',    filters.date_from);
+  if (filters.date_to)      qs.set('date_to',      filters.date_to);
+
+  try {
+    const tickets = await API.get('/tickets/?' + qs.toString());
+    const header = document.getElementById('adv-results-header');
+    const count  = document.getElementById('adv-results-count');
+    header.classList.remove('d-none');
+    count.textContent = `${tickets.length} résultat${tickets.length !== 1 ? 's' : ''}`;
+    const c = document.getElementById('adv-results-container');
+    c.innerHTML = buildTicketTable(tickets);
+    attachTicketClicks(c);
+  } catch (err) {
+    toast(err.message, 'danger');
+  }
+}
+
+function resetAdvSearch() {
+  document.getElementById('adv-fulltext').value = '';
+  document.querySelectorAll('#adv-statuses input, #adv-priorities input').forEach(i => i.checked = false);
+  ['adv-type','adv-category','adv-assignee','adv-creator'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('adv-date-from').value = '';
+  document.getElementById('adv-date-to').value = '';
+  document.getElementById('adv-results-header').classList.add('d-none');
+  document.getElementById('adv-results-container').innerHTML = '';
+}
+
+// Recherches sauvegardées
+function getSavedSearches() {
+  return JSON.parse(localStorage.getItem(`saved_searches_${state.user?.id}`) || '[]');
+}
+
+function saveSearch(name, filters) {
+  const searches = getSavedSearches();
+  const existing = searches.findIndex(s => s.name === name);
+  if (existing >= 0) searches[existing] = { name, filters };
+  else searches.unshift({ name, filters });
+  localStorage.setItem(`saved_searches_${state.user?.id}`, JSON.stringify(searches.slice(0, 5)));
+}
+
+function deleteSavedSearch(name) {
+  const searches = getSavedSearches().filter(s => s.name !== name);
+  localStorage.setItem(`saved_searches_${state.user?.id}`, JSON.stringify(searches));
+}
+
+function renderSavedSearches() {
+  const searches = getSavedSearches();
+  const el = document.getElementById('saved-searches-list');
+  if (!searches.length) {
+    el.innerHTML = '<p class="text-muted small text-center">Aucune recherche sauvegardée.</p>';
+    return;
+  }
+  el.innerHTML = searches.map(s => `
+    <div class="d-flex justify-content-between align-items-center p-2 border rounded mb-2">
+      <div>
+        <div class="fw-semibold small">${escHtml(s.name)}</div>
+        <div class="text-muted" style="font-size:.7rem">${summarizeSearch(s.filters)}</div>
+      </div>
+      <div class="d-flex gap-1">
+        <button class="btn btn-sm btn-outline-primary" onclick="loadSavedSearch('${escHtml(s.name)}')">
+          <i class="fas fa-play"></i>
+        </button>
+        <button class="btn btn-sm btn-outline-danger" onclick="deleteSavedSearchAndRefresh('${escHtml(s.name)}')">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    </div>`).join('');
+}
+
+function summarizeSearch(f) {
+  const parts = [];
+  if (f.full_text)  parts.push(`"${f.full_text}"`);
+  if (f.statuses)   parts.push(f.statuses.split(',').join(', '));
+  if (f.priorities) parts.push(f.priorities.split(',').join(', '));
+  if (f.type)       parts.push(f.type);
+  if (f.date_from)  parts.push(`du ${f.date_from}`);
+  if (f.date_to)    parts.push(`au ${f.date_to}`);
+  return parts.join(' · ') || 'Tous les tickets';
+}
+
+function loadSavedSearch(name) {
+  const s = getSavedSearches().find(s => s.name === name);
+  if (!s) return;
+  bootstrap.Modal.getInstance(document.getElementById('savedSearchModal'))?.hide();
+  resetAdvSearch();
+  applyAdvFilters(s.filters);
+  runAdvSearch(s.filters);
+}
+
+function deleteSavedSearchAndRefresh(name) {
+  deleteSavedSearch(name);
+  renderSavedSearches();
+  toast('Recherche supprimée');
+}
+
+document.getElementById('adv-search').addEventListener('click', () => runAdvSearch(getAdvFilters()));
+document.getElementById('adv-reset').addEventListener('click', resetAdvSearch);
+document.getElementById('adv-fulltext').addEventListener('keydown', e => {
+  if (e.key === 'Enter') runAdvSearch(getAdvFilters());
+});
+
+document.getElementById('adv-save-search').addEventListener('click', () => {
+  const filters = getAdvFilters();
+  const hasFilter = filters.full_text || filters.statuses || filters.priorities ||
+                    filters.type || filters.category || filters.date_from || filters.date_to;
+  if (!hasFilter) { toast('Définissez au moins un critère avant de sauvegarder', 'warning'); return; }
+  const name = prompt('Nom de la recherche :');
+  if (!name?.trim()) return;
+  saveSearch(name.trim(), filters);
+  toast(`Recherche "${name}" sauvegardée !`);
+});
+
+document.getElementById('savedSearchModal').addEventListener('show.bs.modal', renderSavedSearches);
+
+async function loadAdvSearchUsers() {
+  try {
+    const users = await API.get('/users/');
+    const creatorSel  = document.getElementById('adv-creator');
+    const assigneeSel = document.getElementById('adv-assignee');
+    users.forEach(u => {
+      const opt1 = document.createElement('option');
+      opt1.value = u.id; opt1.textContent = u.username;
+      creatorSel.appendChild(opt1);
+      if (['technician','admin'].includes(u.role)) {
+        const opt2 = document.createElement('option');
+        opt2.value = u.id; opt2.textContent = u.username;
+        assigneeSel.appendChild(opt2);
+      }
+    });
+  } catch (_) {}
 }
 
 // ════════════════════════════════════════════

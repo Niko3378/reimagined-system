@@ -42,21 +42,31 @@ def _record_history(db, ticket_id: int, user_id: int, field: str, old_val, new_v
 @router.get("/", response_model=List[schemas.TicketListOut])
 def list_tickets(
     status: Optional[str] = Query(None),
+    statuses: Optional[str] = Query(None),       # ex: "ouvert,en_cours"
     type: Optional[str] = Query(None),
     type_group: Optional[str] = Query(None),
     priority: Optional[str] = Query(None),
+    priorities: Optional[str] = Query(None),     # ex: "haute,critique"
     category: Optional[str] = Query(None),
     assigned_to_id: Optional[int] = Query(None),
+    creator_id: Optional[int] = Query(None),
     unassigned: bool = Query(False),
     mine: bool = Query(False),
     search: Optional[str] = Query(None),
+    full_text: Optional[str] = Query(None),       # recherche titre + description
+    date_from: Optional[str] = Query(None),       # YYYY-MM-DD
+    date_to: Optional[str] = Query(None),         # YYYY-MM-DD
     db: Session = Depends(get_db),
     current_user: models.User = Depends(auth.get_current_user),
 ):
     q = db.query(models.Ticket)
     if mine:
         q = q.filter(models.Ticket.created_by_id == current_user.id)
-    if status:
+    if creator_id is not None:
+        q = q.filter(models.Ticket.created_by_id == creator_id)
+    if statuses:
+        q = q.filter(models.Ticket.status.in_(statuses.split(",")))
+    elif status:
         q = q.filter(models.Ticket.status == status)
     if type:
         q = q.filter(models.Ticket.type == type)
@@ -64,7 +74,9 @@ def list_tickets(
         q = q.filter(models.Ticket.type.in_(INCIDENT_TYPES))
     elif type_group == "demande":
         q = q.filter(models.Ticket.type.in_(DEMANDE_TYPES))
-    if priority:
+    if priorities:
+        q = q.filter(models.Ticket.priority.in_(priorities.split(",")))
+    elif priority:
         q = q.filter(models.Ticket.priority == priority)
     if category:
         q = q.filter(models.Ticket.category == category)
@@ -72,8 +84,17 @@ def list_tickets(
         q = q.filter(models.Ticket.assigned_to_id == None)
     elif assigned_to_id is not None:
         q = q.filter(models.Ticket.assigned_to_id == assigned_to_id)
-    if search:
+    if full_text:
+        term = f"%{full_text}%"
+        q = q.filter(
+            models.Ticket.title.ilike(term) | models.Ticket.description.ilike(term)
+        )
+    elif search:
         q = q.filter(models.Ticket.title.ilike(f"%{search}%"))
+    if date_from:
+        q = q.filter(models.Ticket.created_at >= date_from)
+    if date_to:
+        q = q.filter(models.Ticket.created_at <= date_to + " 23:59:59")
     return q.order_by(models.Ticket.created_at.desc()).all()
 
 
