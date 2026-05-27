@@ -799,6 +799,16 @@ def seed(force=False):
              (6, "Vérifier le retour à la normale", "Confirmer la connectivité sur l'ensemble du périmètre touché. Tester les services critiques (AD, DNS, accès Internet, serveurs)."),
              (7, "Documenter et clore", "Rédiger le compte-rendu d'incident : cause, actions, durée de l'interruption. Clore le ticket et notifier les utilisateurs."),
          ]),
+        ("Prise en charge panne matérielle", "panne",
+         "Processus de diagnostic et de résolution d'une panne matérielle sur un équipement informatique", [
+             (1, "Qualifier la panne et l'impact", "Identifier l'équipement en panne (PC, serveur, imprimante, switch...), le nombre d'utilisateurs impactés et l'urgence métier. Vérifier si un équipement de remplacement est disponible."),
+             (2, "Diagnostiquer la panne", "Effectuer les tests de base : alimentation, câbles, voyants. Consulter les journaux système et les alertes de supervision. Identifier la composante défaillante (disque, RAM, alimentation, carte mère, etc.)."),
+             (3, "Mettre en place une solution de contournement", "Si possible, fournir un équipement de prêt pour limiter l'impact sur l'utilisateur pendant la résolution (poste de remplacement, imprimante alternative, etc.)."),
+             (4, "Commander la pièce ou l'équipement de remplacement", "Vérifier si la pièce est en stock. Si non, passer la commande auprès du fournisseur ou activer la garantie constructeur. Suivre le délai de livraison."),
+             (5, "Effectuer la réparation ou le remplacement", "Remplacer la pièce défaillante ou l'équipement complet. Réinstaller et reconfigurer le système si nécessaire (OS, pilotes, logiciels, jonction domaine)."),
+             (6, "Tester et valider le bon fonctionnement", "Vérifier que l'équipement réparé fonctionne correctement. Tester toutes les fonctionnalités utilisées par l'utilisateur (réseau, impression, applications métier)."),
+             (7, "Restituer à l'utilisateur et clore", "Remettre l'équipement à l'utilisateur, récupérer le matériel de prêt si applicable. Mettre à jour l'inventaire du parc et fermer le ticket."),
+         ]),
         ("Réponse à une attaque ransomware", "ransomware",
          "Processus de gestion de crise et de remédiation suite à une attaque ransomware", [
              (1,  "Isolation d'urgence du système d'information", "Couper immédiatement tous les accès réseau (switch, WiFi, VPN). Isoler physiquement les machines chiffrées sans les éteindre pour préserver la mémoire vive et les traces forensiques."),
