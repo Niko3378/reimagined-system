@@ -127,6 +127,56 @@
     .badge-demande_audit_securite { background: #006064; }
     .badge-demande_intervention_site { background: #e65100; }
     .badge-demande_certificat_ssl { background: #1565c0; }
+    .badge-lenteur_systeme { background: #6d4c41; }
+    .badge-mise_a_jour_echouee { background: #455a64; }
+    .badge-certificat_expire { background: #f57f17; }
+    .badge-sauvegarde_echouee { background: #bf360c; }
+    .badge-attaque_ddos { background: #b71c1c; }
+    .badge-acces_non_autorise { background: #880e4f; }
+    .badge-perte_connexion_wifi { background: #0277bd; }
+    .badge-messagerie_indisponible { background: #4527a0; }
+    .badge-partage_reseau_inaccessible { background: #37474f; }
+    .badge-application_lente { background: #546e7a; }
+    .badge-ecran_noir { background: #212121; }
+    .badge-clavier_souris_defaillant { background: #4e342e; }
+    .badge-son_defaillant { background: #6a1b9a; }
+    .badge-logiciel_non_autorise { background: #e65100; }
+    .badge-erreur_connexion_vpn { background: #1a237e; }
+    .badge-synchronisation_echouee { background: #004d40; }
+    .badge-onduleur_defaillant { background: #827717; }
+    .badge-stockage_plein { background: #bf360c; }
+    .badge-usurpation_identite { background: #b71c1c; }
+    .badge-base_donnees_corrompue { background: #c62828; }
+    .badge-incompatibilite_logicielle { background: #5d4037; }
+    .badge-camera_defaillante { background: #37474f; }
+    .badge-perte_connexion_internet { background: #0277bd; }
+    .badge-interruption_cloud { background: #1565c0; }
+    .badge-erreur_authentification { background: #6a1b9a; }
+    .badge-demande_extension_stockage { background: #1b5e20; }
+    .badge-demande_redirection_mail { background: #006064; }
+    .badge-demande_groupe_securite { background: #1a237e; }
+    .badge-demande_partage_reseau { background: #004d40; }
+    .badge-demande_restauration { background: #bf360c; }
+    .badge-demande_tele_travail { background: #4527a0; }
+    .badge-demande_poste_remplacement { background: #37474f; }
+    .badge-demande_mise_en_service { background: #1b5e20; }
+    .badge-demande_chiffrement { background: #0277bd; }
+    .badge-demande_double_authentification { background: #4a148c; }
+    .badge-demande_revision_droits { background: #e65100; }
+    .badge-demande_telephone_ip { background: #006064; }
+    .badge-demande_nettoyage_poste { background: #455a64; }
+    .badge-demande_migration_donnees { background: #827717; }
+    .badge-demande_formation_securite { background: #1565c0; }
+    .badge-demande_mise_a_jour_firmware { background: #546e7a; }
+    .badge-demande_salle_reunion { background: #5d4037; }
+    .badge-demande_signature_mail { background: #004d40; }
+    .badge-demande_rapport_activite { background: #37474f; }
+    .badge-demande_antivirus { background: #1b5e20; }
+    .badge-demande_scan_securite { background: #880e4f; }
+    .badge-demande_connexion_bureau_distant { background: #1a237e; }
+    .badge-demande_acces_applicatif { background: #006064; }
+    .badge-demande_supervision { background: #455a64; }
+    .badge-demande_changement_mdp { background: #4527a0; }
 
     /* ── Ticket detail ── */
     .modal-xl { max-width: 900px; }
@@ -691,7 +741,7 @@
     <div id="view-all-tickets" style="display:none">
       <div class="d-flex justify-content-between align-items-center mb-4">
         <div class="d-flex align-items-center gap-2">
-          <h5 class="fw-bold mb-0"><i class="fas fa-list me-2 text-primary"></i>Tous les tickets</h5>
+          <h5 class="fw-bold mb-0"><i class="fas fa-list me-2 text-primary"></i>Tous les tickets <span id="all-tickets-count" class="badge bg-secondary ms-1" style="font-size:.75rem">—</span></h5>
           <button id="all-tickets-unassigned-toggle" class="btn btn-outline-secondary btn-sm">
             <i class="fas fa-user-slash me-1"></i>Non assignés
           </button>
@@ -755,6 +805,31 @@
                   <option value="spam_massif">Spam massif</option>
                   <option value="defaillance_serveur">Défaillance serveur</option>
                   <option value="coupure_telephonie">Coupure téléphonie</option>
+                  <option value="lenteur_systeme">Lenteur système / PC</option>
+                  <option value="mise_a_jour_echouee">Mise à jour échouée</option>
+                  <option value="certificat_expire">Certificat expiré</option>
+                  <option value="sauvegarde_echouee">Échec de sauvegarde</option>
+                  <option value="attaque_ddos">Attaque DDoS</option>
+                  <option value="acces_non_autorise">Accès non autorisé</option>
+                  <option value="perte_connexion_wifi">Perte connexion Wi-Fi</option>
+                  <option value="messagerie_indisponible">Messagerie indisponible</option>
+                  <option value="partage_reseau_inaccessible">Partage réseau inaccessible</option>
+                  <option value="application_lente">Application lente / plantée</option>
+                  <option value="ecran_noir">Écran noir / sans signal</option>
+                  <option value="clavier_souris_defaillant">Clavier ou souris défaillant</option>
+                  <option value="son_defaillant">Problème son / audio</option>
+                  <option value="logiciel_non_autorise">Logiciel non autorisé</option>
+                  <option value="erreur_connexion_vpn">Erreur connexion VPN</option>
+                  <option value="synchronisation_echouee">Échec synchronisation</option>
+                  <option value="onduleur_defaillant">Défaillance onduleur</option>
+                  <option value="stockage_plein">Disque / stockage plein</option>
+                  <option value="usurpation_identite">Usurpation d'identité</option>
+                  <option value="base_donnees_corrompue">Base de données corrompue</option>
+                  <option value="incompatibilite_logicielle">Incompatibilité logicielle</option>
+                  <option value="camera_defaillante">Caméra / webcam défaillante</option>
+                  <option value="perte_connexion_internet">Perte connexion Internet</option>
+                  <option value="interruption_cloud">Interruption service cloud</option>
+                  <option value="erreur_authentification">Erreur d'authentification</option>
                 </optgroup>
                 <optgroup label="Demandes">
                   <option value="demande">Demande</option>
@@ -782,6 +857,31 @@
                   <option value="demande_audit_securite">Audit de sécurité</option>
                   <option value="demande_intervention_site">Intervention sur site</option>
                   <option value="demande_certificat_ssl">Certificat SSL / PKI</option>
+                  <option value="demande_extension_stockage">Extension de stockage</option>
+                  <option value="demande_redirection_mail">Redirection / alias email</option>
+                  <option value="demande_groupe_securite">Groupe de sécurité (AD)</option>
+                  <option value="demande_partage_reseau">Partage réseau</option>
+                  <option value="demande_restauration">Restauration de données</option>
+                  <option value="demande_tele_travail">Équipement télétravail</option>
+                  <option value="demande_poste_remplacement">Remplacement de poste</option>
+                  <option value="demande_mise_en_service">Mise en service matériel</option>
+                  <option value="demande_chiffrement">Chiffrement de poste</option>
+                  <option value="demande_double_authentification">Activation 2FA / MFA</option>
+                  <option value="demande_revision_droits">Révision droits d'accès</option>
+                  <option value="demande_telephone_ip">Téléphone IP / VoIP</option>
+                  <option value="demande_nettoyage_poste">Nettoyage / optimisation</option>
+                  <option value="demande_migration_donnees">Migration de données</option>
+                  <option value="demande_formation_securite">Formation cybersécurité</option>
+                  <option value="demande_mise_a_jour_firmware">Mise à jour firmware</option>
+                  <option value="demande_salle_reunion">Équipement salle de réunion</option>
+                  <option value="demande_signature_mail">Signature email</option>
+                  <option value="demande_rapport_activite">Rapport / extraction de données</option>
+                  <option value="demande_antivirus">Installation antivirus</option>
+                  <option value="demande_scan_securite">Scan de sécurité</option>
+                  <option value="demande_connexion_bureau_distant">Bureau à distance</option>
+                  <option value="demande_acces_applicatif">Accès applicatif (ERP/CRM)</option>
+                  <option value="demande_supervision">Supervision / monitoring</option>
+                  <option value="demande_changement_mdp">Changement mot de passe</option>
                 </optgroup>
               </select>
             </div>
@@ -889,6 +989,31 @@
                 <option value="spam_massif">Spam massif</option>
                 <option value="defaillance_serveur">Défaillance serveur</option>
                 <option value="coupure_telephonie">Coupure téléphonie</option>
+                <option value="lenteur_systeme">Lenteur système / PC</option>
+                <option value="mise_a_jour_echouee">Mise à jour échouée</option>
+                <option value="certificat_expire">Certificat expiré</option>
+                <option value="sauvegarde_echouee">Échec de sauvegarde</option>
+                <option value="attaque_ddos">Attaque DDoS</option>
+                <option value="acces_non_autorise">Accès non autorisé</option>
+                <option value="perte_connexion_wifi">Perte connexion Wi-Fi</option>
+                <option value="messagerie_indisponible">Messagerie indisponible</option>
+                <option value="partage_reseau_inaccessible">Partage réseau inaccessible</option>
+                <option value="application_lente">Application lente / plantée</option>
+                <option value="ecran_noir">Écran noir / sans signal</option>
+                <option value="clavier_souris_defaillant">Clavier ou souris défaillant</option>
+                <option value="son_defaillant">Problème son / audio</option>
+                <option value="logiciel_non_autorise">Logiciel non autorisé</option>
+                <option value="erreur_connexion_vpn">Erreur connexion VPN</option>
+                <option value="synchronisation_echouee">Échec synchronisation</option>
+                <option value="onduleur_defaillant">Défaillance onduleur</option>
+                <option value="stockage_plein">Disque / stockage plein</option>
+                <option value="usurpation_identite">Usurpation d'identité</option>
+                <option value="base_donnees_corrompue">Base de données corrompue</option>
+                <option value="incompatibilite_logicielle">Incompatibilité logicielle</option>
+                <option value="camera_defaillante">Caméra / webcam défaillante</option>
+                <option value="perte_connexion_internet">Perte connexion Internet</option>
+                <option value="interruption_cloud">Interruption service cloud</option>
+                <option value="erreur_authentification">Erreur d'authentification</option>
               </select>
             </div>
             <div class="col-md-2">
@@ -984,6 +1109,31 @@
                 <option value="demande_audit_securite">Audit de sécurité</option>
                 <option value="demande_intervention_site">Intervention sur site</option>
                 <option value="demande_certificat_ssl">Certificat SSL / PKI</option>
+                <option value="demande_extension_stockage">Extension de stockage</option>
+                <option value="demande_redirection_mail">Redirection / alias email</option>
+                <option value="demande_groupe_securite">Groupe de sécurité (AD)</option>
+                <option value="demande_partage_reseau">Partage réseau</option>
+                <option value="demande_restauration">Restauration de données</option>
+                <option value="demande_tele_travail">Équipement télétravail</option>
+                <option value="demande_poste_remplacement">Remplacement de poste</option>
+                <option value="demande_mise_en_service">Mise en service matériel</option>
+                <option value="demande_chiffrement">Chiffrement de poste</option>
+                <option value="demande_double_authentification">Activation 2FA / MFA</option>
+                <option value="demande_revision_droits">Révision droits d'accès</option>
+                <option value="demande_telephone_ip">Téléphone IP / VoIP</option>
+                <option value="demande_nettoyage_poste">Nettoyage / optimisation</option>
+                <option value="demande_migration_donnees">Migration de données</option>
+                <option value="demande_formation_securite">Formation cybersécurité</option>
+                <option value="demande_mise_a_jour_firmware">Mise à jour firmware</option>
+                <option value="demande_salle_reunion">Équipement salle de réunion</option>
+                <option value="demande_signature_mail">Signature email</option>
+                <option value="demande_rapport_activite">Rapport / extraction de données</option>
+                <option value="demande_antivirus">Installation antivirus</option>
+                <option value="demande_scan_securite">Scan de sécurité</option>
+                <option value="demande_connexion_bureau_distant">Bureau à distance</option>
+                <option value="demande_acces_applicatif">Accès applicatif (ERP/CRM)</option>
+                <option value="demande_supervision">Supervision / monitoring</option>
+                <option value="demande_changement_mdp">Changement mot de passe</option>
               </select>
             </div>
             <div class="col-md-2">
@@ -1744,6 +1894,31 @@
                   <option value="spam_massif">📨 Spam massif</option>
                   <option value="defaillance_serveur">🖥️ Défaillance serveur</option>
                   <option value="coupure_telephonie">📵 Coupure téléphonie</option>
+                  <option value="lenteur_systeme">🐢 Lenteur système / PC</option>
+                  <option value="mise_a_jour_echouee">🔁 Mise à jour échouée</option>
+                  <option value="certificat_expire">🔒 Certificat expiré (SSL/TLS)</option>
+                  <option value="sauvegarde_echouee">💾 Échec de sauvegarde</option>
+                  <option value="attaque_ddos">💣 Attaque DDoS</option>
+                  <option value="acces_non_autorise">🚨 Accès non autorisé</option>
+                  <option value="perte_connexion_wifi">📶 Perte connexion Wi-Fi</option>
+                  <option value="messagerie_indisponible">📭 Messagerie indisponible</option>
+                  <option value="partage_reseau_inaccessible">📂 Partage réseau inaccessible</option>
+                  <option value="application_lente">⏳ Application lente / plantée</option>
+                  <option value="ecran_noir">🖤 Écran noir / sans signal</option>
+                  <option value="clavier_souris_defaillant">⌨️ Clavier ou souris défaillant</option>
+                  <option value="son_defaillant">🔇 Problème son / audio</option>
+                  <option value="logiciel_non_autorise">🚫 Logiciel non autorisé détecté</option>
+                  <option value="erreur_connexion_vpn">🛡️ Erreur connexion VPN</option>
+                  <option value="synchronisation_echouee">🔄 Échec synchronisation (AD/cloud)</option>
+                  <option value="onduleur_defaillant">🔋 Défaillance onduleur (UPS)</option>
+                  <option value="stockage_plein">💽 Disque / stockage plein</option>
+                  <option value="usurpation_identite">🎭 Usurpation d'identité</option>
+                  <option value="base_donnees_corrompue">🗃️ Base de données corrompue</option>
+                  <option value="incompatibilite_logicielle">⚠️ Incompatibilité logicielle</option>
+                  <option value="camera_defaillante">📷 Caméra / webcam défaillante</option>
+                  <option value="perte_connexion_internet">🌐 Perte connexion Internet</option>
+                  <option value="interruption_cloud">☁️ Interruption service cloud</option>
+                  <option value="erreur_authentification">🔑 Erreur d'authentification</option>
                 </optgroup>
                 <optgroup label="── Demandes">
                   <option value="demande">📋 Demande</option>
@@ -1771,6 +1946,31 @@
                   <option value="demande_audit_securite">🔍 Audit de sécurité</option>
                   <option value="demande_intervention_site">📍 Intervention sur site</option>
                   <option value="demande_certificat_ssl">🏅 Certificat SSL / PKI</option>
+                  <option value="demande_extension_stockage">💾 Extension de stockage</option>
+                  <option value="demande_redirection_mail">📧 Redirection / alias email</option>
+                  <option value="demande_groupe_securite">👥 Groupe de sécurité (AD)</option>
+                  <option value="demande_partage_reseau">📂 Partage réseau</option>
+                  <option value="demande_restauration">♻️ Restauration de données</option>
+                  <option value="demande_tele_travail">🏠 Équipement télétravail</option>
+                  <option value="demande_poste_remplacement">🖥️ Remplacement de poste</option>
+                  <option value="demande_mise_en_service">🔧 Mise en service matériel</option>
+                  <option value="demande_chiffrement">🔐 Chiffrement de poste / données</option>
+                  <option value="demande_double_authentification">📱 Activation 2FA / MFA</option>
+                  <option value="demande_revision_droits">🔍 Révision des droits d'accès</option>
+                  <option value="demande_telephone_ip">☎️ Téléphone IP / VoIP</option>
+                  <option value="demande_nettoyage_poste">🧹 Nettoyage / optimisation poste</option>
+                  <option value="demande_migration_donnees">📦 Migration de données</option>
+                  <option value="demande_formation_securite">🛡️ Formation cybersécurité</option>
+                  <option value="demande_mise_a_jour_firmware">⚙️ Mise à jour firmware</option>
+                  <option value="demande_salle_reunion">🖥️ Équipement salle de réunion</option>
+                  <option value="demande_signature_mail">✉️ Configuration signature email</option>
+                  <option value="demande_rapport_activite">📊 Rapport / extraction de données</option>
+                  <option value="demande_antivirus">🦠 Installation / MAJ antivirus</option>
+                  <option value="demande_scan_securite">🔎 Scan de sécurité</option>
+                  <option value="demande_connexion_bureau_distant">🖥️ Connexion bureau à distance</option>
+                  <option value="demande_acces_applicatif">📱 Accès applicatif (ERP/CRM…)</option>
+                  <option value="demande_supervision">📡 Supervision / monitoring</option>
+                  <option value="demande_changement_mdp">🔑 Changement de mot de passe planifié</option>
                 </optgroup>
               </select>
             </div>
@@ -2081,6 +2281,31 @@ const TYPE_META = {
   ecran_bleu:                 { label: 'Écran bleu (BSOD)',             icon: 'desktop' },
   peripherique_defaillant:    { label: 'Périphérique défaillant',       icon: 'plug' },
   probleme_impression:        { label: "Problème d'impression",         icon: 'print' },
+  lenteur_systeme:            { label: 'Lenteur système / PC',           icon: 'tachometer-alt' },
+  mise_a_jour_echouee:        { label: 'Mise à jour échouée',            icon: 'redo' },
+  certificat_expire:          { label: 'Certificat expiré',              icon: 'lock' },
+  sauvegarde_echouee:         { label: 'Échec de sauvegarde',            icon: 'save' },
+  attaque_ddos:               { label: 'Attaque DDoS',                   icon: 'bomb' },
+  acces_non_autorise:         { label: 'Accès non autorisé',             icon: 'user-slash' },
+  perte_connexion_wifi:       { label: 'Perte connexion Wi-Fi',          icon: 'wifi' },
+  messagerie_indisponible:    { label: 'Messagerie indisponible',        icon: 'envelope-open' },
+  partage_reseau_inaccessible:{ label: 'Partage réseau inaccessible',    icon: 'folder-open' },
+  application_lente:          { label: 'Application lente / plantée',    icon: 'hourglass-half' },
+  ecran_noir:                 { label: 'Écran noir / sans signal',       icon: 'tv' },
+  clavier_souris_defaillant:  { label: 'Clavier ou souris défaillant',   icon: 'keyboard' },
+  son_defaillant:             { label: 'Problème son / audio',           icon: 'volume-mute' },
+  logiciel_non_autorise:      { label: 'Logiciel non autorisé',          icon: 'ban' },
+  erreur_connexion_vpn:       { label: 'Erreur connexion VPN',           icon: 'shield-alt' },
+  synchronisation_echouee:    { label: 'Échec synchronisation',          icon: 'sync-alt' },
+  onduleur_defaillant:        { label: 'Défaillance onduleur',           icon: 'bolt' },
+  stockage_plein:             { label: 'Disque / stockage plein',        icon: 'hdd' },
+  usurpation_identite:        { label: "Usurpation d'identité",          icon: 'user-secret' },
+  base_donnees_corrompue:     { label: 'Base de données corrompue',      icon: 'database' },
+  incompatibilite_logicielle: { label: 'Incompatibilité logicielle',     icon: 'exclamation-triangle' },
+  camera_defaillante:         { label: 'Caméra / webcam défaillante',    icon: 'video-slash' },
+  perte_connexion_internet:   { label: 'Perte connexion Internet',       icon: 'globe' },
+  interruption_cloud:         { label: 'Interruption service cloud',     icon: 'cloud' },
+  erreur_authentification:    { label: "Erreur d'authentification",      icon: 'key' },
   demande:               { label: 'Demande',                   icon: 'clipboard-list' },
   demande_acces:         { label: "Demande d'accès",           icon: 'key' },
   demande_installation:  { label: "Demande d'installation",    icon: 'download' },
@@ -2106,6 +2331,31 @@ const TYPE_META = {
   demande_audit_securite:         { label: 'Audit de sécurité',              icon: 'search' },
   demande_intervention_site:      { label: 'Intervention sur site',           icon: 'map-marker-alt' },
   demande_certificat_ssl:         { label: 'Certificat SSL / PKI',           icon: 'certificate' },
+  demande_extension_stockage:     { label: 'Extension de stockage',           icon: 'hdd' },
+  demande_redirection_mail:       { label: 'Redirection / alias email',       icon: 'reply' },
+  demande_groupe_securite:        { label: 'Groupe de sécurité (AD)',         icon: 'users-cog' },
+  demande_partage_reseau:         { label: 'Partage réseau',                  icon: 'folder-open' },
+  demande_restauration:           { label: 'Restauration de données',         icon: 'history' },
+  demande_tele_travail:           { label: 'Équipement télétravail',          icon: 'home' },
+  demande_poste_remplacement:     { label: 'Remplacement de poste',           icon: 'desktop' },
+  demande_mise_en_service:        { label: 'Mise en service matériel',        icon: 'tools' },
+  demande_chiffrement:            { label: 'Chiffrement de poste / données',  icon: 'lock' },
+  demande_double_authentification:{ label: 'Activation 2FA / MFA',            icon: 'mobile-alt' },
+  demande_revision_droits:        { label: "Révision des droits d'accès",     icon: 'user-cog' },
+  demande_telephone_ip:           { label: 'Téléphone IP / VoIP',             icon: 'phone' },
+  demande_nettoyage_poste:        { label: 'Nettoyage / optimisation poste',  icon: 'broom' },
+  demande_migration_donnees:      { label: 'Migration de données',            icon: 'exchange-alt' },
+  demande_formation_securite:     { label: 'Formation cybersécurité',         icon: 'shield-alt' },
+  demande_mise_a_jour_firmware:   { label: 'Mise à jour firmware',            icon: 'microchip' },
+  demande_salle_reunion:          { label: 'Équipement salle de réunion',     icon: 'chalkboard' },
+  demande_signature_mail:         { label: 'Configuration signature email',   icon: 'signature' },
+  demande_rapport_activite:       { label: 'Rapport / extraction de données', icon: 'chart-bar' },
+  demande_antivirus:              { label: 'Installation / MAJ antivirus',    icon: 'virus-slash' },
+  demande_scan_securite:          { label: 'Scan de sécurité',                icon: 'search' },
+  demande_connexion_bureau_distant:{ label: 'Connexion bureau à distance',    icon: 'laptop' },
+  demande_acces_applicatif:       { label: 'Accès applicatif (ERP/CRM…)',     icon: 'th' },
+  demande_supervision:            { label: 'Supervision / monitoring',        icon: 'satellite-dish' },
+  demande_changement_mdp:         { label: 'Changement de mot de passe',      icon: 'unlock-alt' },
 };
 
 function typeBadge(t) {
@@ -2690,6 +2940,10 @@ async function loadTicketList(containerId, params = {}) {
     const c = document.getElementById(containerId);
     c.innerHTML = buildTicketTable(tickets);
     attachTicketClicks(c);
+    if (containerId === 'all-tickets-container') {
+      const badge = document.getElementById('all-tickets-count');
+      if (badge) badge.textContent = `${tickets.length} ticket${tickets.length !== 1 ? 's' : ''}`;
+    }
   } catch (err) {
     toast(err.message, 'danger');
   }
@@ -2822,22 +3076,36 @@ async function loadGroupView(group, params = {}) {
 // ════════════════════════════════════════════
 const AUTO_PRIORITY = {
   intrusion: 'critique', alerte_securite: 'critique', perte_donnees: 'critique', virus: 'critique', corruption_donnees: 'critique',
-  panne: 'haute', coupure_reseau: 'haute', surcharge_systeme: 'haute', panne_electrique: 'haute', phishing: 'haute', indisponibilite_service: 'haute',
-  incident: 'normale', dysfonctionnement: 'normale', crash_application: 'normale', acces_refuse: 'normale',
-  ecran_bleu: 'normale', peripherique_defaillant: 'normale',
-  erreur_reseau: 'haute',
   ransomware: 'critique', fuite_donnees: 'critique', defaillance_serveur: 'critique',
-  vol_equipement: 'haute', coupure_telephonie: 'haute',
-  spam_massif: 'normale',
+  attaque_ddos: 'critique', acces_non_autorise: 'critique', usurpation_identite: 'critique', base_donnees_corrompue: 'critique',
+  panne: 'haute', coupure_reseau: 'haute', surcharge_systeme: 'haute', panne_electrique: 'haute', phishing: 'haute', indisponibilite_service: 'haute',
+  erreur_reseau: 'haute', vol_equipement: 'haute', coupure_telephonie: 'haute',
+  lenteur_systeme: 'haute', certificat_expire: 'haute', sauvegarde_echouee: 'haute',
+  messagerie_indisponible: 'haute', logiciel_non_autorise: 'haute', onduleur_defaillant: 'haute',
+  stockage_plein: 'haute', perte_connexion_internet: 'haute', interruption_cloud: 'haute',
+  incident: 'normale', dysfonctionnement: 'normale', crash_application: 'normale', acces_refuse: 'normale',
+  ecran_bleu: 'normale', peripherique_defaillant: 'normale', spam_massif: 'normale',
+  mise_a_jour_echouee: 'normale', perte_connexion_wifi: 'normale', partage_reseau_inaccessible: 'normale',
+  application_lente: 'normale', ecran_noir: 'normale', erreur_connexion_vpn: 'normale',
+  synchronisation_echouee: 'normale', incompatibilite_logicielle: 'normale', erreur_authentification: 'normale',
+  clavier_souris_defaillant: 'faible', son_defaillant: 'faible', camera_defaillante: 'faible', probleme_impression: 'faible',
   demande_onboarding: 'normale', demande_offboarding: 'normale',
   demande_intervention_site: 'normale', demande_certificat_ssl: 'normale',
-  demande_audit_securite: 'faible',
+  demande_restauration: 'normale', demande_poste_remplacement: 'normale', demande_mise_en_service: 'normale',
+  demande_chiffrement: 'normale', demande_revision_droits: 'normale', demande_migration_donnees: 'normale',
+  demande_scan_securite: 'normale',
   demande: 'faible', demande_acces: 'faible', demande_installation: 'faible',
   demande_materiel: 'faible', demande_information: 'faible', demande_formation: 'faible',
   demande_sauvegarde: 'faible', demande_demenagement: 'faible', demande_licence: 'faible',
-  probleme_impression: 'faible',
-  demande_deblockage_compte: 'faible', demande_vpn: 'faible', demande_messagerie: 'faible',
-  demande_impression_config: 'faible', demande_badge_acces: 'faible',
+  demande_audit_securite: 'faible', demande_deblockage_compte: 'faible', demande_vpn: 'faible',
+  demande_messagerie: 'faible', demande_impression_config: 'faible', demande_badge_acces: 'faible',
+  demande_extension_stockage: 'faible', demande_redirection_mail: 'faible', demande_groupe_securite: 'faible',
+  demande_partage_reseau: 'faible', demande_tele_travail: 'faible', demande_telephone_ip: 'faible',
+  demande_nettoyage_poste: 'faible', demande_formation_securite: 'faible', demande_mise_a_jour_firmware: 'faible',
+  demande_salle_reunion: 'faible', demande_signature_mail: 'faible', demande_rapport_activite: 'faible',
+  demande_antivirus: 'faible', demande_connexion_bureau_distant: 'faible', demande_acces_applicatif: 'faible',
+  demande_supervision: 'faible', demande_changement_mdp: 'faible',
+  demande_double_authentification: 'faible',
 };
 const PRIORITY_LABELS = { faible: 'Faible', normale: 'Normale', haute: 'Haute', critique: 'Critique' };
 
@@ -3204,6 +3472,19 @@ const KB_TYPE_OPTIONS = (() => {
     ['probleme_impression',"Problème d'impression"],['vol_equipement',"Vol d'équipement"],
     ['fuite_donnees','Fuite de données'],['spam_massif','Spam massif'],
     ['defaillance_serveur','Défaillance serveur'],['coupure_telephonie','Coupure téléphonie'],
+    ['lenteur_systeme','Lenteur système'],['mise_a_jour_echouee','MAJ échouée'],
+    ['certificat_expire','Certificat expiré'],['sauvegarde_echouee','Échec sauvegarde'],
+    ['attaque_ddos','Attaque DDoS'],['acces_non_autorise','Accès non autorisé'],
+    ['perte_connexion_wifi','Perte Wi-Fi'],['messagerie_indisponible','Messagerie indisponible'],
+    ['partage_reseau_inaccessible','Partage inaccessible'],['application_lente','Application lente'],
+    ['ecran_noir','Écran noir'],['clavier_souris_defaillant','Clavier/souris défaillant'],
+    ['son_defaillant','Problème audio'],['logiciel_non_autorise','Logiciel non autorisé'],
+    ['erreur_connexion_vpn','Erreur VPN'],['synchronisation_echouee','Échec synchronisation'],
+    ['onduleur_defaillant','Onduleur défaillant'],['stockage_plein','Stockage plein'],
+    ['usurpation_identite',"Usurpation d'identité"],['base_donnees_corrompue','BDD corrompue'],
+    ['incompatibilite_logicielle','Incompatibilité logicielle'],['camera_defaillante','Webcam défaillante'],
+    ['perte_connexion_internet','Perte Internet'],['interruption_cloud','Interruption cloud'],
+    ['erreur_authentification',"Erreur d'authentification"],
   ];
   const dem = [
     ['demande','Demande'],['demande_acces','Accès'],['demande_installation','Installation'],
@@ -3219,6 +3500,19 @@ const KB_TYPE_OPTIONS = (() => {
     ['demande_onboarding','Onboarding'],['demande_offboarding','Offboarding'],
     ['demande_audit_securite','Audit sécurité'],['demande_intervention_site','Intervention site'],
     ['demande_certificat_ssl','Certificat SSL'],
+    ['demande_extension_stockage','Extension stockage'],['demande_redirection_mail','Redirection email'],
+    ['demande_groupe_securite','Groupe sécurité AD'],['demande_partage_reseau','Partage réseau'],
+    ['demande_restauration','Restauration données'],['demande_tele_travail','Équip. télétravail'],
+    ['demande_poste_remplacement','Remplacement poste'],['demande_mise_en_service','Mise en service'],
+    ['demande_chiffrement','Chiffrement poste'],['demande_double_authentification','Activation 2FA'],
+    ['demande_revision_droits','Révision droits'],['demande_telephone_ip','Téléphone IP / VoIP'],
+    ['demande_nettoyage_poste','Nettoyage poste'],['demande_migration_donnees','Migration données'],
+    ['demande_formation_securite','Formation cybersécurité'],['demande_mise_a_jour_firmware','MAJ firmware'],
+    ['demande_salle_reunion','Salle de réunion'],['demande_signature_mail','Signature email'],
+    ['demande_rapport_activite','Rapport activité'],['demande_antivirus','Antivirus'],
+    ['demande_scan_securite','Scan sécurité'],['demande_connexion_bureau_distant','Bureau à distance'],
+    ['demande_acces_applicatif','Accès ERP/CRM'],['demande_supervision','Supervision'],
+    ['demande_changement_mdp','Changement mot de passe'],
   ];
   return { inc, dem };
 })();
@@ -3996,6 +4290,31 @@ const CATALOGUE_INCIDENTS = [
   { type: 'ecran_bleu',             label: 'Écran bleu (BSOD)',       icon: 'fa-desktop',         color: 'primary'   },
   { type: 'peripherique_defaillant',label: 'Périphérique défaillant', icon: 'fa-plug',            color: 'secondary' },
   { type: 'probleme_impression',    label: "Pb. d'impression",        icon: 'fa-print',           color: 'secondary' },
+  { type: 'lenteur_systeme',        label: 'Lenteur système',         icon: 'fa-tachometer-alt',  color: 'warning'   },
+  { type: 'mise_a_jour_echouee',    label: 'MAJ échouée',             icon: 'fa-redo',            color: 'secondary' },
+  { type: 'certificat_expire',      label: 'Certificat expiré',       icon: 'fa-lock',            color: 'warning'   },
+  { type: 'sauvegarde_echouee',     label: 'Échec sauvegarde',        icon: 'fa-save',            color: 'danger'    },
+  { type: 'attaque_ddos',           label: 'Attaque DDoS',            icon: 'fa-bomb',            color: 'danger'    },
+  { type: 'acces_non_autorise',     label: 'Accès non autorisé',      icon: 'fa-user-slash',      color: 'danger'    },
+  { type: 'perte_connexion_wifi',   label: 'Perte Wi-Fi',             icon: 'fa-wifi',            color: 'secondary' },
+  { type: 'messagerie_indisponible',label: 'Messagerie indisponible', icon: 'fa-envelope-open',   color: 'warning'   },
+  { type: 'partage_reseau_inaccessible', label: 'Partage inaccessible', icon: 'fa-folder-open',  color: 'secondary' },
+  { type: 'application_lente',      label: 'Application lente',       icon: 'fa-hourglass-half',  color: 'warning'   },
+  { type: 'ecran_noir',             label: 'Écran noir',              icon: 'fa-tv',              color: 'dark'      },
+  { type: 'clavier_souris_defaillant', label: 'Clavier / souris défaillant', icon: 'fa-keyboard', color: 'secondary'},
+  { type: 'son_defaillant',         label: 'Problème audio',          icon: 'fa-volume-mute',     color: 'secondary' },
+  { type: 'logiciel_non_autorise',  label: 'Logiciel non autorisé',   icon: 'fa-ban',             color: 'danger'    },
+  { type: 'erreur_connexion_vpn',   label: 'Erreur VPN',              icon: 'fa-shield-alt',      color: 'secondary' },
+  { type: 'synchronisation_echouee',label: 'Échec synchronisation',   icon: 'fa-sync-alt',        color: 'secondary' },
+  { type: 'onduleur_defaillant',    label: 'Onduleur défaillant',     icon: 'fa-bolt',            color: 'warning'   },
+  { type: 'stockage_plein',         label: 'Stockage plein',          icon: 'fa-hdd',             color: 'danger'    },
+  { type: 'usurpation_identite',    label: "Usurpation d'identité",   icon: 'fa-user-secret',     color: 'danger'    },
+  { type: 'base_donnees_corrompue', label: 'BDD corrompue',           icon: 'fa-database',        color: 'danger'    },
+  { type: 'incompatibilite_logicielle', label: 'Incompatibilité log.', icon: 'fa-exclamation-triangle', color: 'warning'},
+  { type: 'camera_defaillante',     label: 'Webcam défaillante',      icon: 'fa-video-slash',     color: 'secondary' },
+  { type: 'perte_connexion_internet', label: 'Perte Internet',        icon: 'fa-globe',           color: 'danger'    },
+  { type: 'interruption_cloud',     label: 'Interruption cloud',      icon: 'fa-cloud',           color: 'warning'   },
+  { type: 'erreur_authentification',label: "Erreur d'authentification", icon: 'fa-key',           color: 'secondary' },
 ];
 const CATALOGUE_DEMANDES = [
   { type: 'demande',              label: 'Demande',         icon: 'fa-clipboard-list', color: 'primary'   },
@@ -4023,6 +4342,31 @@ const CATALOGUE_DEMANDES = [
   { type: 'demande_audit_securite',      label: 'Audit sécurité',                icon: 'fa-search',        color: 'info'      },
   { type: 'demande_intervention_site',   label: 'Intervention site',             icon: 'fa-map-marker-alt',color: 'warning'   },
   { type: 'demande_certificat_ssl',      label: 'Certificat SSL',                icon: 'fa-certificate',   color: 'primary'   },
+  { type: 'demande_extension_stockage', label: 'Extension stockage',            icon: 'fa-hdd',           color: 'secondary' },
+  { type: 'demande_redirection_mail',   label: 'Redirection email',             icon: 'fa-reply',         color: 'info'      },
+  { type: 'demande_groupe_securite',    label: 'Groupe sécurité AD',            icon: 'fa-users-cog',     color: 'dark'      },
+  { type: 'demande_partage_reseau',     label: 'Partage réseau',                icon: 'fa-folder-open',   color: 'secondary' },
+  { type: 'demande_restauration',       label: 'Restauration données',          icon: 'fa-history',       color: 'warning'   },
+  { type: 'demande_tele_travail',       label: 'Équip. télétravail',            icon: 'fa-home',          color: 'success'   },
+  { type: 'demande_poste_remplacement', label: 'Remplacement poste',            icon: 'fa-desktop',       color: 'secondary' },
+  { type: 'demande_mise_en_service',    label: 'Mise en service',               icon: 'fa-tools',         color: 'success'   },
+  { type: 'demande_chiffrement',        label: 'Chiffrement poste',             icon: 'fa-lock',          color: 'primary'   },
+  { type: 'demande_double_authentification', label: 'Activation 2FA',           icon: 'fa-mobile-alt',    color: 'info'      },
+  { type: 'demande_revision_droits',    label: 'Révision droits',               icon: 'fa-user-cog',      color: 'warning'   },
+  { type: 'demande_telephone_ip',       label: 'Téléphone IP / VoIP',           icon: 'fa-phone',         color: 'primary'   },
+  { type: 'demande_nettoyage_poste',    label: 'Nettoyage poste',               icon: 'fa-broom',         color: 'secondary' },
+  { type: 'demande_migration_donnees',  label: 'Migration données',             icon: 'fa-exchange-alt',  color: 'warning'   },
+  { type: 'demande_formation_securite', label: 'Formation cybersécurité',       icon: 'fa-shield-alt',    color: 'info'      },
+  { type: 'demande_mise_a_jour_firmware', label: 'MAJ firmware',                icon: 'fa-microchip',     color: 'dark'      },
+  { type: 'demande_salle_reunion',      label: 'Salle de réunion',              icon: 'fa-chalkboard',    color: 'secondary' },
+  { type: 'demande_signature_mail',     label: 'Signature email',               icon: 'fa-envelope',      color: 'info'      },
+  { type: 'demande_rapport_activite',   label: 'Rapport activité',              icon: 'fa-chart-bar',     color: 'primary'   },
+  { type: 'demande_antivirus',          label: 'Antivirus',                     icon: 'fa-virus-slash',   color: 'success'   },
+  { type: 'demande_scan_securite',      label: 'Scan sécurité',                 icon: 'fa-search',        color: 'danger'    },
+  { type: 'demande_connexion_bureau_distant', label: 'Bureau à distance',       icon: 'fa-laptop',        color: 'primary'   },
+  { type: 'demande_acces_applicatif',   label: 'Accès ERP / CRM',               icon: 'fa-th',            color: 'dark'      },
+  { type: 'demande_supervision',        label: 'Supervision / monitoring',      icon: 'fa-satellite-dish',color: 'info'      },
+  { type: 'demande_changement_mdp',     label: 'Changement mot de passe',       icon: 'fa-unlock-alt',    color: 'success'   },
 ];
 
 let _catalogueByType = {};
