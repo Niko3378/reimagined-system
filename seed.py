@@ -780,6 +780,25 @@ def seed(force=False):
              (5, "Restaurer et valider", "Restaurer depuis une sauvegarde saine et vérifier l'intégrité."),
              (6, "Rédiger le rapport post-incident", "Documenter le chronologie, les actions et les recommandations."),
          ]),
+        ("Réinitialisation de mot de passe", "demande_reinitialisation_mdp",
+         "Processus sécurisé de réinitialisation du mot de passe utilisateur", [
+             (1, "Vérifier l'identité du demandeur", "Confirmer l'identité par appel téléphonique, badge ou validation du responsable hiérarchique."),
+             (2, "Vérifier le compte dans l'AD", "Contrôler que le compte est actif, non bloqué et non expiré dans Active Directory."),
+             (3, "Réinitialiser le mot de passe", "Générer un mot de passe temporaire conforme à la politique de sécurité (12 car. min., majuscule, chiffre, caractère spécial)."),
+             (4, "Forcer le changement à la prochaine connexion", "Activer l'option de changement obligatoire du mot de passe dans les propriétés du compte AD."),
+             (5, "Communiquer le mot de passe temporaire", "Transmettre via un canal sécurisé (SMS ou appel direct) — jamais par email en clair."),
+             (6, "Vérifier la reconnexion et clore le ticket", "Confirmer avec l'utilisateur que la connexion fonctionne, puis fermer le ticket."),
+         ]),
+        ("Prise en charge panne réseau", "coupure_reseau",
+         "Processus de diagnostic et résolution d'une panne réseau", [
+             (1, "Qualifier la panne", "Déterminer le périmètre : un poste, un étage, un site entier. Identifier les premiers utilisateurs touchés et l'heure de début."),
+             (2, "Vérifier les équipements réseau", "Contrôler les voyants des switchs, routeurs et bornes WiFi. Vérifier les câbles et les branchements physiques."),
+             (3, "Tester la connectivité", "Effectuer des ping, traceroute et test DNS depuis plusieurs points du réseau pour localiser la coupure."),
+             (4, "Isoler la cause racine", "Identifier la source : équipement défaillant, saturation de bande passante, boucle réseau, VLAN mal configuré ou panne FAI."),
+             (5, "Appliquer la remédiation", "Redémarrer l'équipement défaillant, remplacer un câble ou switch, reconfigurer le VLAN ou basculer sur le lien de secours."),
+             (6, "Vérifier le retour à la normale", "Confirmer la connectivité sur l'ensemble du périmètre touché. Tester les services critiques (AD, DNS, accès Internet, serveurs)."),
+             (7, "Documenter et clore", "Rédiger le compte-rendu d'incident : cause, actions, durée de l'interruption. Clore le ticket et notifier les utilisateurs."),
+         ]),
     ]
     for (name, ttype, desc, steps) in process_defs:
         pt = models.ProcessTemplate(
