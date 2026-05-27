@@ -114,6 +114,13 @@
     .empty-state { text-align: center; padding: 60px 20px; color: #9e9e9e; }
     .empty-state i { font-size: 3rem; margin-bottom: 12px; }
 
+    /* ── Sidebar submenu ── */
+    .collapse-icon { transition: transform .2s; }
+    #collapse-incidents.show ~ * .collapse-icon,
+    .sidebar .nav-link[aria-expanded="true"] .collapse-icon { transform: rotate(180deg); }
+    .sidebar .collapse .nav-link { font-size: .82rem; color: #616161; padding-left: 8px; }
+    .sidebar .collapse .nav-link:hover, .sidebar .collapse .nav-link.active { background: #e3f2fd; color: #1565c0; }
+
     /* ── Notification toast ── */
     #toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; }
     .toast { min-width: 280px; border-radius: 10px; }
@@ -238,14 +245,42 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#" data-view="incidents">
-          <i class="fas fa-exclamation-triangle"></i>Incidents
+        <a class="nav-link d-flex justify-content-between align-items-center" href="#" data-view="incidents" data-bs-toggle="collapse" data-bs-target="#collapse-incidents" aria-expanded="false">
+          <span><i class="fas fa-exclamation-triangle"></i>Incidents</span>
+          <i class="fas fa-chevron-down small collapse-icon" id="chevron-incidents"></i>
         </a>
+        <div class="collapse" id="collapse-incidents">
+          <ul class="nav flex-column ms-3">
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="incident"><i class="fas fa-exclamation-triangle me-1" style="width:14px"></i>Incident</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="panne"><i class="fas fa-power-off me-1" style="width:14px"></i>Panne</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="dysfonctionnement"><i class="fas fa-exclamation-circle me-1" style="width:14px"></i>Dysfonctionnement</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="alerte_securite"><i class="fas fa-shield-alt me-1" style="width:14px"></i>Alerte sécurité</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="coupure_reseau"><i class="fas fa-wifi me-1" style="width:14px"></i>Coupure réseau</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="intrusion"><i class="fas fa-user-secret me-1" style="width:14px"></i>Intrusion</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="perte_donnees"><i class="fas fa-database me-1" style="width:14px"></i>Perte de données</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="surcharge_systeme"><i class="fas fa-server me-1" style="width:14px"></i>Surcharge système</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="panne_electrique"><i class="fas fa-bolt me-1" style="width:14px"></i>Panne électrique</a></li>
+          </ul>
+        </div>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#" data-view="demandes">
-          <i class="fas fa-clipboard-list"></i>Demandes
+        <a class="nav-link d-flex justify-content-between align-items-center" href="#" data-view="demandes" data-bs-toggle="collapse" data-bs-target="#collapse-demandes" aria-expanded="false">
+          <span><i class="fas fa-clipboard-list"></i>Demandes</span>
+          <i class="fas fa-chevron-down small collapse-icon" id="chevron-demandes"></i>
         </a>
+        <div class="collapse" id="collapse-demandes">
+          <ul class="nav flex-column ms-3">
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande"><i class="fas fa-clipboard-list me-1" style="width:14px"></i>Demande</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_acces"><i class="fas fa-key me-1" style="width:14px"></i>Accès</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_installation"><i class="fas fa-download me-1" style="width:14px"></i>Installation</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_materiel"><i class="fas fa-desktop me-1" style="width:14px"></i>Matériel</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_information"><i class="fas fa-question-circle me-1" style="width:14px"></i>Information</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_formation"><i class="fas fa-graduation-cap me-1" style="width:14px"></i>Formation</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_sauvegarde"><i class="fas fa-save me-1" style="width:14px"></i>Sauvegarde</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_demenagement"><i class="fas fa-truck me-1" style="width:14px"></i>Déménagement</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_licence"><i class="fas fa-file-contract me-1" style="width:14px"></i>Licence</a></li>
+          </ul>
+        </div>
       </li>
       <li class="nav-item mt-3" id="admin-nav-item" style="display:none">
         <div class="px-3 mb-1 text-uppercase small text-muted fw-bold" style="font-size:.7rem">Administration</div>
@@ -1101,7 +1136,26 @@ function showView(name) {
 }
 
 document.querySelectorAll('.sidebar .nav-link[data-view]').forEach(a => {
-  a.addEventListener('click', e => { e.preventDefault(); showView(a.dataset.view); });
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    if (a.dataset.type) {
+      // Sous-type : charge la vue du groupe avec filtre type
+      const group = a.dataset.view;
+      showView(group);
+      document.getElementById(`${group}-type`).value = a.dataset.type;
+      loadGroupView(group, { type: a.dataset.type });
+    } else if (!a.dataset.bsToggle) {
+      showView(a.dataset.view);
+    }
+  });
+});
+
+// Rotation chevron sur collapse
+['incidents','demandes'].forEach(group => {
+  const collapseEl = document.getElementById(`collapse-${group}`);
+  const chevron = document.getElementById(`chevron-${group}`);
+  collapseEl.addEventListener('show.bs.collapse', () => chevron.style.transform = 'rotate(180deg)');
+  collapseEl.addEventListener('hide.bs.collapse', () => chevron.style.transform = 'rotate(0deg)');
 });
 
 function loadView(name) {
@@ -1575,7 +1629,7 @@ function getGroupFilters(group) {
 
 async function loadGroupView(group, params = {}) {
   const qs = new URLSearchParams();
-  qs.set('type_group', group);
+  if (!params.type) qs.set('type_group', group);
   if (params.status)   qs.set('status',   params.status);
   if (params.type)     qs.set('type',     params.type);
   if (params.priority) qs.set('priority', params.priority);
