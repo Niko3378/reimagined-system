@@ -799,6 +799,15 @@ def seed(force=False):
              (6, "Vérifier le retour à la normale", "Confirmer la connectivité sur l'ensemble du périmètre touché. Tester les services critiques (AD, DNS, accès Internet, serveurs)."),
              (7, "Documenter et clore", "Rédiger le compte-rendu d'incident : cause, actions, durée de l'interruption. Clore le ticket et notifier les utilisateurs."),
          ]),
+        ("Traitement d'une demande de formation", "demande_formation",
+         "Processus d'organisation et de suivi d'une demande de formation informatique", [
+             (1, "Analyser le besoin de formation", "Identifier le sujet, le niveau actuel et visé, le nombre de participants, le format souhaité (présentiel, e-learning, atelier) et la date souhaitée."),
+             (2, "Valider le besoin avec le responsable", "S'assurer que la formation est validée par le responsable hiérarchique et budgetairement approuvée. Vérifier si le plan de formation annuel prévoit cette action."),
+             (3, "Identifier la solution de formation", "Rechercher un formateur interne, un organisme externe ou une ressource e-learning adaptée. Comparer les offres si plusieurs prestataires. Vérifier les certifications Qualiopi si nécessaire."),
+             (4, "Organiser la session", "Planifier la date, réserver la salle ou la plateforme en ligne, convoquer les participants et envoyer les informations pratiques (lieu, horaires, prérequis)."),
+             (5, "Animer ou superviser la formation", "S'assurer du bon déroulement de la session. Prendre les présences. Fournir les supports de cours et les accès aux outils nécessaires."),
+             (6, "Évaluer et clore", "Recueillir les évaluations des participants (questionnaire de satisfaction). Transmettre les attestations de formation. Mettre à jour le plan de formation et fermer le ticket."),
+         ]),
         ("Déploiement d'une mise à jour", "demande_mise_a_jour",
          "Processus de préparation et déploiement d'une mise à jour logicielle ou système", [
              (1, "Analyser la mise à jour et ses impacts", "Lire les notes de version. Identifier les changements, les corrections de CVE, les incompatibilités potentielles et les prérequis. Évaluer l'impact sur les applications métier."),
