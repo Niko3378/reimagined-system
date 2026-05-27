@@ -1,4 +1,5 @@
 import asyncio
+import os
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -60,9 +61,10 @@ app.include_router(users_router.router)
 app.include_router(tickets_router.router)
 app.include_router(notifications_router.router)
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+_static_dir = os.environ.get("HELPDESK_STATIC_PATH", "static")
+app.mount("/static", StaticFiles(directory=_static_dir), name="static")
 
 
 @app.get("/")
 def root():
-    return FileResponse("static/index.html")
+    return FileResponse(os.path.join(_static_dir, "index.html"))

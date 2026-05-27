@@ -18,14 +18,9 @@ router = APIRouter(prefix="/api/tickets", tags=["tickets"])
 
 VALID_STATUSES = {"ouvert", "en_cours", "resolu", "ferme"}
 VALID_PRIORITIES = {"faible", "normale", "haute", "critique"}
-INCIDENT_TYPES = {"incident","panne","dysfonctionnement","alerte_securite","coupure_reseau","intrusion","perte_donnees","surcharge_systeme","panne_electrique"}
-DEMANDE_TYPES  = {"demande","demande_acces","demande_installation","demande_materiel","demande_information","demande_formation","demande_sauvegarde","demande_demenagement","demande_licence"}
-VALID_TYPES = {
-    "incident", "panne", "dysfonctionnement", "alerte_securite", "coupure_reseau",
-    "intrusion", "perte_donnees", "surcharge_systeme", "panne_electrique",
-    "demande", "demande_acces", "demande_installation", "demande_materiel", "demande_information",
-    "demande_formation", "demande_sauvegarde", "demande_demenagement", "demande_licence",
-}
+INCIDENT_TYPES = {"incident","panne","dysfonctionnement","alerte_securite","coupure_reseau","intrusion","perte_donnees","surcharge_systeme","panne_electrique","virus","phishing","crash_application","corruption_donnees","indisponibilite_service","acces_refuse"}
+DEMANDE_TYPES  = {"demande","demande_acces","demande_installation","demande_materiel","demande_information","demande_formation","demande_sauvegarde","demande_demenagement","demande_licence","demande_reinitialisation_mdp","demande_creation_compte","demande_assistance","demande_configuration","demande_mise_a_jour","demande_archivage"}
+VALID_TYPES = INCIDENT_TYPES | DEMANDE_TYPES
 VALID_CATEGORIES = {"materiel", "logiciel", "reseau", "securite", "telephonie", "imprimante", "autre"}
 
 
@@ -234,6 +229,156 @@ def export_tickets(
     )
 
 
+@router.get("/catalogue/pdf")
+def export_catalogue_pdf(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    from reportlab.lib import colors
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib.styles import ParagraphStyle
+    from reportlab.lib.units import cm
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, HRFlowable
+    from reportlab.lib.enums import TA_CENTER
+
+    all_tickets = db.query(models.Ticket).all()
+    by_type = {}
+    for t in all_tickets:
+        by_type[t.type] = by_type.get(t.type, 0) + 1
+
+    INCIDENT_TYPES_LIST = [
+        ("incident",               "Incident",               "normale",   24),
+        ("panne",                  "Panne",                  "haute",      8),
+        ("dysfonctionnement",      "Dysfonctionnement",      "normale",   24),
+        ("alerte_securite",        "Alerte sécurité",        "critique",   4),
+        ("coupure_reseau",         "Coupure réseau",         "haute",      8),
+        ("intrusion",              "Intrusion",              "critique",   4),
+        ("perte_donnees",          "Perte de données",       "critique",   4),
+        ("surcharge_systeme",      "Surcharge système",      "haute",      8),
+        ("panne_electrique",       "Panne électrique",       "haute",      8),
+        ("virus",                  "Virus / Malware",        "critique",   4),
+        ("phishing",               "Phishing / Spam",        "haute",      8),
+        ("crash_application",      "Crash application",      "normale",   24),
+        ("corruption_donnees",     "Corruption de données",  "critique",   4),
+        ("indisponibilite_service","Indisponibilité service","haute",      8),
+        ("acces_refuse",           "Accès refusé",           "normale",   24),
+    ]
+    DEMANDE_TYPES_LIST = [
+        ("demande",                     "Demande générale",            "faible", 72),
+        ("demande_acces",               "Accès",                       "faible", 72),
+        ("demande_installation",        "Installation",                "faible", 72),
+        ("demande_materiel",            "Matériel",                    "faible", 72),
+        ("demande_information",         "Information",                 "faible", 72),
+        ("demande_formation",           "Formation",                   "faible", 72),
+        ("demande_sauvegarde",          "Sauvegarde",                  "faible", 72),
+        ("demande_demenagement",        "Déménagement",                "faible", 72),
+        ("demande_licence",             "Licence",                     "faible", 72),
+        ("demande_reinitialisation_mdp","Réinitialisation mot de passe","faible",72),
+        ("demande_creation_compte",     "Création de compte",          "faible", 72),
+        ("demande_assistance",          "Assistance à distance",       "faible", 72),
+        ("demande_configuration",       "Configuration",               "faible", 72),
+        ("demande_mise_a_jour",         "Mise à jour logicielle",      "faible", 72),
+        ("demande_archivage",           "Archivage de données",        "faible", 72),
+    ]
+    PRIORITY_LABELS = {"critique": "Critique", "haute": "Haute", "normale": "Normale", "faible": "Faible"}
+    PRIORITY_COLORS = {
+        "critique": colors.HexColor("#c62828"),
+        "haute":    colors.HexColor("#f57c00"),
+        "normale":  colors.HexColor("#1976d2"),
+        "faible":   colors.HexColor("#388e3c"),
+    }
+    PRIORITY_HEX = {
+        "critique": "#c62828",
+        "haute":    "#f57c00",
+        "normale":  "#1976d2",
+        "faible":   "#388e3c",
+    }
+
+    buf = io.BytesIO()
+    doc = SimpleDocTemplate(buf, pagesize=A4,
+                            leftMargin=2*cm, rightMargin=2*cm,
+                            topMargin=2*cm, bottomMargin=2*cm)
+
+    title_style   = ParagraphStyle("t", fontSize=20, fontName="Helvetica-Bold",
+                                   textColor=colors.HexColor("#1565c0"), spaceAfter=4, alignment=TA_CENTER)
+    sub_style     = ParagraphStyle("s", fontSize=10, fontName="Helvetica",
+                                   textColor=colors.HexColor("#757575"), spaceAfter=16, alignment=TA_CENTER)
+    section_style = ParagraphStyle("sec", fontSize=13, fontName="Helvetica-Bold",
+                                   textColor=colors.white, spaceAfter=0)
+    cell_style    = ParagraphStyle("c", fontSize=9, fontName="Helvetica", leading=12)
+    count_style   = ParagraphStyle("n", fontSize=9, fontName="Helvetica-Bold",
+                                   alignment=TA_CENTER)
+
+    elements = [
+        Paragraph("Catalogue des types de tickets", title_style),
+        Paragraph(
+            f"HelpDesk IT  •  Généré le {datetime.now().strftime('%d/%m/%Y à %H:%M')}"
+            f"  •  {current_user.username}",
+            sub_style,
+        ),
+        HRFlowable(width="100%", thickness=1, color=colors.HexColor("#e0e0e0"), spaceAfter=16),
+    ]
+
+    headers_row = ["Type interne", "Libellé", "Priorité suggérée", "Délai SLA", "Tickets"]
+    col_widths  = [3.8*cm, 5*cm, 3.5*cm, 2.5*cm, 2.5*cm]
+
+    def build_section(title, bg_color, type_list):
+        elements.append(Spacer(1, 8))
+        # Section header as single-cell table for background color
+        hdr_table = Table(
+            [[Paragraph(title, section_style)]],
+            colWidths=[sum(col_widths)],
+        )
+        hdr_table.setStyle(TableStyle([
+            ("BACKGROUND", (0,0), (-1,-1), bg_color),
+            ("TOPPADDING", (0,0), (-1,-1), 6),
+            ("BOTTOMPADDING", (0,0), (-1,-1), 6),
+            ("LEFTPADDING", (0,0), (-1,-1), 8),
+        ]))
+        elements.append(hdr_table)
+
+        data = [headers_row]
+        row_cmds = []
+        for i, (ttype, label, priority, sla_h) in enumerate(type_list, start=1):
+            count = by_type.get(ttype, 0)
+            prio_color = PRIORITY_COLORS[priority]
+            data.append([
+                Paragraph(f"<font color='#616161'>{ttype}</font>", cell_style),
+                Paragraph(f"<b>{label}</b>", cell_style),
+                Paragraph(f"<b><font color='{PRIORITY_HEX[priority]}'>{PRIORITY_LABELS[priority]}</font></b>", cell_style),
+                Paragraph(f"{sla_h}h", cell_style),
+                Paragraph(str(count), count_style),
+            ])
+            if i % 2 == 0:
+                row_cmds.append(("BACKGROUND", (0, i), (-1, i), colors.HexColor("#fafafa")))
+
+        tbl = Table(data, colWidths=col_widths, repeatRows=1)
+        tbl.setStyle(TableStyle([
+            ("BACKGROUND",    (0, 0), (-1, 0), colors.HexColor("#eceff1")),
+            ("FONTNAME",      (0, 0), (-1, 0), "Helvetica-Bold"),
+            ("FONTSIZE",      (0, 0), (-1, -1), 9),
+            ("GRID",          (0, 0), (-1, -1), 0.4, colors.HexColor("#e0e0e0")),
+            ("VALIGN",        (0, 0), (-1, -1), "MIDDLE"),
+            ("TOPPADDING",    (0, 0), (-1, -1), 5),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+            ("LEFTPADDING",   (0, 0), (-1, -1), 6),
+            ("ALIGN",         (4, 0), (4, -1), "CENTER"),
+        ] + row_cmds))
+        elements.append(tbl)
+
+    build_section("INCIDENTS", colors.HexColor("#c62828"), INCIDENT_TYPES_LIST)
+    build_section("DEMANDES",  colors.HexColor("#1565c0"), DEMANDE_TYPES_LIST)
+
+    doc.build(elements)
+    buf.seek(0)
+    filename = f"catalogue_types_{datetime.now().strftime('%Y%m%d')}.pdf"
+    return StreamingResponse(
+        iter([buf.getvalue()]),
+        media_type="application/pdf",
+        headers={"Content-Disposition": f"attachment; filename={filename}"},
+    )
+
+
 @router.get("/export/pdf")
 def export_tickets_pdf(
     status: Optional[str] = Query(None),
@@ -409,10 +554,7 @@ def get_stats(
         },
         "by_type": {
             t_type: sum(1 for t in all_tickets if t.type == t_type)
-            for t_type in (
-                "incident","panne","dysfonctionnement","alerte_securite","coupure_reseau",
-                "demande","demande_acces","demande_installation","demande_materiel","demande_information"
-            )
+            for t_type in sorted(INCIDENT_TYPES | DEMANDE_TYPES)
         },
     }
 
@@ -468,6 +610,57 @@ def get_my_stats(
         "assigned_to_me": len(assigned),
         "assigned_open":  sum(1 for t in assigned if t.status in ("ouvert", "en_cours")),
         "assigned_critique": sum(1 for t in assigned if t.priority == "critique" and t.status in ("ouvert","en_cours")),
+    }
+
+
+@router.get("/reports")
+def get_reports(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    all_tickets = db.query(models.Ticket).all()
+    resolved = [t for t in all_tickets if t.status in ("resolu", "ferme")]
+
+    # Temps moyen de résolution par priorité (en heures)
+    # Utilise updated_at si disponible, sinon now() comme approximation
+    avg_resolution = {}
+    for priority in ("critique", "haute", "normale", "faible"):
+        pts = [t for t in resolved if t.priority == priority and t.created_at]
+        if pts:
+            total_h = 0
+            for t in pts:
+                end = t.updated_at or datetime.utcnow()
+                total_h += (end - t.created_at).total_seconds() / 3600
+            avg_resolution[priority] = round(total_h / len(pts), 1)
+        else:
+            avg_resolution[priority] = None
+
+    # Top assignés : total assigné + nb résolus
+    assignee_stats = {}
+    for t in all_tickets:
+        if t.assignee:
+            name = t.assignee.username
+            if name not in assignee_stats:
+                assignee_stats[name] = {"total": 0, "resolved": 0}
+            assignee_stats[name]["total"] += 1
+            if t.status in ("resolu", "ferme"):
+                assignee_stats[name]["resolved"] += 1
+
+    top_assignees = sorted(
+        [{"name": k, **v} for k, v in assignee_stats.items()],
+        key=lambda x: x["resolved"],
+        reverse=True,
+    )[:8]
+
+    total = len(all_tickets)
+    resolution_rate = round(len(resolved) / total * 100, 1) if total else 0
+
+    return {
+        "resolution_rate": resolution_rate,
+        "avg_resolution_h": avg_resolution,
+        "top_assignees": top_assignees,
+        "total": total,
+        "resolved_count": len(resolved),
     }
 
 

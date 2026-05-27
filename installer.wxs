@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+
+  <Product Id="*"
+           Name="HelpDesk IT"
+           Language="1036"
+           Version="1.0.0"
+           Manufacturer="HelpDesk Dev"
+           UpgradeCode="A1B2C3D4-E5F6-7890-ABCD-EF1234567890">
+
+    <Package InstallerVersion="200"
+             Compressed="yes"
+             InstallScope="perMachine"
+             Description="HelpDesk IT — Système de tickets"
+             Manufacturer="HelpDesk Dev" />
+
+    <MajorUpgrade DowngradeErrorMessage="Une version plus récente est déjà installée." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <!-- ── Propriétés UI ── -->
+    <Property Id="ARPPRODUCTICON" Value="appicon.ico" />
+    <Property Id="ARPHELPLINK"    Value="http://localhost:8000" />
+
+    <!-- ── Répertoire d'installation ── -->
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLDIR" Name="HelpDesk IT" />
+      </Directory>
+      <Directory Id="DesktopFolder" Name="Desktop" />
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="HelpDesk IT" />
+      </Directory>
+    </Directory>
+
+    <!-- ── Composant : tous les fichiers du bundle ── -->
+    <DirectoryRef Id="INSTALLDIR">
+      <Component Id="MainExecutable" Guid="B1C2D3E4-F5A6-7890-BCDE-F01234567891">
+        <File Id="HelpDeskExe"
+              Source="dist\HelpDesk IT\HelpDesk IT.exe"
+              KeyPath="yes"
+              Checksum="yes" />
+      </Component>
+
+      <!-- Fichiers du dossier dist (harvester heat.exe génèrera le reste) -->
+      <Component Id="AppFiles" Guid="C2D3E4F5-A6B7-8901-CDEF-012345678912">
+        <File Id="AppFiles_placeholder"
+              Source="dist\HelpDesk IT\HelpDesk IT.exe"
+              KeyPath="yes" />
+      </Component>
+    </DirectoryRef>
+
+    <!-- ── Raccourci Bureau ── -->
+    <DirectoryRef Id="DesktopFolder">
+      <Component Id="DesktopShortcut" Guid="D3E4F5A6-B7C8-9012-DEF0-123456789023">
+        <Shortcut Id="DesktopSC"
+                  Name="HelpDesk IT"
+                  Description="Ouvrir HelpDesk IT"
+                  Target="[INSTALLDIR]HelpDesk IT.exe"
+                  WorkingDirectory="INSTALLDIR" />
+        <RemoveFolder Id="RemoveDesktopSC" On="uninstall" />
+        <RegistryValue Root="HKCU"
+                       Key="Software\HelpDesk IT"
+                       Name="DesktopShortcut"
+                       Type="integer" Value="1"
+                       KeyPath="yes" />
+      </Component>
+    </DirectoryRef>
+
+    <!-- ── Raccourci Menu Démarrer ── -->
+    <DirectoryRef Id="ApplicationProgramsFolder">
+      <Component Id="StartMenuShortcut" Guid="E4F5A6B7-C8D9-0123-EF01-234567890134">
+        <Shortcut Id="StartMenuSC"
+                  Name="HelpDesk IT"
+                  Description="Ouvrir HelpDesk IT"
+                  Target="[INSTALLDIR]HelpDesk IT.exe"
+                  WorkingDirectory="INSTALLDIR" />
+        <RemoveFolder Id="RemoveStartMenu" Directory="ApplicationProgramsFolder" On="uninstall" />
+        <RegistryValue Root="HKCU"
+                       Key="Software\HelpDesk IT"
+                       Name="StartMenuShortcut"
+                       Type="integer" Value="1"
+                       KeyPath="yes" />
+      </Component>
+    </DirectoryRef>
+
+    <!-- ── Feature principale ── -->
+    <Feature Id="ProductFeature" Title="HelpDesk IT" Level="1">
+      <ComponentRef Id="MainExecutable" />
+      <ComponentRef Id="DesktopShortcut" />
+      <ComponentRef Id="StartMenuShortcut" />
+      <ComponentGroupRef Id="AppFilesGroup" />
+    </Feature>
+
+  </Product>
+</Wix>

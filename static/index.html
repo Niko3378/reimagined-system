@@ -85,6 +85,12 @@
     .badge-demande_sauvegarde { background: #1b5e20; }
     .badge-demande_demenagement { background: #33691e; }
     .badge-demande_licence { background: #01579b; }
+    .badge-demande_reinitialisation_mdp { background: #00695c; }
+    .badge-demande_creation_compte { background: #1a237e; }
+    .badge-demande_assistance { background: #004d40; }
+    .badge-demande_configuration { background: #37474f; }
+    .badge-demande_mise_a_jour { background: #1565c0; }
+    .badge-demande_archivage { background: #4a148c; }
     .badge-incident { background: #d32f2f; }
     .badge-panne { background: #b71c1c; }
     .badge-dysfonctionnement { background: #e65100; }
@@ -94,6 +100,12 @@
     .badge-perte_donnees { background: #bf360c; }
     .badge-surcharge_systeme { background: #827717; }
     .badge-panne_electrique { background: #4e342e; }
+    .badge-virus { background: #c62828; }
+    .badge-phishing { background: #ad1457; }
+    .badge-crash_application { background: #6d4c41; }
+    .badge-corruption_donnees { background: #b71c1c; }
+    .badge-indisponibilite_service { background: #e65100; }
+    .badge-acces_refuse { background: #546e7a; }
 
     /* ── Ticket detail ── */
     .modal-xl { max-width: 900px; }
@@ -321,6 +333,12 @@
             <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="perte_donnees"><i class="fas fa-database me-1" style="width:14px"></i>Perte de données</a></li>
             <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="surcharge_systeme"><i class="fas fa-server me-1" style="width:14px"></i>Surcharge système</a></li>
             <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="panne_electrique"><i class="fas fa-bolt me-1" style="width:14px"></i>Panne électrique</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="virus"><i class="fas fa-bug me-1" style="width:14px"></i>Virus / Malware</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="phishing"><i class="fas fa-fish me-1" style="width:14px"></i>Phishing / Spam</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="crash_application"><i class="fas fa-skull-crossbones me-1" style="width:14px"></i>Crash application</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="corruption_donnees"><i class="fas fa-times-circle me-1" style="width:14px"></i>Corruption de données</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="indisponibilite_service"><i class="fas fa-ban me-1" style="width:14px"></i>Indisponibilité service</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="acces_refuse"><i class="fas fa-user-times me-1" style="width:14px"></i>Accès refusé</a></li>
           </ul>
         </div>
       </li>
@@ -340,6 +358,12 @@
             <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_sauvegarde"><i class="fas fa-save me-1" style="width:14px"></i>Sauvegarde</a></li>
             <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_demenagement"><i class="fas fa-truck me-1" style="width:14px"></i>Déménagement</a></li>
             <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_licence"><i class="fas fa-file-contract me-1" style="width:14px"></i>Licence</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_reinitialisation_mdp"><i class="fas fa-unlock-alt me-1" style="width:14px"></i>Réinit. mot de passe</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_creation_compte"><i class="fas fa-user-plus me-1" style="width:14px"></i>Création de compte</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_assistance"><i class="fas fa-headset me-1" style="width:14px"></i>Assistance à distance</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_configuration"><i class="fas fa-cogs me-1" style="width:14px"></i>Configuration</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_mise_a_jour"><i class="fas fa-sync-alt me-1" style="width:14px"></i>Mise à jour logicielle</a></li>
+            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_archivage"><i class="fas fa-archive me-1" style="width:14px"></i>Archivage de données</a></li>
           </ul>
         </div>
       </li>
@@ -351,6 +375,11 @@
       <li class="nav-item">
         <a class="nav-link" href="#" data-view="kanban">
           <i class="fas fa-columns"></i>Kanban
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#" data-view="reports">
+          <i class="fas fa-chart-bar"></i>Rapports
         </a>
       </li>
       <li class="nav-item">
@@ -643,6 +672,12 @@
                   <option value="perte_donnees">Perte de données</option>
                   <option value="surcharge_systeme">Surcharge système</option>
                   <option value="panne_electrique">Panne électrique / UPS</option>
+                  <option value="virus">Virus / Malware</option>
+                  <option value="phishing">Phishing / Spam</option>
+                  <option value="crash_application">Crash application</option>
+                  <option value="corruption_donnees">Corruption de données</option>
+                  <option value="indisponibilite_service">Indisponibilité service</option>
+                  <option value="acces_refuse">Accès refusé</option>
                 </optgroup>
                 <optgroup label="Demandes">
                   <option value="demande">Demande</option>
@@ -654,6 +689,12 @@
                   <option value="demande_sauvegarde">Demande de sauvegarde</option>
                   <option value="demande_demenagement">Demande de déménagement</option>
                   <option value="demande_licence">Demande de licence</option>
+                  <option value="demande_reinitialisation_mdp">Réinitialisation mot de passe</option>
+                  <option value="demande_creation_compte">Création de compte</option>
+                  <option value="demande_assistance">Assistance à distance</option>
+                  <option value="demande_configuration">Configuration</option>
+                  <option value="demande_mise_a_jour">Mise à jour logicielle</option>
+                  <option value="demande_archivage">Archivage de données</option>
                 </optgroup>
               </select>
             </div>
@@ -745,6 +786,12 @@
                 <option value="perte_donnees">Perte de données</option>
                 <option value="surcharge_systeme">Surcharge système</option>
                 <option value="panne_electrique">Panne électrique / UPS</option>
+                <option value="virus">Virus / Malware</option>
+                <option value="phishing">Phishing / Spam</option>
+                <option value="crash_application">Crash application</option>
+                <option value="corruption_donnees">Corruption de données</option>
+                <option value="indisponibilite_service">Indisponibilité service</option>
+                <option value="acces_refuse">Accès refusé</option>
               </select>
             </div>
             <div class="col-md-2">
@@ -824,6 +871,12 @@
                 <option value="demande_sauvegarde">Demande de sauvegarde</option>
                 <option value="demande_demenagement">Demande de déménagement</option>
                 <option value="demande_licence">Demande de licence</option>
+                <option value="demande_reinitialisation_mdp">Réinitialisation mot de passe</option>
+                <option value="demande_creation_compte">Création de compte</option>
+                <option value="demande_assistance">Assistance à distance</option>
+                <option value="demande_configuration">Configuration</option>
+                <option value="demande_mise_a_jour">Mise à jour logicielle</option>
+                <option value="demande_archivage">Archivage de données</option>
               </select>
             </div>
             <div class="col-md-2">
@@ -1104,6 +1157,86 @@
       <div id="kanban-board" class="kanban-board"></div>
     </div>
 
+    <!-- ── Rapports ── -->
+    <div id="view-reports" style="display:none">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="fw-bold mb-0"><i class="fas fa-chart-bar me-2 text-primary"></i>Rapports & Statistiques</h5>
+        <div class="d-flex gap-2 align-items-center">
+          <div class="btn-group btn-group-sm" id="reports-period-btns">
+            <button class="btn btn-outline-primary active" data-days="7">7 j</button>
+            <button class="btn btn-outline-primary" data-days="30">30 j</button>
+            <button class="btn btn-outline-primary" data-days="90">90 j</button>
+          </div>
+          <button class="btn btn-outline-secondary btn-sm" onclick="loadReports()">
+            <i class="fas fa-sync me-1"></i>Actualiser
+          </button>
+        </div>
+      </div>
+
+      <!-- KPIs -->
+      <div class="row g-3 mb-4" id="reports-kpis"></div>
+
+      <!-- Ligne 1 : timeline + statuts -->
+      <div class="row g-3 mb-3">
+        <div class="col-lg-8">
+          <div class="card h-100">
+            <div class="card-body">
+              <h6 class="fw-semibold mb-3"><i class="fas fa-chart-line me-2 text-primary"></i>Évolution des tickets</h6>
+              <canvas id="chart-timeline" height="90"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h6 class="fw-semibold mb-3"><i class="fas fa-circle-notch me-2 text-primary"></i>Répartition par statut</h6>
+              <canvas id="chart-status" height="180"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ligne 2 : priorité + catégorie -->
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <div class="card h-100">
+            <div class="card-body">
+              <h6 class="fw-semibold mb-3"><i class="fas fa-exclamation-circle me-2 text-warning"></i>Répartition par priorité</h6>
+              <canvas id="chart-priority" height="120"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card h-100">
+            <div class="card-body">
+              <h6 class="fw-semibold mb-3"><i class="fas fa-tag me-2 text-info"></i>Répartition par catégorie</h6>
+              <canvas id="chart-category" height="120"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ligne 3 : temps résolution + top assignés -->
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="card h-100">
+            <div class="card-body">
+              <h6 class="fw-semibold mb-3"><i class="fas fa-clock me-2 text-success"></i>Temps moyen de résolution (h)</h6>
+              <canvas id="chart-resolution-time" height="120"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card h-100">
+            <div class="card-body">
+              <h6 class="fw-semibold mb-3"><i class="fas fa-user-check me-2 text-purple"></i>Top assignés (tickets résolus)</h6>
+              <canvas id="chart-assignees" height="120"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- ── Admin users ── -->
     <div id="view-admin-users" style="display:none">
       <h5 class="fw-bold mb-4"><i class="fas fa-users-cog me-2 text-primary"></i>Gestion des utilisateurs</h5>
@@ -1144,6 +1277,12 @@
                   <option value="perte_donnees">💾 Perte de données</option>
                   <option value="surcharge_systeme">📈 Surcharge système</option>
                   <option value="panne_electrique">⚡ Panne électrique / UPS</option>
+                  <option value="virus">🦠 Virus / Malware</option>
+                  <option value="phishing">🎣 Phishing / Spam</option>
+                  <option value="crash_application">💥 Crash application</option>
+                  <option value="corruption_donnees">🗄️ Corruption de données</option>
+                  <option value="indisponibilite_service">🚫 Indisponibilité service</option>
+                  <option value="acces_refuse">🚷 Accès refusé</option>
                 </optgroup>
                 <optgroup label="── Demandes">
                   <option value="demande">📋 Demande</option>
@@ -1155,6 +1294,12 @@
                   <option value="demande_sauvegarde">💿 Demande de sauvegarde</option>
                   <option value="demande_demenagement">📦 Demande de déménagement</option>
                   <option value="demande_licence">📄 Demande de licence</option>
+                  <option value="demande_reinitialisation_mdp">🔓 Réinitialisation mot de passe</option>
+                  <option value="demande_creation_compte">👤 Création de compte</option>
+                  <option value="demande_assistance">🎧 Assistance à distance</option>
+                  <option value="demande_configuration">⚙️ Configuration</option>
+                  <option value="demande_mise_a_jour">🔄 Mise à jour logicielle</option>
+                  <option value="demande_archivage">🗃️ Archivage de données</option>
                 </optgroup>
               </select>
             </div>
@@ -1430,7 +1575,13 @@ const TYPE_META = {
   intrusion:             { label: 'Intrusion / Cyberattaque',  icon: 'user-secret' },
   perte_donnees:         { label: 'Perte de données',          icon: 'database' },
   surcharge_systeme:     { label: 'Surcharge système',         icon: 'server' },
-  panne_electrique:      { label: 'Panne électrique / UPS',    icon: 'bolt' },
+  panne_electrique:           { label: 'Panne électrique / UPS',        icon: 'bolt' },
+  virus:                      { label: 'Virus / Malware',               icon: 'bug' },
+  phishing:                   { label: 'Phishing / Spam',               icon: 'fish' },
+  crash_application:          { label: 'Crash application',             icon: 'skull-crossbones' },
+  corruption_donnees:         { label: 'Corruption de données',         icon: 'times-circle' },
+  indisponibilite_service:    { label: 'Indisponibilité service',        icon: 'ban' },
+  acces_refuse:               { label: 'Accès refusé',                  icon: 'user-times' },
   demande:               { label: 'Demande',                   icon: 'clipboard-list' },
   demande_acces:         { label: "Demande d'accès",           icon: 'key' },
   demande_installation:  { label: "Demande d'installation",    icon: 'download' },
@@ -1439,7 +1590,13 @@ const TYPE_META = {
   demande_formation:     { label: 'Demande de formation',      icon: 'graduation-cap' },
   demande_sauvegarde:    { label: 'Demande de sauvegarde',     icon: 'save' },
   demande_demenagement:  { label: 'Demande de déménagement',   icon: 'truck' },
-  demande_licence:       { label: 'Demande de licence',        icon: 'file-contract' },
+  demande_licence:                { label: 'Demande de licence',              icon: 'file-contract' },
+  demande_reinitialisation_mdp:   { label: 'Réinitialisation mot de passe',   icon: 'unlock-alt' },
+  demande_creation_compte:        { label: 'Création de compte',              icon: 'user-plus' },
+  demande_assistance:             { label: 'Assistance à distance',           icon: 'headset' },
+  demande_configuration:          { label: 'Configuration',                   icon: 'cogs' },
+  demande_mise_a_jour:            { label: 'Mise à jour logicielle',          icon: 'sync-alt' },
+  demande_archivage:              { label: 'Archivage de données',            icon: 'archive' },
 };
 
 function typeBadge(t) {
@@ -1543,6 +1700,7 @@ function enterApp() {
   connectSSE();
   applyWidgets();
   startSLAChecker();
+  initReportsPeriodBtns();
   showView('dashboard');
 }
 
@@ -1572,7 +1730,7 @@ async function loadTechUsers() {
 // ════════════════════════════════════════════
 // NAVIGATION
 // ════════════════════════════════════════════
-const VIEWS = ['dashboard', 'my-tickets', 'all-tickets', 'catalogue', 'incidents', 'demandes', 'advanced-search', 'kanban', 'sla', 'admin-users'];
+const VIEWS = ['dashboard', 'my-tickets', 'all-tickets', 'catalogue', 'incidents', 'demandes', 'advanced-search', 'kanban', 'reports', 'sla', 'admin-users'];
 
 function showView(name) {
   VIEWS.forEach(v => {
@@ -1615,6 +1773,7 @@ function loadView(name) {
   else if (name === 'demandes') loadGroupView('demandes');
   else if (name === 'catalogue') loadCatalogue();
   else if (name === 'kanban') loadKanban();
+  else if (name === 'reports') loadReports();
   else if (name === 'advanced-search') loadAdvSearchUsers();
   else if (name === 'sla') loadSLA();
   else if (name === 'admin-users') loadAdminUsers();
@@ -2150,9 +2309,9 @@ async function loadGroupView(group, params = {}) {
 // AUTO-PRIORITÉ
 // ════════════════════════════════════════════
 const AUTO_PRIORITY = {
-  intrusion: 'critique', alerte_securite: 'critique', perte_donnees: 'critique',
-  panne: 'haute', coupure_reseau: 'haute', surcharge_systeme: 'haute', panne_electrique: 'haute',
-  incident: 'normale', dysfonctionnement: 'normale',
+  intrusion: 'critique', alerte_securite: 'critique', perte_donnees: 'critique', virus: 'critique', corruption_donnees: 'critique',
+  panne: 'haute', coupure_reseau: 'haute', surcharge_systeme: 'haute', panne_electrique: 'haute', phishing: 'haute', indisponibilite_service: 'haute',
+  incident: 'normale', dysfonctionnement: 'normale', crash_application: 'normale', acces_refuse: 'normale',
   demande: 'faible', demande_acces: 'faible', demande_installation: 'faible',
   demande_materiel: 'faible', demande_information: 'faible', demande_formation: 'faible',
   demande_sauvegarde: 'faible', demande_demenagement: 'faible', demande_licence: 'faible',
@@ -2392,6 +2551,117 @@ async function changeRole(userId, role) {
 }
 
 // ════════════════════════════════════════════
+// RAPPORTS
+// ════════════════════════════════════════════
+let _reportsPeriod = 30;
+
+function initReportsPeriodBtns() {
+  document.querySelectorAll('#reports-period-btns button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#reports-period-btns button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      _reportsPeriod = parseInt(btn.dataset.days);
+      loadReports();
+    });
+  });
+}
+
+async function loadReports() {
+  try {
+    const [stats, timeline, reports] = await Promise.all([
+      API.get('/tickets/stats'),
+      API.get(`/tickets/timeline?days=${_reportsPeriod}`),
+      API.get('/tickets/reports'),
+    ]);
+
+    // ── KPIs ──
+    const rate = reports.resolution_rate;
+    const avgAll = Object.values(reports.avg_resolution_h).filter(v => v !== null);
+    const globalAvg = avgAll.length ? (avgAll.reduce((a, b) => a + b, 0) / avgAll.length).toFixed(1) : '—';
+    document.getElementById('reports-kpis').innerHTML = `
+      <div class="col-6 col-lg-3">
+        <div class="card text-center py-3">
+          <div class="display-6 fw-bold text-primary">${stats.total}</div>
+          <div class="text-muted small">Tickets total</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="card text-center py-3">
+          <div class="display-6 fw-bold text-success">${rate}%</div>
+          <div class="text-muted small">Taux de résolution</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="card text-center py-3">
+          <div class="display-6 fw-bold text-warning">${globalAvg}h</div>
+          <div class="text-muted small">Temps moyen résolution</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="card text-center py-3">
+          <div class="display-6 fw-bold text-danger">${stats.critique}</div>
+          <div class="text-muted small">Tickets critiques</div>
+        </div>
+      </div>`;
+
+    // ── Graphiques ──
+    const lblFmt = d => d.slice(5); // MM-DD
+
+    buildChart('chart-timeline', 'line', {
+      labels: timeline.dates.map(lblFmt),
+      datasets: [
+        { label: 'Créés',   data: timeline.created,  borderColor: '#1976d2', backgroundColor: 'rgba(25,118,210,.1)', tension: .3, fill: true },
+        { label: 'Résolus', data: timeline.resolved, borderColor: '#388e3c', backgroundColor: 'rgba(56,142,60,.1)',  tension: .3, fill: true },
+      ],
+    }, { plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } });
+
+    buildChart('chart-status', 'doughnut', {
+      labels: ['Ouvert', 'En cours', 'Résolu', 'Fermé'],
+      datasets: [{ data: [stats.ouvert, stats.en_cours, stats.resolu, stats.ferme],
+        backgroundColor: ['#1976d2','#f57c00','#388e3c','#757575'] }],
+    }, { plugins: { legend: { position: 'bottom' } } });
+
+    buildChart('chart-priority', 'bar', {
+      labels: ['Critique', 'Haute', 'Normale', 'Faible'],
+      datasets: [{ label: 'Tickets', data: [stats.critique, stats.haute, stats.normale, stats.faible],
+        backgroundColor: ['#c62828','#f57c00','#1976d2','#388e3c'] }],
+    }, { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } });
+
+    const cats = stats.by_category;
+    buildChart('chart-category', 'bar', {
+      labels: Object.keys(cats).map(k => k.charAt(0).toUpperCase() + k.slice(1)),
+      datasets: [{ label: 'Tickets', data: Object.values(cats),
+        backgroundColor: '#5c6bc0' }],
+    }, { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }, indexAxis: 'y' });
+
+    const rh = reports.avg_resolution_h;
+    buildChart('chart-resolution-time', 'bar', {
+      labels: ['Critique', 'Haute', 'Normale', 'Faible'],
+      datasets: [{ label: 'Heures', data: [rh.critique, rh.haute, rh.normale, rh.faible].map(v => v ?? 0),
+        backgroundColor: ['#c62828','#f57c00','#1976d2','#388e3c'] }],
+    }, { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } });
+
+    buildChart('chart-assignees', 'bar', {
+      labels: reports.top_assignees.map(a => a.name),
+      datasets: [
+        { label: 'Assignés',  data: reports.top_assignees.map(a => a.total),    backgroundColor: 'rgba(25,118,210,.5)' },
+        { label: 'Résolus',   data: reports.top_assignees.map(a => a.resolved), backgroundColor: '#388e3c' },
+      ],
+    }, { plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } });
+
+  } catch (e) {
+    console.error('Erreur rapports', e);
+  }
+}
+
+function buildChart(id, type, data, options = {}) {
+  destroyChart(id);
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+  _charts[id] = new Chart(ctx, { type, data, options: { responsive: true, ...options } });
+}
+
+// ════════════════════════════════════════════
 // KANBAN
 // ════════════════════════════════════════════
 const KANBAN_COLS = [
@@ -2495,7 +2765,13 @@ const CATALOGUE_INCIDENTS = [
   { type: 'intrusion',         label: 'Intrusion',         icon: 'fa-user-secret',          color: 'dark'    },
   { type: 'perte_donnees',     label: 'Perte de données',  icon: 'fa-database',             color: 'danger'  },
   { type: 'surcharge_systeme', label: 'Surcharge système', icon: 'fa-server',               color: 'warning' },
-  { type: 'panne_electrique',  label: 'Panne électrique',  icon: 'fa-bolt',                 color: 'warning' },
+  { type: 'panne_electrique',       label: 'Panne électrique',       icon: 'fa-bolt',            color: 'warning'   },
+  { type: 'virus',                  label: 'Virus / Malware',         icon: 'fa-bug',             color: 'danger'    },
+  { type: 'phishing',               label: 'Phishing / Spam',         icon: 'fa-fish',            color: 'warning'   },
+  { type: 'crash_application',      label: 'Crash application',       icon: 'fa-skull-crossbones',color: 'secondary' },
+  { type: 'corruption_donnees',     label: 'Corruption de données',   icon: 'fa-times-circle',    color: 'danger'    },
+  { type: 'indisponibilite_service',label: 'Indisponibilité service',  icon: 'fa-ban',             color: 'warning'   },
+  { type: 'acces_refuse',           label: 'Accès refusé',            icon: 'fa-user-times',      color: 'secondary' },
 ];
 const CATALOGUE_DEMANDES = [
   { type: 'demande',              label: 'Demande',         icon: 'fa-clipboard-list', color: 'primary'   },
@@ -2506,7 +2782,13 @@ const CATALOGUE_DEMANDES = [
   { type: 'demande_formation',    label: 'Formation',       icon: 'fa-graduation-cap', color: 'success'   },
   { type: 'demande_sauvegarde',   label: 'Sauvegarde',      icon: 'fa-save',           color: 'primary'   },
   { type: 'demande_demenagement', label: 'Déménagement',    icon: 'fa-truck',          color: 'secondary' },
-  { type: 'demande_licence',      label: 'Licence',         icon: 'fa-file-contract',  color: 'dark'      },
+  { type: 'demande_licence',             label: 'Licence',                      icon: 'fa-file-contract', color: 'dark'      },
+  { type: 'demande_reinitialisation_mdp',label: 'Réinit. mot de passe',          icon: 'fa-unlock-alt',    color: 'success'   },
+  { type: 'demande_creation_compte',     label: 'Création de compte',            icon: 'fa-user-plus',     color: 'info'      },
+  { type: 'demande_assistance',          label: 'Assistance à distance',         icon: 'fa-headset',       color: 'success'   },
+  { type: 'demande_configuration',       label: 'Configuration',                 icon: 'fa-cogs',          color: 'secondary' },
+  { type: 'demande_mise_a_jour',         label: 'Mise à jour logicielle',        icon: 'fa-sync-alt',      color: 'info'      },
+  { type: 'demande_archivage',           label: 'Archivage de données',          icon: 'fa-archive',       color: 'dark'      },
 ];
 
 let _catalogueByType = {};
@@ -2567,38 +2849,23 @@ function exportCatalogueCSV() {
   toast('Export CSV téléchargé !');
 }
 
-function exportCataloguePDF() {
-  const date = new Date().toLocaleDateString('fr-FR');
-  const buildRows = (items, group) => items.map(d => {
-    const count = _catalogueByType[d.type] || 0;
-    return `<tr><td>${group}</td><td>${d.label}</td><td style="text-align:center;font-weight:600">${count}</td></tr>`;
-  }).join('');
-
-  const html = `<!DOCTYPE html><html><head><meta charset="utf-8">
-    <title>Catalogue des types — ${date}</title>
-    <style>
-      body { font-family: Arial, sans-serif; font-size: 13px; color: #212121; padding: 24px; }
-      h1 { font-size: 18px; margin-bottom: 4px; }
-      .sub { color: #757575; font-size: 12px; margin-bottom: 24px; }
-      table { width: 100%; border-collapse: collapse; margin-bottom: 32px; }
-      th { background: #1976d2; color: #fff; padding: 8px 12px; text-align: left; font-size: 12px; }
-      td { padding: 7px 12px; border-bottom: 1px solid #e0e0e0; }
-      tr:hover td { background: #f5f5f5; }
-      .section { font-size: 14px; font-weight: 700; color: #1976d2; padding: 10px 0 4px; border-bottom: 2px solid #1976d2; margin: 24px 0 12px; text-transform: uppercase; letter-spacing: .05em; }
-    </style></head><body>
-    <h1>Catalogue des types de tickets</h1>
-    <div class="sub">Exporté le ${date}</div>
-    <div class="section">Incidents</div>
-    <table><thead><tr><th>Catégorie</th><th>Type</th><th style="width:120px;text-align:center">Tickets</th></tr></thead>
-    <tbody>${buildRows(CATALOGUE_INCIDENTS, 'Incident')}</tbody></table>
-    <div class="section">Demandes</div>
-    <table><thead><tr><th>Catégorie</th><th>Type</th><th style="width:120px;text-align:center">Tickets</th></tr></thead>
-    <tbody>${buildRows(CATALOGUE_DEMANDES, 'Demande')}</tbody></table>
-    <script>window.onload=()=>{window.print();}<\/script></body></html>`;
-
-  const win = window.open('', '_blank');
-  win.document.write(html);
-  win.document.close();
+async function exportCataloguePDF() {
+  try {
+    const res = await fetch('/api/tickets/catalogue/pdf', {
+      headers: { 'Authorization': `Bearer ${API.token}` },
+    });
+    if (!res.ok) { toast('Erreur lors de la génération du PDF', 'danger'); return; }
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `catalogue_types_${new Date().toISOString().slice(0,10)}.pdf`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast('Catalogue PDF téléchargé !');
+  } catch (e) {
+    toast('Erreur : ' + e.message, 'danger');
+  }
 }
 
 // ════════════════════════════════════════════
