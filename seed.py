@@ -799,6 +799,15 @@ def seed(force=False):
              (6, "Vérifier le retour à la normale", "Confirmer la connectivité sur l'ensemble du périmètre touché. Tester les services critiques (AD, DNS, accès Internet, serveurs)."),
              (7, "Documenter et clore", "Rédiger le compte-rendu d'incident : cause, actions, durée de l'interruption. Clore le ticket et notifier les utilisateurs."),
          ]),
+        ("Mise en place d'une sauvegarde", "demande_sauvegarde",
+         "Processus de configuration d'une solution de sauvegarde pour un poste ou un serveur", [
+             (1, "Analyser le besoin et les données à sauvegarder", "Identifier les données critiques (type, volume, emplacement), la fréquence souhaitée, la durée de rétention et les contraintes métier (fenêtres de sauvegarde, RPO/RTO)."),
+             (2, "Choisir la solution et la destination", "Sélectionner la solution adaptée (Veeam, Windows Server Backup, robocopy, cloud...) et la destination (NAS, bande, cloud S3, serveur de sauvegarde). Vérifier l'espace disponible."),
+             (3, "Configurer le job de sauvegarde", "Créer le job avec les paramètres définis : source, destination, planning, type (complet/incrémentiel/différentiel), rétention et notifications d'alerte en cas d'échec."),
+             (4, "Effectuer une première sauvegarde de référence", "Lancer manuellement la première sauvegarde complète. Vérifier qu'elle se termine sans erreur et contrôler l'intégrité des données sauvegardées."),
+             (5, "Tester la restauration", "Effectuer un test de restauration sur un fichier ou dossier de test pour valider que les données sont bien récupérables. Documenter le résultat et le temps de restauration."),
+             (6, "Valider et documenter", "Confirmer avec le demandeur que la sauvegarde répond au besoin. Documenter la configuration (source, destination, planning, rétention) dans l'outil de gestion et fermer le ticket."),
+         ]),
         ("Prise en charge panne matérielle", "panne",
          "Processus de diagnostic et de résolution d'une panne matérielle sur un équipement informatique", [
              (1, "Qualifier la panne et l'impact", "Identifier l'équipement en panne (PC, serveur, imprimante, switch...), le nombre d'utilisateurs impactés et l'urgence métier. Vérifier si un équipement de remplacement est disponible."),
