@@ -322,6 +322,371 @@ def seed(force=False):
         "demande_licence", "reseau", "critique", "ouvert", admin, created_days_ago=0)
     history(t29, admin, "création", None, "ouvert", days_ago=0)
 
+    # ── Nouveaux types d'incidents ────────────────────────────────────────────
+
+    t30 = ticket("PC de M. Blanc très lent depuis mise à jour",
+        "Depuis la mise à jour Windows du 20/05, le poste PC-BLANC-01 met 8 minutes à démarrer "
+        "et les applications mettent 2-3 min à s'ouvrir. Impact fort sur la productivité.",
+        "lenteur_systeme", "logiciel", "haute", "ouvert", mmartin, created_days_ago=4)
+    history(t30, mmartin, "création", None, "ouvert", days_ago=4)
+
+    t31 = ticket("Mise à jour KB5034441 échoue sur 8 postes comptabilité",
+        "La mise à jour cumulative KB5034441 échoue systématiquement avec l'erreur 0x80073701 "
+        "sur 8 postes du service comptabilité. Les postes restent en retard de patch.",
+        "mise_a_jour_echouee", "logiciel", "normale", "en_cours", jdupont, jdupont, created_days_ago=5)
+    history(t31, jdupont, "création", None,       "ouvert",   days_ago=5)
+    history(t31, jdupont, "statut",   "ouvert",   "en_cours", days_ago=4)
+    comment(t31, jdupont, "Composant CBS corrompu identifié. Exécution de DISM /RestoreHealth en cours sur les postes.", days_ago=3)
+
+    t32 = ticket("Certificat SSL API interne expiré - services bloqués",
+        "Le certificat du serveur API interne (api.interne.local) a expiré ce matin. "
+        "Les applications métier (ERP, CRM) ne peuvent plus s'authentifier. Impact critique.",
+        "certificat_expire", "reseau", "haute", "en_cours", admin, admin, created_days_ago=0)
+    history(t32, admin, "création", None,       "ouvert",   days_ago=0)
+    history(t32, admin, "statut",   "ouvert",   "en_cours", days_ago=0)
+    comment(t32, admin, "Nouveau certificat Let's Encrypt généré et déployé. Tests de validation en cours.")
+
+    t33 = ticket("Sauvegarde nocturne Veeam en échec depuis 3 jours",
+        "Les jobs de sauvegarde Veeam B&R échouent chaque nuit depuis le 23/05 avec l'erreur "
+        "'Unable to connect to guest'. Les VMs critiques ne sont plus sauvegardées.",
+        "sauvegarde_echouee", "logiciel", "haute", "ouvert", admin, created_days_ago=3)
+    history(t33, admin, "création", None, "ouvert", days_ago=3)
+
+    t34 = ticket("Attaque DDoS sur le site vitrine - débit saturé",
+        "Notre site vitrine (www.entreprise.fr) est victime d'une attaque DDoS depuis 10h. "
+        "Bande passante saturée à 100%, site inaccessible. Prestataire hébergeur contacté.",
+        "attaque_ddos", "reseau", "critique", "en_cours", admin, admin, created_days_ago=0)
+    history(t34, admin, "création", None,       "ouvert",   days_ago=0)
+    history(t34, admin, "statut",   "ouvert",   "en_cours", days_ago=0)
+    comment(t34, admin, "Mitigation CloudFlare activée. Trafic en cours de filtrage. Site partiellement accessible.")
+
+    t35 = ticket("Compte de Mme Torres piraté - connexion depuis l'étranger",
+        "L'Azure AD Conditional Access a détecté une connexion depuis Moscou avec le compte "
+        "de Mme Torres (RH). Le compte a été bloqué automatiquement. Vérification et remédiation requises.",
+        "acces_non_autorise", "securite", "critique", "en_cours", admin, admin, created_days_ago=1)
+    history(t35, admin, "création", None,       "ouvert",   days_ago=1)
+    history(t35, admin, "statut",   "ouvert",   "en_cours", days_ago=1)
+    comment(t35, admin, "MDP réinitialisé, sessions révoquées, MFA forcé. Analyse de l'activité suspecte en cours.", days_ago=0)
+
+    t36 = ticket("WiFi coupé dans l'open space RDC - 15 postes impactés",
+        "Le point d'accès WiFi de l'open space RDC (AP-RDC-03) est hors service depuis 9h. "
+        "15 collaborateurs sans connexion. Le câble réseau de remplacement fonctionne.",
+        "perte_connexion_wifi", "reseau", "normale", "ouvert", mmartin, created_days_ago=0)
+    history(t36, mmartin, "création", None, "ouvert", days_ago=0)
+
+    t37 = ticket("Serveur Exchange indisponible - messagerie hors service",
+        "Le serveur Exchange On-Premise (SRV-MAIL-01) est tombé à 14h32. "
+        "Tous les utilisateurs ne peuvent plus envoyer ni recevoir d'emails depuis 2h. "
+        "Service critique pour le bon fonctionnement de l'entreprise.",
+        "messagerie_indisponible", "reseau", "haute", "en_cours", jdupont, jdupont, created_days_ago=0)
+    history(t37, jdupont, "création", None,       "ouvert",   days_ago=0)
+    history(t37, jdupont, "statut",   "ouvert",   "en_cours", days_ago=0)
+    comment(t37, jdupont, "Service de transport Exchange redémarré. Vérification de la file de messages en cours.")
+
+    t38 = ticket("Dossier \\\\SRV-FIC\\COMPTA inaccessible depuis ce matin",
+        "Le dossier partagé Comptabilité sur le serveur de fichiers est inaccessible depuis 8h. "
+        "Message : 'Le chemin réseau est introuvable.' Les autres partages fonctionnent normalement.",
+        "partage_reseau_inaccessible", "reseau", "normale", "ouvert", mmartin, created_days_ago=0)
+    history(t38, mmartin, "création", None, "ouvert", days_ago=0)
+
+    t39 = ticket("SAP très lent au démarrage - 30 secondes pour ouvrir",
+        "Le module SAP FI/CO met désormais 25-30 secondes à s'ouvrir contre 5 secondes habituellement. "
+        "Problème apparu après la mise à jour SAP GUI 7.70 Patch 4 déployée vendredi.",
+        "application_lente", "logiciel", "normale", "en_cours", mmartin, jdupont, created_days_ago=2)
+    history(t39, mmartin, "création", None,       "ouvert",   days_ago=2)
+    history(t39, jdupont, "statut",   "ouvert",   "en_cours", days_ago=1)
+
+    t40 = ticket("Écran externe sans signal - poste Mme Renard",
+        "L'écran externe Dell 27\" du poste de Mme Renard (bureau 412) n'affiche rien depuis ce matin. "
+        "Le câble DisplayPort a été remplacé sans amélioration. L'écran intégré du laptop fonctionne.",
+        "ecran_noir", "materiel", "normale", "ouvert", mmartin, created_days_ago=1)
+    history(t40, mmartin, "création", None, "ouvert", days_ago=1)
+
+    t41 = ticket("Clavier sans fil Logitech plus détecté - poste RH",
+        "Le clavier sans fil Logitech K780 du poste RH-05 n'est plus reconnu depuis ce matin. "
+        "Remplacement des piles effectué, reset Unifying Receiver tenté sans succès.",
+        "clavier_souris_defaillant", "materiel", "faible", "resolu", mmartin, jdupont, created_days_ago=3)
+    history(t41, mmartin, "création", None,       "ouvert",   days_ago=3)
+    history(t41, jdupont, "statut",   "ouvert",   "resolu",   days_ago=2)
+    comment(t41, jdupont, "Récepteur USB Unifying défaillant. Remplacement du récepteur effectué. Clavier fonctionnel.", days_ago=2)
+
+    t42 = ticket("Casque Teams sans son depuis mise à jour Windows",
+        "Depuis la mise à jour Windows 11 23H2, le casque Jabra Evolve 40 ne produit plus de son "
+        "dans Microsoft Teams. Les autres applications audio fonctionnent normalement.",
+        "son_defaillant", "logiciel", "faible", "ouvert", mmartin, created_days_ago=2)
+    history(t42, mmartin, "création", None, "ouvert", days_ago=2)
+
+    t43 = ticket("uTorrent détecté sur PC-COMPTA-07 - violation politique SI",
+        "L'outil de supervision a détecté uTorrent installé et actif sur le poste PC-COMPTA-07 "
+        "(M. Roux, comptabilité). Logiciel non autorisé par la politique de sécurité informatique.",
+        "logiciel_non_autorise", "securite", "haute", "en_cours", admin, jdupont, created_days_ago=1)
+    history(t43, admin,   "création", None,       "ouvert",   days_ago=1)
+    history(t43, jdupont, "statut",   "ouvert",   "en_cours", days_ago=0)
+    comment(t43, jdupont, "Logiciel désinstallé, utilisateur convoqué par son responsable. Rapport de sécurité transmis à la DRH.")
+
+    t44 = ticket("GlobalProtect erreur 48 - impossible de se connecter",
+        "Mme Torres ne peut plus se connecter au VPN GlobalProtect depuis son domicile. "
+        "Erreur : 'Portal does not exist (48)'. Fonctionne depuis le réseau interne.",
+        "erreur_connexion_vpn", "reseau", "normale", "ouvert", mmartin, created_days_ago=1)
+    history(t44, mmartin, "création", None, "ouvert", days_ago=1)
+
+    t45 = ticket("OneDrive bloqué en synchronisation - fichiers non mis à jour",
+        "OneDrive affiche 'Traitement des modifications...' depuis 3 jours sans progresser. "
+        "Environ 2 Go de fichiers projet en attente de synchronisation. "
+        "Aucun message d'erreur explicite.",
+        "synchronisation_echouee", "logiciel", "normale", "ouvert", mmartin, created_days_ago=3)
+    history(t45, mmartin, "création", None, "ouvert", days_ago=3)
+
+    t46 = ticket("Onduleur baie réseau - alarme batterie faible",
+        "L'onduleur APC Smart-UPS 1500 de la baie réseau salle 101 émet une alarme de batterie faible. "
+        "Autonomie estimée à 8 minutes. Risque de coupure réseau non contrôlée.",
+        "onduleur_defaillant", "materiel", "haute", "en_cours", admin, admin, created_days_ago=0)
+    history(t46, admin, "création", None,       "ouvert",   days_ago=0)
+    history(t46, admin, "statut",   "ouvert",   "en_cours", days_ago=0)
+    comment(t46, admin, "Commande de remplacement batterie passée en urgence. Délai : 48h. Surveillance renforcée.")
+
+    t47 = ticket("Disque C:\\ serveur de fichiers à 98% - espace critique",
+        "Le disque système du serveur SRV-FIC-01 est à 98% d'utilisation (197 Go / 200 Go). "
+        "Risque imminent d'arrêt des services si le seuil est atteint. Nettoyage ou extension requis.",
+        "stockage_plein", "logiciel", "haute", "en_cours", admin, admin, created_days_ago=0)
+    history(t47, admin, "création", None,       "ouvert",   days_ago=0)
+    history(t47, admin, "statut",   "ouvert",   "en_cours", days_ago=0)
+    comment(t47, admin, "Suppression des logs anciens : +12 Go libérés. Analyse des gros fichiers en cours. Extension disque planifiée.")
+
+    t48 = ticket("Email frauduleux imitant le PDG - tentative de virement",
+        "Plusieurs employés ont reçu un email usurpant l'identité du PDG (M. Martin) demandant "
+        "un virement urgent de 45 000€. L'email provient d'un domaine similaire (entreprlse.fr). "
+        "Aucun virement n'a été effectué.",
+        "usurpation_identite", "securite", "critique", "en_cours", admin, admin, created_days_ago=0)
+    history(t48, admin, "création", None,       "ouvert",   days_ago=0)
+    history(t48, admin, "statut",   "ouvert",   "en_cours", days_ago=0)
+    comment(t48, admin, "Domaine frauduleux signalé à l'hébergeur. Règle de blocage mail déployée. Sensibilisation équipe finance.")
+
+    t49 = ticket("Tables PostgreSQL corrompues après crash disque",
+        "Suite à un crash de disque sur SRV-DB-02, plusieurs tables PostgreSQL de l'application "
+        "RH sont corrompues (pg_catalog, schema hr). Erreur : 'invalid page header in block'. "
+        "Application RH complètement hors service.",
+        "base_donnees_corrompue", "logiciel", "critique", "en_cours", admin, admin, created_days_ago=1)
+    history(t49, admin, "création", None,       "ouvert",   days_ago=1)
+    history(t49, admin, "statut",   "ouvert",   "en_cours", days_ago=1)
+    comment(t49, admin, "Restauration depuis sauvegarde J-1 en cours. Perte de données estimée : données de la journée. DBA prévenu.", days_ago=0)
+
+    t50 = ticket("Teams crashe systématiquement avec Sophos Intercept X",
+        "Depuis la mise à jour Sophos Intercept X 2.0.23, Microsoft Teams se ferme brutalement "
+        "lors des partages d'écran. Problème reproductible sur 4 postes. Désactivation Sophos = Teams OK.",
+        "incompatibilite_logicielle", "logiciel", "normale", "ouvert", mmartin, created_days_ago=4)
+    history(t50, mmartin, "création", None, "ouvert", days_ago=4)
+
+    t51 = ticket("Webcam Logitech C920 non détectée en réunion Teams",
+        "La webcam Logitech C920 du poste PC-CONF-02 (salle de conf.) n'est plus reconnue "
+        "par Teams ni par l'OS. Appareil absent du gestionnaire de périphériques.",
+        "camera_defaillante", "materiel", "faible", "ouvert", mmartin, created_days_ago=1)
+    history(t51, mmartin, "création", None, "ouvert", days_ago=1)
+
+    t52 = ticket("Coupure fibre Orange - site de Lyon totalement isolé",
+        "Le site de Lyon est totalement coupé d'internet depuis 7h suite à une coupure fibre Orange. "
+        "80 collaborateurs sans accès internet, cloud et VPN. Équipe Orange estimant la réparation à 4h.",
+        "perte_connexion_internet", "reseau", "haute", "en_cours", admin, admin, created_days_ago=0)
+    history(t52, admin, "création", None,       "ouvert",   days_ago=0)
+    history(t52, admin, "statut",   "ouvert",   "en_cours", days_ago=0)
+    comment(t52, admin, "Bascule sur connexion 4G de secours effectuée. Débit limité à 50 Mb/s. Orange ETA : 11h30.")
+
+    t53 = ticket("Microsoft 365 dégradé - SharePoint et Teams inaccessibles",
+        "Depuis 9h15, SharePoint Online et Teams sont inaccessibles pour tous les utilisateurs. "
+        "Incident référencé sur le portail Microsoft Service Health (MO782341). Aucune action de notre côté.",
+        "interruption_cloud", "reseau", "haute", "ouvert", admin, created_days_ago=0)
+    history(t53, admin, "création", None, "ouvert", days_ago=0)
+
+    t54 = ticket("Impossible de se connecter au portail RH - erreur 401",
+        "Depuis ce matin, plusieurs utilisateurs reçoivent une erreur 401 (Unauthorized) "
+        "en tentant de se connecter au portail RH en ligne. Le portail demande une réauthentification "
+        "à chaque accès. Problème SAML/ADFS suspecté.",
+        "erreur_authentification", "logiciel", "normale", "ouvert", mmartin, created_days_ago=1)
+    history(t54, mmartin, "création", None, "ouvert", days_ago=1)
+
+    # ── Nouvelles demandes ────────────────────────────────────────────────────
+
+    t55 = ticket("Extension quota OneDrive équipe direction - 1 To vers 5 To",
+        "Les 3 membres de l'équipe direction ont atteint leur quota OneDrive (1 To). "
+        "Demande d'extension à 5 To par utilisateur pour stocker les projets stratégiques.",
+        "demande_extension_stockage", "logiciel", "faible", "ouvert", mmartin, created_days_ago=2)
+    history(t55, mmartin, "création", None, "ouvert", days_ago=2)
+
+    t56 = ticket("Redirection email M. Bernard vers M. Durand - départ retraite",
+        "M. Bernard part en retraite le 31/05. Merci de rediriger ses emails vers son successeur "
+        "M. Durand pour une durée de 6 mois, puis de créer un alias permanent.",
+        "demande_redirection_mail", "logiciel", "faible", "resolu", admin, jdupont, created_days_ago=8)
+    history(t56, admin,   "création", None,       "ouvert",   days_ago=8)
+    history(t56, jdupont, "statut",   "ouvert",   "resolu",   days_ago=6)
+    comment(t56, jdupont, "Règle de redirection Exchange configurée. Alias bernard@entreprise.fr conservé 6 mois.", days_ago=6)
+
+    t57 = ticket("Création groupe AD 'Projet OMEGA' avec accès NAS et SharePoint",
+        "Le chef de projet M. Lévy demande la création d'un groupe de sécurité AD pour le projet OMEGA "
+        "(8 membres). Accès requis : dossier NAS \\\\SRV-FIC\\PROJETS\\OMEGA et site SharePoint projet.",
+        "demande_groupe_securite", "reseau", "faible", "ouvert", admin, created_days_ago=1)
+    history(t57, admin, "création", None, "ouvert", days_ago=1)
+
+    t58 = ticket("Dossier partagé 'Architecture 2026' sur NAS - équipe technique",
+        "L'équipe technique (6 personnes) a besoin d'un dossier partagé pour le projet Architecture 2026. "
+        "Emplacement souhaité : \\\\SRV-FIC\\PROJETS. Droits : lecture-écriture pour l'équipe, lecture seule pour la direction.",
+        "demande_partage_reseau", "reseau", "faible", "en_cours", mmartin, jdupont, created_days_ago=3)
+    history(t58, mmartin, "création", None,       "ouvert",   days_ago=3)
+    history(t58, jdupont, "statut",   "ouvert",   "en_cours", days_ago=2)
+
+    t59 = ticket("Restauration fichier Excel budget 2026 supprimé par erreur",
+        "Mme Petit a supprimé par erreur le fichier 'Budget_2026_V3_FINAL.xlsx' de son bureau "
+        "hier soir. La corbeille a été vidée. Besoin de restauration depuis la sauvegarde NAS.",
+        "demande_restauration", "logiciel", "normale", "resolu", mmartin, jdupont, created_days_ago=2)
+    history(t59, mmartin, "création", None,       "ouvert",   days_ago=2)
+    history(t59, jdupont, "statut",   "ouvert",   "resolu",   days_ago=1)
+    comment(t59, jdupont, "Fichier restauré depuis la sauvegarde de 22h. Version J-1 récupérée et transmise à l'utilisatrice.", days_ago=1)
+
+    t60 = ticket("Kit télétravail pour Mme Faure - commerciale itinérante",
+        "Mme Faure rejoint l'équipe commerciale le 03/06 avec un contrat en télétravail partiel (3j/5). "
+        "Besoin : dock USB-C, écran portable 15\", souris sans fil et sac de transport.",
+        "demande_tele_travail", "materiel", "faible", "ouvert", mmartin, created_days_ago=2)
+    history(t60, mmartin, "création", None, "ouvert", days_ago=2)
+
+    t61 = ticket("Remplacement PC vétuste direction - HP EliteBook 840 G3",
+        "Le PC de M. Renault (Direction Administrative) a 7 ans et est devenu inutilisable. "
+        "RAM insuffisante (4 Go), disque HDD très lent. Demande de remplacement par un modèle récent.",
+        "demande_poste_remplacement", "materiel", "normale", "en_cours", admin, jdupont, created_days_ago=5)
+    history(t61, admin,   "création", None,       "ouvert",   days_ago=5)
+    history(t61, jdupont, "statut",   "ouvert",   "en_cours", days_ago=4)
+    comment(t61, jdupont, "HP EliteBook 840 G10 commandé. Arrivée prévue dans 5 jours. Migration des données planifiée.", days_ago=3)
+
+    t62 = ticket("Mise en service imprimante couleur A3 - service Marketing",
+        "Le service Marketing a reçu une nouvelle imprimante Canon imageRUNNER C3226i. "
+        "Merci de procéder à la mise en service réseau, installation des pilotes sur les 6 postes "
+        "du service et configuration des bacs papier.",
+        "demande_mise_en_service", "imprimante", "normale", "ouvert", admin, created_days_ago=1)
+    history(t62, admin, "création", None, "ouvert", days_ago=1)
+
+    t63 = ticket("Chiffrement BitLocker sur laptops RH et Finance",
+        "Dans le cadre de la politique RGPD, les 8 laptops du service RH et Finance doivent être "
+        "chiffrés avec BitLocker. Clés de récupération à centraliser dans Azure AD.",
+        "demande_chiffrement", "securite", "normale", "en_cours", admin, jdupont, created_days_ago=6)
+    history(t63, admin,   "création", None,       "ouvert",   days_ago=6)
+    history(t63, jdupont, "statut",   "ouvert",   "en_cours", days_ago=5)
+    comment(t63, jdupont, "4/8 laptops chiffrés. Clés sauvegardées dans Azure AD. Suite prévue demain.", days_ago=2)
+
+    t64 = ticket("Activation MFA Microsoft 365 pour toute la direction",
+        "Suite à la recommandation de l'audit de sécurité, l'authentification MFA doit être "
+        "activée pour les 5 comptes de la direction. Utilisation de l'application Authenticator.",
+        "demande_double_authentification", "securite", "faible", "ouvert", admin, created_days_ago=3)
+    history(t64, admin, "création", None, "ouvert", days_ago=3)
+
+    t65 = ticket("Révision des droits AD - service Finance - départs et mutations",
+        "Suite à 2 départs et 1 mutation au service Finance en mai, une révision des droits "
+        "Active Directory est nécessaire. Liste des accès à révoquer et à créer jointe.",
+        "demande_revision_droits", "securite", "normale", "en_cours", admin, admin, created_days_ago=4)
+    history(t65, admin, "création", None,       "ouvert",   days_ago=4)
+    history(t65, admin, "statut",   "ouvert",   "en_cours", days_ago=3)
+    comment(t65, admin, "Comptes des partants désactivés. Droits du muté en cours de mise à jour.", days_ago=2)
+
+    t66 = ticket("Téléphone IP Cisco pour nouveau bureau commercial 215",
+        "Le bureau 215 (open space commercial) vient d'être attribué à M. Lambert. "
+        "Merci d'installer et configurer un téléphone IP Cisco 7942 avec le numéro de poste 2215.",
+        "demande_telephone_ip", "telephonie", "faible", "ouvert", mmartin, created_days_ago=1)
+    history(t66, mmartin, "création", None, "ouvert", days_ago=1)
+
+    t67 = ticket("Nettoyage et optimisation PC de M. Petit - bureau 108",
+        "Le PC de M. Petit est très lent au quotidien. Beaucoup de programmes au démarrage, "
+        "peu d'espace disque, logiciels obsolètes. Demande de nettoyage complet et optimisation.",
+        "demande_nettoyage_poste", "logiciel", "faible", "resolu", mmartin, jdupont, created_days_ago=7)
+    history(t67, mmartin, "création", None,       "ouvert",   days_ago=7)
+    history(t67, jdupont, "statut",   "ouvert",   "resolu",   days_ago=5)
+    comment(t67, jdupont, "Démarrage optimisé (8 → 2 programmes), 15 Go libérés, pilotes à jour. Temps démarrage : 45s → 18s.", days_ago=5)
+
+    t68 = ticket("Migration données ancien serveur SRV-OLD vers NAS Synology",
+        "Le serveur SRV-OLD doit être décommissionné fin juin. 800 Go de données doivent être "
+        "migrés vers le NAS Synology DS1823xs+ avec remapping des droits NTFS.",
+        "demande_migration_donnees", "reseau", "normale", "en_cours", admin, admin, created_days_ago=10)
+    history(t68, admin, "création", None,       "ouvert",   days_ago=10)
+    history(t68, admin, "statut",   "ouvert",   "en_cours", days_ago=8)
+    comment(t68, admin, "Migration 340 Go / 800 Go effectuée. Vérification des droits NTFS en cours. ETA : 3 jours.", days_ago=3)
+
+    t69 = ticket("Formation anti-phishing pour le service comptabilité",
+        "Suite à 2 incidents de phishing en mai, le RSSI demande une formation de sensibilisation "
+        "pour les 12 personnes du service comptabilité. Format : 2h présentiel + simulation de phishing.",
+        "demande_formation_securite", "securite", "faible", "ouvert", admin, created_days_ago=3)
+    history(t69, admin, "création", None, "ouvert", days_ago=3)
+
+    t70 = ticket("Mise à jour firmware switch HP ProCurve - étage 2",
+        "Le switch HP ProCurve 2530-24G de l'étage 2 tourne sur un firmware obsolète (YA.16.02). "
+        "Mise à jour vers YA.16.10 recommandée pour corriger 3 CVE critiques. "
+        "Intervention à planifier en dehors des heures ouvrées.",
+        "demande_mise_a_jour_firmware", "reseau", "faible", "en_cours", admin, jdupont, created_days_ago=5)
+    history(t70, admin,   "création", None,       "ouvert",   days_ago=5)
+    history(t70, jdupont, "statut",   "ouvert",   "en_cours", days_ago=4)
+    comment(t70, jdupont, "Firmware téléchargé et validé. Intervention planifiée samedi 01/06 à 7h00.", days_ago=2)
+
+    t71 = ticket("Configuration écran interactif salle Alpha - Teams Rooms",
+        "La salle de réunion Alpha vient d'être équipée d'un écran interactif Samsung Flip 4. "
+        "Besoin de configurer Microsoft Teams Rooms, le partage sans fil et la connexion HDMI.",
+        "demande_salle_reunion", "materiel", "faible", "ouvert", admin, created_days_ago=2)
+    history(t71, admin, "création", None, "ouvert", days_ago=2)
+
+    t72 = ticket("Mise à jour signatures email - nouveau logo et charte graphique",
+        "Suite au rebranding de l'entreprise, toutes les signatures email doivent être mises à jour "
+        "avec le nouveau logo, les nouvelles couleurs et le nouveau slogan. À déployer pour les 45 utilisateurs.",
+        "demande_signature_mail", "logiciel", "faible", "resolu", admin, jdupont, created_days_ago=12)
+    history(t72, admin,   "création", None,       "ouvert",   days_ago=12)
+    history(t72, jdupont, "statut",   "ouvert",   "resolu",   days_ago=9)
+    comment(t72, jdupont, "Template déployé via script PowerShell sur les 45 boîtes. Vérification effectuée sur 5 postes.", days_ago=9)
+
+    t73 = ticket("Export tickets résolus Q1 2026 pour bilan DSI trimestriel",
+        "Le DSI demande un export complet des tickets résolus du 01/01 au 31/03/2026 "
+        "avec les indicateurs : délai de résolution, type, priorité et technicien assigné.",
+        "demande_rapport_activite", "logiciel", "faible", "ouvert", admin, created_days_ago=1)
+    history(t73, admin, "création", None, "ouvert", days_ago=1)
+
+    t74 = ticket("Déploiement Microsoft Defender for Endpoint sur 15 nouveaux postes",
+        "Les 15 postes récemment livrés ne disposent pas encore de Defender for Endpoint. "
+        "Merci de procéder au déploiement et à l'intégration dans la console Sécurité M365.",
+        "demande_antivirus", "securite", "faible", "en_cours", admin, jdupont, created_days_ago=4)
+    history(t74, admin,   "création", None,       "ouvert",   days_ago=4)
+    history(t74, jdupont, "statut",   "ouvert",   "en_cours", days_ago=3)
+    comment(t74, jdupont, "10/15 postes enrôlés dans Defender. 5 restants planifiés pour demain.", days_ago=1)
+
+    t75 = ticket("Scan de vulnérabilités avant audit de certification ISO 27001",
+        "L'audit de certification ISO 27001 est prévu fin juin. Un scan de vulnérabilités complet "
+        "de l'infrastructure (serveurs, postes, équipements réseau) est requis. "
+        "Outil préconisé : Nessus Professional.",
+        "demande_scan_securite", "securite", "normale", "en_cours", admin, admin, created_days_ago=8)
+    history(t75, admin, "création", None,       "ouvert",   days_ago=8)
+    history(t75, admin, "statut",   "ouvert",   "en_cours", days_ago=7)
+    comment(t75, admin, "Scan Nessus terminé sur les serveurs (43 hôtes). Rapport en cours de rédaction. Postes à scanner la semaine prochaine.", days_ago=2)
+
+    t76 = ticket("Accès RDP serveur applicatif SRV-APP-01 pour équipe projet",
+        "L'équipe projet SIGMA (4 personnes) a besoin d'un accès bureau à distance (RDP) "
+        "au serveur SRV-APP-01 pour déployer et tester l'application métier en développement.",
+        "demande_connexion_bureau_distant", "reseau", "faible", "ouvert", mmartin, created_days_ago=2)
+    history(t76, mmartin, "création", None, "ouvert", days_ago=2)
+
+    t77 = ticket("Accès SAP module Finance (FI/CO) pour Mme Legrand - mutation",
+        "Mme Legrand vient d'être mutée au service Finance. Elle a besoin d'un accès au module "
+        "SAP FI/CO avec les profils : FB03 (affichage pièces), FK03 (affichage fournisseurs), F110.",
+        "demande_acces_applicatif", "logiciel", "faible", "en_cours", mmartin, jdupont, created_days_ago=3)
+    history(t77, mmartin, "création", None,       "ouvert",   days_ago=3)
+    history(t77, jdupont, "statut",   "ouvert",   "en_cours", days_ago=2)
+    comment(t77, jdupont, "Profils SAP en cours de création avec le gestionnaire SAP. Accès actif sous 24h.", days_ago=1)
+
+    t78 = ticket("Mise en place supervision Zabbix sur 8 nouveaux serveurs",
+        "Les 8 serveurs livrés en mai ne sont pas encore surveillés par Zabbix. "
+        "Merci d'ajouter ces hôtes avec les templates adaptés (CPU, RAM, disque, services).",
+        "demande_supervision", "reseau", "normale", "en_cours", admin, admin, created_days_ago=6)
+    history(t78, admin, "création", None,       "ouvert",   days_ago=6)
+    history(t78, admin, "statut",   "ouvert",   "en_cours", days_ago=5)
+    comment(t78, admin, "5/8 serveurs intégrés dans Zabbix. Alertes mail configurées. 3 serveurs restants cette semaine.", days_ago=2)
+
+    t79 = ticket("Changement MDP planifié - politique renouvellement 90 jours",
+        "La politique de sécurité impose un changement de mot de passe tous les 90 jours. "
+        "M. Fabre n'a pas effectué le changement et son compte a été bloqué automatiquement. "
+        "Merci de débloquer et d'accompagner le changement.",
+        "demande_changement_mdp", "logiciel", "faible", "ouvert", mmartin, created_days_ago=0)
+    history(t79, mmartin, "création", None, "ouvert", days_ago=0)
+
     db.commit()
 
     # ── Modèles de tickets ────────────────────────────────────────────────────
