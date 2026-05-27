@@ -799,6 +799,16 @@ def seed(force=False):
              (6, "Vérifier le retour à la normale", "Confirmer la connectivité sur l'ensemble du périmètre touché. Tester les services critiques (AD, DNS, accès Internet, serveurs)."),
              (7, "Documenter et clore", "Rédiger le compte-rendu d'incident : cause, actions, durée de l'interruption. Clore le ticket et notifier les utilisateurs."),
          ]),
+        ("Déploiement d'une mise à jour", "demande_mise_a_jour",
+         "Processus de préparation et déploiement d'une mise à jour logicielle ou système", [
+             (1, "Analyser la mise à jour et ses impacts", "Lire les notes de version. Identifier les changements, les corrections de CVE, les incompatibilités potentielles et les prérequis. Évaluer l'impact sur les applications métier."),
+             (2, "Préparer et tester en environnement de recette", "Déployer la mise à jour sur un environnement de test ou un poste pilote. Valider le bon fonctionnement des applications critiques après la mise à jour."),
+             (3, "Planifier le déploiement", "Définir la fenêtre de déploiement (hors heures de bureau pour les systèmes critiques). Informer les utilisateurs et équipes concernées. Préparer le plan de rollback en cas d'échec."),
+             (4, "Sauvegarder avant déploiement", "Effectuer une sauvegarde complète ou un snapshot des systèmes cibles avant d'appliquer la mise à jour. Vérifier l'intégrité de la sauvegarde."),
+             (5, "Déployer la mise à jour", "Appliquer la mise à jour via l'outil de déploiement (WSUS, SCCM, GPO, script). Surveiller le déploiement en temps réel et journaliser les résultats poste par poste."),
+             (6, "Vérifier et tester après déploiement", "Contrôler que la mise à jour est correctement installée sur tous les postes cibles. Tester les applications critiques et vérifier l'absence d'erreurs ou de régressions."),
+             (7, "Traiter les échecs et clore", "Analyser et corriger les postes en échec (rollback si nécessaire). Documenter le taux de succès, les éventuels problèmes rencontrés et fermer le ticket."),
+         ]),
         ("Mise en place d'une sauvegarde", "demande_sauvegarde",
          "Processus de configuration d'une solution de sauvegarde pour un poste ou un serveur", [
              (1, "Analyser le besoin et les données à sauvegarder", "Identifier les données critiques (type, volume, emplacement), la fréquence souhaitée, la durée de rétention et les contraintes métier (fenêtres de sauvegarde, RPO/RTO)."),
