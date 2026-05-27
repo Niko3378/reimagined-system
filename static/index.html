@@ -52,6 +52,19 @@
       color: #1565c0;
     }
     .sidebar .nav-link i { width: 20px; text-align: center; margin-right: 8px; }
+    .sidebar-cat {
+      color: #78909c !important;
+      font-size: .72rem !important;
+      font-weight: 700 !important;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      padding: 3px 8px !important;
+      margin: 2px 4px !important;
+      border-radius: 4px !important;
+    }
+    .sidebar-cat:hover { background: #f5f5f5 !important; color: #546e7a !important; }
+    .sidebar-cat .fa-chevron-down { transition: transform .2s; }
+    .sidebar-cat[aria-expanded="true"] .fa-chevron-down { transform: rotate(-180deg); }
     .main-content {
       margin-left: var(--sidebar-width);
       padding: 24px;
@@ -405,57 +418,118 @@
           <i class="fas fa-chevron-down small collapse-icon" id="chevron-incidents"></i>
         </a>
         <div class="collapse" id="collapse-incidents">
-          <ul class="nav flex-column ms-3">
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="incident"><i class="fas fa-exclamation-triangle me-1" style="width:14px"></i>Incident</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="panne"><i class="fas fa-power-off me-1" style="width:14px"></i>Panne</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="dysfonctionnement"><i class="fas fa-exclamation-circle me-1" style="width:14px"></i>Dysfonctionnement</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="alerte_securite"><i class="fas fa-shield-alt me-1" style="width:14px"></i>Alerte sécurité</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="coupure_reseau"><i class="fas fa-wifi me-1" style="width:14px"></i>Coupure réseau</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="intrusion"><i class="fas fa-user-secret me-1" style="width:14px"></i>Intrusion</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="perte_donnees"><i class="fas fa-database me-1" style="width:14px"></i>Perte de données</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="surcharge_systeme"><i class="fas fa-server me-1" style="width:14px"></i>Surcharge système</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="panne_electrique"><i class="fas fa-bolt me-1" style="width:14px"></i>Panne électrique</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="virus"><i class="fas fa-bug me-1" style="width:14px"></i>Virus / Malware</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="phishing"><i class="fas fa-fish me-1" style="width:14px"></i>Phishing / Spam</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="crash_application"><i class="fas fa-skull-crossbones me-1" style="width:14px"></i>Crash application</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="corruption_donnees"><i class="fas fa-times-circle me-1" style="width:14px"></i>Corruption de données</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="indisponibilite_service"><i class="fas fa-ban me-1" style="width:14px"></i>Indisponibilité service</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="acces_refuse"><i class="fas fa-user-times me-1" style="width:14px"></i>Accès refusé</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="ransomware"><i class="fas fa-lock me-1" style="width:14px"></i>Ransomware</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="erreur_reseau"><i class="fas fa-network-wired me-1" style="width:14px"></i>Erreur réseau / DNS</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="ecran_bleu"><i class="fas fa-desktop me-1" style="width:14px"></i>Écran bleu (BSOD)</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="peripherique_defaillant"><i class="fas fa-plug me-1" style="width:14px"></i>Périphérique défaillant</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="probleme_impression"><i class="fas fa-print me-1" style="width:14px"></i>Problème d'impression</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="vol_equipement"><i class="fas fa-shopping-bag me-1" style="width:14px"></i>Vol d'équipement</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="fuite_donnees"><i class="fas fa-water me-1" style="width:14px"></i>Fuite de données</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="spam_massif"><i class="fas fa-envelope-open-text me-1" style="width:14px"></i>Spam massif</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="defaillance_serveur"><i class="fas fa-hdd me-1" style="width:14px"></i>Défaillance serveur</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="coupure_telephonie"><i class="fas fa-phone-slash me-1" style="width:14px"></i>Coupure téléphonie</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="lenteur_systeme"><i class="fas fa-tachometer-alt me-1" style="width:14px"></i>Lenteur système</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="mise_a_jour_echouee"><i class="fas fa-redo me-1" style="width:14px"></i>MAJ échouée</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="certificat_expire"><i class="fas fa-lock me-1" style="width:14px"></i>Certificat expiré</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="sauvegarde_echouee"><i class="fas fa-save me-1" style="width:14px"></i>Échec sauvegarde</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="attaque_ddos"><i class="fas fa-bomb me-1" style="width:14px"></i>Attaque DDoS</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="acces_non_autorise"><i class="fas fa-user-slash me-1" style="width:14px"></i>Accès non autorisé</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="perte_connexion_wifi"><i class="fas fa-wifi me-1" style="width:14px"></i>Perte Wi-Fi</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="messagerie_indisponible"><i class="fas fa-envelope-open me-1" style="width:14px"></i>Messagerie indisponible</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="partage_reseau_inaccessible"><i class="fas fa-folder-open me-1" style="width:14px"></i>Partage inaccessible</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="application_lente"><i class="fas fa-hourglass-half me-1" style="width:14px"></i>Application lente</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="ecran_noir"><i class="fas fa-tv me-1" style="width:14px"></i>Écran noir</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="clavier_souris_defaillant"><i class="fas fa-keyboard me-1" style="width:14px"></i>Clavier / souris</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="son_defaillant"><i class="fas fa-volume-mute me-1" style="width:14px"></i>Problème audio</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="logiciel_non_autorise"><i class="fas fa-ban me-1" style="width:14px"></i>Logiciel non autorisé</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="erreur_connexion_vpn"><i class="fas fa-shield-alt me-1" style="width:14px"></i>Erreur VPN</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="synchronisation_echouee"><i class="fas fa-sync-alt me-1" style="width:14px"></i>Échec synchronisation</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="onduleur_defaillant"><i class="fas fa-bolt me-1" style="width:14px"></i>Onduleur défaillant</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="stockage_plein"><i class="fas fa-hdd me-1" style="width:14px"></i>Stockage plein</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="usurpation_identite"><i class="fas fa-user-secret me-1" style="width:14px"></i>Usurpation d'identité</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="base_donnees_corrompue"><i class="fas fa-database me-1" style="width:14px"></i>BDD corrompue</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="incompatibilite_logicielle"><i class="fas fa-exclamation-triangle me-1" style="width:14px"></i>Incompatibilité log.</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="camera_defaillante"><i class="fas fa-video-slash me-1" style="width:14px"></i>Webcam défaillante</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="perte_connexion_internet"><i class="fas fa-globe me-1" style="width:14px"></i>Perte Internet</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="interruption_cloud"><i class="fas fa-cloud me-1" style="width:14px"></i>Interruption cloud</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="erreur_authentification"><i class="fas fa-key me-1" style="width:14px"></i>Erreur authentification</a></li>
+          <ul class="nav flex-column ms-2">
+
+            <!-- ── Sécurité ── -->
+            <li class="nav-item">
+              <a class="nav-link sidebar-cat d-flex justify-content-between align-items-center" href="#" data-bs-toggle="collapse" data-bs-target="#inc-securite" aria-expanded="false">
+                <span><i class="fas fa-shield-alt me-1" style="width:14px"></i>Sécurité</span>
+                <i class="fas fa-chevron-down" style="font-size:.65rem"></i>
+              </a>
+              <div class="collapse" id="inc-securite">
+                <ul class="nav flex-column ms-2">
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="alerte_securite"><i class="fas fa-shield-alt me-1" style="width:14px"></i>Alerte sécurité</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="intrusion"><i class="fas fa-user-secret me-1" style="width:14px"></i>Intrusion</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="virus"><i class="fas fa-bug me-1" style="width:14px"></i>Virus / Malware</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="phishing"><i class="fas fa-fish me-1" style="width:14px"></i>Phishing / Spam</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="ransomware"><i class="fas fa-lock me-1" style="width:14px"></i>Ransomware</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="fuite_donnees"><i class="fas fa-water me-1" style="width:14px"></i>Fuite de données</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="perte_donnees"><i class="fas fa-database me-1" style="width:14px"></i>Perte de données</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="attaque_ddos"><i class="fas fa-bomb me-1" style="width:14px"></i>Attaque DDoS</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="acces_non_autorise"><i class="fas fa-user-slash me-1" style="width:14px"></i>Accès non autorisé</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="usurpation_identite"><i class="fas fa-user-secret me-1" style="width:14px"></i>Usurpation d'identité</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="logiciel_non_autorise"><i class="fas fa-ban me-1" style="width:14px"></i>Logiciel non autorisé</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="spam_massif"><i class="fas fa-envelope-open-text me-1" style="width:14px"></i>Spam massif</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="vol_equipement"><i class="fas fa-shopping-bag me-1" style="width:14px"></i>Vol d'équipement</a></li>
+                </ul>
+              </div>
+            </li>
+
+            <!-- ── Réseau & Connectivité ── -->
+            <li class="nav-item">
+              <a class="nav-link sidebar-cat d-flex justify-content-between align-items-center" href="#" data-bs-toggle="collapse" data-bs-target="#inc-reseau" aria-expanded="false">
+                <span><i class="fas fa-network-wired me-1" style="width:14px"></i>Réseau & Connectivité</span>
+                <i class="fas fa-chevron-down" style="font-size:.65rem"></i>
+              </a>
+              <div class="collapse" id="inc-reseau">
+                <ul class="nav flex-column ms-2">
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="coupure_reseau"><i class="fas fa-wifi me-1" style="width:14px"></i>Coupure réseau</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="erreur_reseau"><i class="fas fa-network-wired me-1" style="width:14px"></i>Erreur réseau / DNS</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="perte_connexion_wifi"><i class="fas fa-wifi me-1" style="width:14px"></i>Perte Wi-Fi</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="perte_connexion_internet"><i class="fas fa-globe me-1" style="width:14px"></i>Perte Internet</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="partage_reseau_inaccessible"><i class="fas fa-folder-open me-1" style="width:14px"></i>Partage inaccessible</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="erreur_connexion_vpn"><i class="fas fa-shield-alt me-1" style="width:14px"></i>Erreur VPN</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="synchronisation_echouee"><i class="fas fa-sync-alt me-1" style="width:14px"></i>Échec synchronisation</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="coupure_telephonie"><i class="fas fa-phone-slash me-1" style="width:14px"></i>Coupure téléphonie</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="messagerie_indisponible"><i class="fas fa-envelope-open me-1" style="width:14px"></i>Messagerie indisponible</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="interruption_cloud"><i class="fas fa-cloud me-1" style="width:14px"></i>Interruption cloud</a></li>
+                </ul>
+              </div>
+            </li>
+
+            <!-- ── Système & Serveurs ── -->
+            <li class="nav-item">
+              <a class="nav-link sidebar-cat d-flex justify-content-between align-items-center" href="#" data-bs-toggle="collapse" data-bs-target="#inc-systeme" aria-expanded="false">
+                <span><i class="fas fa-server me-1" style="width:14px"></i>Système & Serveurs</span>
+                <i class="fas fa-chevron-down" style="font-size:.65rem"></i>
+              </a>
+              <div class="collapse" id="inc-systeme">
+                <ul class="nav flex-column ms-2">
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="panne"><i class="fas fa-power-off me-1" style="width:14px"></i>Panne</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="surcharge_systeme"><i class="fas fa-server me-1" style="width:14px"></i>Surcharge système</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="defaillance_serveur"><i class="fas fa-hdd me-1" style="width:14px"></i>Défaillance serveur</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="indisponibilite_service"><i class="fas fa-ban me-1" style="width:14px"></i>Indisponibilité service</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="lenteur_systeme"><i class="fas fa-tachometer-alt me-1" style="width:14px"></i>Lenteur système</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="stockage_plein"><i class="fas fa-hdd me-1" style="width:14px"></i>Stockage plein</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="onduleur_defaillant"><i class="fas fa-bolt me-1" style="width:14px"></i>Onduleur défaillant</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="panne_electrique"><i class="fas fa-bolt me-1" style="width:14px"></i>Panne électrique</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="sauvegarde_echouee"><i class="fas fa-save me-1" style="width:14px"></i>Échec sauvegarde</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="corruption_donnees"><i class="fas fa-times-circle me-1" style="width:14px"></i>Corruption de données</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="base_donnees_corrompue"><i class="fas fa-database me-1" style="width:14px"></i>BDD corrompue</a></li>
+                </ul>
+              </div>
+            </li>
+
+            <!-- ── Logiciels & Applications ── -->
+            <li class="nav-item">
+              <a class="nav-link sidebar-cat d-flex justify-content-between align-items-center" href="#" data-bs-toggle="collapse" data-bs-target="#inc-logiciel" aria-expanded="false">
+                <span><i class="fas fa-laptop-code me-1" style="width:14px"></i>Logiciels & Applications</span>
+                <i class="fas fa-chevron-down" style="font-size:.65rem"></i>
+              </a>
+              <div class="collapse" id="inc-logiciel">
+                <ul class="nav flex-column ms-2">
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="incident"><i class="fas fa-exclamation-triangle me-1" style="width:14px"></i>Incident général</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="dysfonctionnement"><i class="fas fa-exclamation-circle me-1" style="width:14px"></i>Dysfonctionnement</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="crash_application"><i class="fas fa-skull-crossbones me-1" style="width:14px"></i>Crash application</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="application_lente"><i class="fas fa-hourglass-half me-1" style="width:14px"></i>Application lente</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="mise_a_jour_echouee"><i class="fas fa-redo me-1" style="width:14px"></i>MAJ échouée</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="incompatibilite_logicielle"><i class="fas fa-exclamation-triangle me-1" style="width:14px"></i>Incompatibilité log.</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="certificat_expire"><i class="fas fa-lock me-1" style="width:14px"></i>Certificat expiré</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="acces_refuse"><i class="fas fa-user-times me-1" style="width:14px"></i>Accès refusé</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="erreur_authentification"><i class="fas fa-key me-1" style="width:14px"></i>Erreur authentification</a></li>
+                </ul>
+              </div>
+            </li>
+
+            <!-- ── Matériel & Poste ── -->
+            <li class="nav-item">
+              <a class="nav-link sidebar-cat d-flex justify-content-between align-items-center" href="#" data-bs-toggle="collapse" data-bs-target="#inc-materiel" aria-expanded="false">
+                <span><i class="fas fa-desktop me-1" style="width:14px"></i>Matériel & Poste</span>
+                <i class="fas fa-chevron-down" style="font-size:.65rem"></i>
+              </a>
+              <div class="collapse" id="inc-materiel">
+                <ul class="nav flex-column ms-2">
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="peripherique_defaillant"><i class="fas fa-plug me-1" style="width:14px"></i>Périphérique défaillant</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="ecran_bleu"><i class="fas fa-desktop me-1" style="width:14px"></i>Écran bleu (BSOD)</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="ecran_noir"><i class="fas fa-tv me-1" style="width:14px"></i>Écran noir</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="clavier_souris_defaillant"><i class="fas fa-keyboard me-1" style="width:14px"></i>Clavier / souris</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="son_defaillant"><i class="fas fa-volume-mute me-1" style="width:14px"></i>Problème audio</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="camera_defaillante"><i class="fas fa-video-slash me-1" style="width:14px"></i>Webcam défaillante</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="incidents" data-type="probleme_impression"><i class="fas fa-print me-1" style="width:14px"></i>Problème d'impression</a></li>
+                </ul>
+              </div>
+            </li>
+
           </ul>
         </div>
       </li>
@@ -465,57 +539,142 @@
           <i class="fas fa-chevron-down small collapse-icon" id="chevron-demandes"></i>
         </a>
         <div class="collapse" id="collapse-demandes">
-          <ul class="nav flex-column ms-3">
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande"><i class="fas fa-clipboard-list me-1" style="width:14px"></i>Demande</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_acces"><i class="fas fa-key me-1" style="width:14px"></i>Accès</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_installation"><i class="fas fa-download me-1" style="width:14px"></i>Installation</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_materiel"><i class="fas fa-desktop me-1" style="width:14px"></i>Matériel</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_information"><i class="fas fa-question-circle me-1" style="width:14px"></i>Information</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_formation"><i class="fas fa-graduation-cap me-1" style="width:14px"></i>Formation</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_sauvegarde"><i class="fas fa-save me-1" style="width:14px"></i>Sauvegarde</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_demenagement"><i class="fas fa-truck me-1" style="width:14px"></i>Déménagement</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_licence"><i class="fas fa-file-contract me-1" style="width:14px"></i>Licence</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_reinitialisation_mdp"><i class="fas fa-unlock-alt me-1" style="width:14px"></i>Réinit. mot de passe</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_creation_compte"><i class="fas fa-user-plus me-1" style="width:14px"></i>Création de compte</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_assistance"><i class="fas fa-headset me-1" style="width:14px"></i>Assistance à distance</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_configuration"><i class="fas fa-cogs me-1" style="width:14px"></i>Configuration</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_mise_a_jour"><i class="fas fa-sync-alt me-1" style="width:14px"></i>Mise à jour logicielle</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_archivage"><i class="fas fa-archive me-1" style="width:14px"></i>Archivage de données</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_deblockage_compte"><i class="fas fa-lock-open me-1" style="width:14px"></i>Déblocage de compte</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_vpn"><i class="fas fa-shield-alt me-1" style="width:14px"></i>Accès VPN</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_messagerie"><i class="fas fa-envelope me-1" style="width:14px"></i>Messagerie / Email</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_impression_config"><i class="fas fa-print me-1" style="width:14px"></i>Config. impression</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_badge_acces"><i class="fas fa-id-card me-1" style="width:14px"></i>Badge d'accès</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_onboarding"><i class="fas fa-user-check me-1" style="width:14px"></i>Onboarding</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_offboarding"><i class="fas fa-user-minus me-1" style="width:14px"></i>Offboarding</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_audit_securite"><i class="fas fa-search me-1" style="width:14px"></i>Audit de sécurité</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_intervention_site"><i class="fas fa-map-marker-alt me-1" style="width:14px"></i>Intervention site</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_certificat_ssl"><i class="fas fa-certificate me-1" style="width:14px"></i>Certificat SSL</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_extension_stockage"><i class="fas fa-hdd me-1" style="width:14px"></i>Extension stockage</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_redirection_mail"><i class="fas fa-reply me-1" style="width:14px"></i>Redirection email</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_groupe_securite"><i class="fas fa-users-cog me-1" style="width:14px"></i>Groupe sécurité AD</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_partage_reseau"><i class="fas fa-folder-open me-1" style="width:14px"></i>Partage réseau</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_restauration"><i class="fas fa-history me-1" style="width:14px"></i>Restauration données</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_tele_travail"><i class="fas fa-home me-1" style="width:14px"></i>Équip. télétravail</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_poste_remplacement"><i class="fas fa-desktop me-1" style="width:14px"></i>Remplacement poste</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_mise_en_service"><i class="fas fa-tools me-1" style="width:14px"></i>Mise en service</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_chiffrement"><i class="fas fa-lock me-1" style="width:14px"></i>Chiffrement poste</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_double_authentification"><i class="fas fa-mobile-alt me-1" style="width:14px"></i>Activation 2FA</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_revision_droits"><i class="fas fa-user-cog me-1" style="width:14px"></i>Révision droits</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_telephone_ip"><i class="fas fa-phone me-1" style="width:14px"></i>Téléphone IP / VoIP</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_nettoyage_poste"><i class="fas fa-broom me-1" style="width:14px"></i>Nettoyage poste</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_migration_donnees"><i class="fas fa-exchange-alt me-1" style="width:14px"></i>Migration données</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_formation_securite"><i class="fas fa-shield-alt me-1" style="width:14px"></i>Formation cybersécurité</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_mise_a_jour_firmware"><i class="fas fa-microchip me-1" style="width:14px"></i>MAJ firmware</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_salle_reunion"><i class="fas fa-chalkboard me-1" style="width:14px"></i>Salle de réunion</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_signature_mail"><i class="fas fa-envelope me-1" style="width:14px"></i>Signature email</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_rapport_activite"><i class="fas fa-chart-bar me-1" style="width:14px"></i>Rapport activité</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_antivirus"><i class="fas fa-virus-slash me-1" style="width:14px"></i>Antivirus</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_scan_securite"><i class="fas fa-search me-1" style="width:14px"></i>Scan sécurité</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_connexion_bureau_distant"><i class="fas fa-laptop me-1" style="width:14px"></i>Bureau à distance</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_acces_applicatif"><i class="fas fa-th me-1" style="width:14px"></i>Accès ERP / CRM</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_supervision"><i class="fas fa-satellite-dish me-1" style="width:14px"></i>Supervision</a></li>
-            <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_changement_mdp"><i class="fas fa-unlock-alt me-1" style="width:14px"></i>Changement MDP</a></li>
+          <ul class="nav flex-column ms-2">
+
+            <!-- ── Comptes & Accès ── -->
+            <li class="nav-item">
+              <a class="nav-link sidebar-cat d-flex justify-content-between align-items-center" href="#" data-bs-toggle="collapse" data-bs-target="#dem-comptes" aria-expanded="false">
+                <span><i class="fas fa-key me-1" style="width:14px"></i>Comptes & Accès</span>
+                <i class="fas fa-chevron-down" style="font-size:.65rem"></i>
+              </a>
+              <div class="collapse" id="dem-comptes">
+                <ul class="nav flex-column ms-2">
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_acces"><i class="fas fa-key me-1" style="width:14px"></i>Accès</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_creation_compte"><i class="fas fa-user-plus me-1" style="width:14px"></i>Création de compte</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_reinitialisation_mdp"><i class="fas fa-unlock-alt me-1" style="width:14px"></i>Réinit. mot de passe</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_changement_mdp"><i class="fas fa-unlock-alt me-1" style="width:14px"></i>Changement MDP</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_deblockage_compte"><i class="fas fa-lock-open me-1" style="width:14px"></i>Déblocage de compte</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_badge_acces"><i class="fas fa-id-card me-1" style="width:14px"></i>Badge d'accès</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_vpn"><i class="fas fa-shield-alt me-1" style="width:14px"></i>Accès VPN</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_connexion_bureau_distant"><i class="fas fa-laptop me-1" style="width:14px"></i>Bureau à distance</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_acces_applicatif"><i class="fas fa-th me-1" style="width:14px"></i>Accès ERP / CRM</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_double_authentification"><i class="fas fa-mobile-alt me-1" style="width:14px"></i>Activation 2FA</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_revision_droits"><i class="fas fa-user-cog me-1" style="width:14px"></i>Révision droits</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_groupe_securite"><i class="fas fa-users-cog me-1" style="width:14px"></i>Groupe sécurité AD</a></li>
+                </ul>
+              </div>
+            </li>
+
+            <!-- ── Matériel & Infrastructure ── -->
+            <li class="nav-item">
+              <a class="nav-link sidebar-cat d-flex justify-content-between align-items-center" href="#" data-bs-toggle="collapse" data-bs-target="#dem-materiel" aria-expanded="false">
+                <span><i class="fas fa-desktop me-1" style="width:14px"></i>Matériel & Infrastructure</span>
+                <i class="fas fa-chevron-down" style="font-size:.65rem"></i>
+              </a>
+              <div class="collapse" id="dem-materiel">
+                <ul class="nav flex-column ms-2">
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_materiel"><i class="fas fa-desktop me-1" style="width:14px"></i>Matériel</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_demenagement"><i class="fas fa-truck me-1" style="width:14px"></i>Déménagement</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_poste_remplacement"><i class="fas fa-desktop me-1" style="width:14px"></i>Remplacement poste</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_mise_en_service"><i class="fas fa-tools me-1" style="width:14px"></i>Mise en service</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_tele_travail"><i class="fas fa-home me-1" style="width:14px"></i>Équip. télétravail</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_telephone_ip"><i class="fas fa-phone me-1" style="width:14px"></i>Téléphone IP / VoIP</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_salle_reunion"><i class="fas fa-chalkboard me-1" style="width:14px"></i>Salle de réunion</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_extension_stockage"><i class="fas fa-hdd me-1" style="width:14px"></i>Extension stockage</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_nettoyage_poste"><i class="fas fa-broom me-1" style="width:14px"></i>Nettoyage poste</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_impression_config"><i class="fas fa-print me-1" style="width:14px"></i>Config. impression</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_intervention_site"><i class="fas fa-map-marker-alt me-1" style="width:14px"></i>Intervention site</a></li>
+                </ul>
+              </div>
+            </li>
+
+            <!-- ── Logiciels & Config ── -->
+            <li class="nav-item">
+              <a class="nav-link sidebar-cat d-flex justify-content-between align-items-center" href="#" data-bs-toggle="collapse" data-bs-target="#dem-logiciel" aria-expanded="false">
+                <span><i class="fas fa-cogs me-1" style="width:14px"></i>Logiciels & Config</span>
+                <i class="fas fa-chevron-down" style="font-size:.65rem"></i>
+              </a>
+              <div class="collapse" id="dem-logiciel">
+                <ul class="nav flex-column ms-2">
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_installation"><i class="fas fa-download me-1" style="width:14px"></i>Installation</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_configuration"><i class="fas fa-cogs me-1" style="width:14px"></i>Configuration</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_mise_a_jour"><i class="fas fa-sync-alt me-1" style="width:14px"></i>Mise à jour logicielle</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_mise_a_jour_firmware"><i class="fas fa-microchip me-1" style="width:14px"></i>MAJ firmware</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_licence"><i class="fas fa-file-contract me-1" style="width:14px"></i>Licence</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_antivirus"><i class="fas fa-virus-slash me-1" style="width:14px"></i>Antivirus</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_chiffrement"><i class="fas fa-lock me-1" style="width:14px"></i>Chiffrement poste</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_assistance"><i class="fas fa-headset me-1" style="width:14px"></i>Assistance à distance</a></li>
+                </ul>
+              </div>
+            </li>
+
+            <!-- ── Messagerie & Communication ── -->
+            <li class="nav-item">
+              <a class="nav-link sidebar-cat d-flex justify-content-between align-items-center" href="#" data-bs-toggle="collapse" data-bs-target="#dem-messagerie" aria-expanded="false">
+                <span><i class="fas fa-envelope me-1" style="width:14px"></i>Messagerie & Communication</span>
+                <i class="fas fa-chevron-down" style="font-size:.65rem"></i>
+              </a>
+              <div class="collapse" id="dem-messagerie">
+                <ul class="nav flex-column ms-2">
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_messagerie"><i class="fas fa-envelope me-1" style="width:14px"></i>Messagerie / Email</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_redirection_mail"><i class="fas fa-reply me-1" style="width:14px"></i>Redirection email</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_signature_mail"><i class="fas fa-envelope me-1" style="width:14px"></i>Signature email</a></li>
+                </ul>
+              </div>
+            </li>
+
+            <!-- ── Données & Stockage ── -->
+            <li class="nav-item">
+              <a class="nav-link sidebar-cat d-flex justify-content-between align-items-center" href="#" data-bs-toggle="collapse" data-bs-target="#dem-donnees" aria-expanded="false">
+                <span><i class="fas fa-database me-1" style="width:14px"></i>Données & Stockage</span>
+                <i class="fas fa-chevron-down" style="font-size:.65rem"></i>
+              </a>
+              <div class="collapse" id="dem-donnees">
+                <ul class="nav flex-column ms-2">
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_sauvegarde"><i class="fas fa-save me-1" style="width:14px"></i>Sauvegarde</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_archivage"><i class="fas fa-archive me-1" style="width:14px"></i>Archivage</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_restauration"><i class="fas fa-history me-1" style="width:14px"></i>Restauration</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_migration_donnees"><i class="fas fa-exchange-alt me-1" style="width:14px"></i>Migration données</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_partage_reseau"><i class="fas fa-folder-open me-1" style="width:14px"></i>Partage réseau</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_rapport_activite"><i class="fas fa-chart-bar me-1" style="width:14px"></i>Rapport activité</a></li>
+                </ul>
+              </div>
+            </li>
+
+            <!-- ── Sécurité & Conformité ── -->
+            <li class="nav-item">
+              <a class="nav-link sidebar-cat d-flex justify-content-between align-items-center" href="#" data-bs-toggle="collapse" data-bs-target="#dem-securite" aria-expanded="false">
+                <span><i class="fas fa-shield-alt me-1" style="width:14px"></i>Sécurité & Conformité</span>
+                <i class="fas fa-chevron-down" style="font-size:.65rem"></i>
+              </a>
+              <div class="collapse" id="dem-securite">
+                <ul class="nav flex-column ms-2">
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_audit_securite"><i class="fas fa-search me-1" style="width:14px"></i>Audit de sécurité</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_scan_securite"><i class="fas fa-search me-1" style="width:14px"></i>Scan sécurité</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_formation_securite"><i class="fas fa-shield-alt me-1" style="width:14px"></i>Formation cybersécurité</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_certificat_ssl"><i class="fas fa-certificate me-1" style="width:14px"></i>Certificat SSL</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_supervision"><i class="fas fa-satellite-dish me-1" style="width:14px"></i>Supervision</a></li>
+                </ul>
+              </div>
+            </li>
+
+            <!-- ── RH & Gestion ── -->
+            <li class="nav-item">
+              <a class="nav-link sidebar-cat d-flex justify-content-between align-items-center" href="#" data-bs-toggle="collapse" data-bs-target="#dem-rh" aria-expanded="false">
+                <span><i class="fas fa-users me-1" style="width:14px"></i>RH & Gestion</span>
+                <i class="fas fa-chevron-down" style="font-size:.65rem"></i>
+              </a>
+              <div class="collapse" id="dem-rh">
+                <ul class="nav flex-column ms-2">
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_onboarding"><i class="fas fa-user-check me-1" style="width:14px"></i>Onboarding</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_offboarding"><i class="fas fa-user-minus me-1" style="width:14px"></i>Offboarding</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_formation"><i class="fas fa-graduation-cap me-1" style="width:14px"></i>Formation</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande_information"><i class="fas fa-question-circle me-1" style="width:14px"></i>Information</a></li>
+                  <li class="nav-item"><a class="nav-link py-1" href="#" data-view="demandes" data-type="demande"><i class="fas fa-clipboard-list me-1" style="width:14px"></i>Demande générale</a></li>
+                </ul>
+              </div>
+            </li>
+
           </ul>
         </div>
       </li>
