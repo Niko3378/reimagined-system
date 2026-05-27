@@ -12,6 +12,7 @@ import auth
 from database import get_db
 from notifications import broadcaster
 from priority_engine import suggest_priority
+from sla_engine import get_sla_status, get_sla_summary, SLA_DELAYS
 
 router = APIRouter(prefix="/api/tickets", tags=["tickets"])
 
@@ -414,6 +415,40 @@ def get_stats(
             )
         },
     }
+
+
+@router.get("/sla")
+def get_sla(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    tickets = db.query(models.Ticket).filter(
+        models.Ticket.status.in_(["ouvert", "en_cours"])
+    ).order_by(models.Ticket.created_at.asc()).all()
+
+    items = []
+    for t in tickets:
+        sla = get_sla_status(t)
+        items.append({
+            "id": t.id,
+            "title": t.title,
+            "priority": t.priority,
+            "status": t.status,
+            "type": t.type,
+            "category": t.category,
+            "creator": t.creator.username,
+            "assignee": t.assignee.username if t.assignee else None,
+            "created_at": t.created_at.isoformat() if t.created_at else None,
+            "sla": sla,
+        })
+
+    items.sort(key=lambda x: (
+        {"breach": 0, "warning": 1, "ok": 2}.get(x["sla"]["status"], 3),
+        x["sla"]["remaining_h"] if x["sla"]["remaining_h"] is not None else 9999,
+    ))
+
+    summary = get_sla_summary(tickets)
+    return {"items": items, "summary": summary, "delays": SLA_DELAYS}
 
 
 @router.get("/my-stats")
