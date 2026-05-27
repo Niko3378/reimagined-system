@@ -799,6 +799,15 @@ def seed(force=False):
              (6, "Vérifier le retour à la normale", "Confirmer la connectivité sur l'ensemble du périmètre touché. Tester les services critiques (AD, DNS, accès Internet, serveurs)."),
              (7, "Documenter et clore", "Rédiger le compte-rendu d'incident : cause, actions, durée de l'interruption. Clore le ticket et notifier les utilisateurs."),
          ]),
+        ("Demande d'accès à une ressource", "demande_acces",
+         "Processus de traitement d'une demande d'accès à une ressource du système d'information", [
+             (1, "Vérifier la légitimité de la demande", "Contrôler que la demande est justifiée par le besoin métier et validée par le responsable hiérarchique de l'utilisateur."),
+             (2, "Vérifier les droits existants", "Consulter les accès actuels de l'utilisateur dans l'AD et les applications cibles pour éviter les doublons ou conflits de droits."),
+             (3, "Vérifier la conformité sécurité", "S'assurer que l'attribution de cet accès respecte la politique de sécurité et le principe du moindre privilège. Alerter le RSSI si nécessaire."),
+             (4, "Attribuer les droits d'accès", "Ajouter l'utilisateur aux groupes AD, rôles applicatifs ou ACL correspondants selon la ressource demandée (dossier réseau, application, VPN, etc.)."),
+             (5, "Tester et valider l'accès", "Vérifier que l'utilisateur peut accéder à la ressource avec les bons niveaux de droits (lecture, écriture, administration)."),
+             (6, "Notifier et clore", "Informer l'utilisateur que son accès est opérationnel. Documenter l'attribution dans le journal des accès et fermer le ticket."),
+         ]),
         ("Création de compte utilisateur", "demande_creation_compte",
          "Processus de création d'un nouveau compte utilisateur dans le système d'information", [
              (1, "Vérifier et collecter les informations", "Recueillir nom, prénom, service, responsable, date d'arrivée, rôle et liste des accès applicatifs nécessaires. Vérifier la validation du responsable."),
