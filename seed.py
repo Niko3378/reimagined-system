@@ -25,6 +25,7 @@ def seed(force=False):
         db.query(models.TicketHistory).delete()
         db.query(models.Comment).delete()
         db.query(models.Ticket).delete()
+        db.query(models.TicketTemplate).delete()
         db.query(models.User).delete()
         db.commit()
 
@@ -317,6 +318,52 @@ def seed(force=False):
         "demande_licence", "reseau", "critique", "ouvert", admin, created_days_ago=0)
     history(t29, admin, "création", None, "ouvert", days_ago=0)
 
+    db.commit()
+
+    # ── Modèles de tickets ────────────────────────────────────────────────────
+    print("Création des modèles de tickets...")
+    templates_data = [
+        ("Réinitialisation mot de passe", "demande_reinitialisation_mdp", "logiciel", "faible",
+         "Réinitialisation mot de passe - [Nom Prénom]",
+         "Bonjour,\n\nJe souhaite demander la réinitialisation de mon mot de passe.\n\n"
+         "Informations :\n- Nom d'utilisateur / email : \n- Application concernée : \n- Raison (compte bloqué, mot de passe oublié) : \n\nMerci d'avance."),
+        ("Nouveau poste de travail", "demande_materiel", "materiel", "normale",
+         "Demande de nouveau poste de travail - [Nom Prénom]",
+         "Bonjour,\n\nJe souhaite faire une demande de nouveau poste de travail.\n\n"
+         "Informations :\n- Utilisateur concerné : \n- Date de besoin : \n- Usage prévu (bureautique, développement, CAO...) : \n- Logiciels requis : \n\nMerci."),
+        ("Création de compte Active Directory", "demande_creation_compte", "logiciel", "normale",
+         "Création de compte AD - [Nom Prénom] - [Service]",
+         "Bonjour,\n\nJe demande la création d'un compte Active Directory.\n\n"
+         "Informations :\n- Nom : \n- Prénom : \n- Service / département : \n- Responsable hiérarchique : \n- Date d'arrivée : \n- Groupes d'accès requis : \n\nMerci."),
+        ("Accès VPN distant", "demande_vpn", "reseau", "normale",
+         "Demande d'accès VPN - [Nom Prénom]",
+         "Bonjour,\n\nJe souhaite obtenir un accès VPN pour travail à distance.\n\n"
+         "Informations :\n- Utilisateur : \n- Justification (télétravail, déplacement...) : \n- Date de début souhaitée : \n- Durée estimée : \n\nMerci."),
+        ("Configuration imprimante réseau", "demande_impression_config", "imprimante", "faible",
+         "Configuration imprimante réseau - [Poste/Bureau]",
+         "Bonjour,\n\nJe rencontre des difficultés pour configurer l'imprimante réseau.\n\n"
+         "Informations :\n- Modèle d'imprimante : \n- Adresse IP ou nom réseau : \n- Système d'exploitation du poste : \n- Erreur observée : \n\nMerci."),
+        ("Virus / Malware détecté", "virus", "securite", "critique",
+         "ALERTE - Virus détecté sur [Nom machine]",
+         "URGENT - Virus/Malware détecté.\n\n"
+         "Informations :\n- Nom de la machine infectée : \n- Utilisateur connecté : \n- Antivirus utilisé : \n- Message d'alerte affiché : \n- Heure de détection : \n\n"
+         "⚠️ La machine a été isolée du réseau en attente d'intervention."),
+        ("Logiciel à installer", "demande_installation", "logiciel", "faible",
+         "Demande d'installation logiciel - [Nom logiciel] sur [Poste]",
+         "Bonjour,\n\nJe souhaite faire installer un logiciel sur mon poste.\n\n"
+         "Informations :\n- Logiciel et version : \n- Poste concerné (nom ou IP) : \n- Justification métier : \n- Licence disponible : Oui / Non\n\nMerci."),
+        ("Déménagement de poste", "demande_demenagement", "materiel", "faible",
+         "Déménagement poste de travail - [Bureau source] → [Bureau destination]",
+         "Bonjour,\n\nJe sollicite l'intervention du service informatique pour un déménagement de poste.\n\n"
+         "Informations :\n- Utilisateur : \n- Bureau actuel : \n- Nouveau bureau : \n- Date souhaitée : \n- Matériel à déplacer : \n\nMerci."),
+    ]
+    for (name, ttype, cat, prio, title, desc) in templates_data:
+        tpl = models.TicketTemplate(
+            name=name, title=title, description=desc,
+            type=ttype, category=cat, priority=prio,
+            author_id=jdupont.id,
+        )
+        db.add(tpl)
     db.commit()
 
     # Résumé

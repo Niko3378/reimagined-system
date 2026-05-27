@@ -70,6 +70,24 @@ class KBArticle(Base):
     author = relationship("User")
 
 
+class TicketTemplate(Base):
+    __tablename__ = "ticket_templates"
+
+    id          = Column(Integer, primary_key=True, index=True)
+    name        = Column(String, nullable=False)
+    title       = Column(String, nullable=False)
+    description = Column(Text, nullable=False)
+    type        = Column(String, default="demande")
+    category    = Column(String, default="autre")
+    priority    = Column(String, default="normale")
+    author_id   = Column(Integer, ForeignKey("users.id"), nullable=False)
+    usage_count = Column(Integer, default=0)
+    created_at  = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at  = Column(DateTime(timezone=True), onupdate=func.now())
+
+    author = relationship("User")
+
+
 class TicketHistory(Base):
     __tablename__ = "ticket_history"
 

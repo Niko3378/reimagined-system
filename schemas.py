@@ -123,6 +123,40 @@ class KBArticleOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class TicketTemplateCreate(BaseModel):
+    name: str
+    title: str
+    description: str
+    type: str = "demande"
+    category: str = "autre"
+    priority: str = "normale"
+
+
+class TicketTemplateUpdate(BaseModel):
+    name: Optional[str] = None
+    title: Optional[str] = None
+    description: Optional[str] = None
+    type: Optional[str] = None
+    category: Optional[str] = None
+    priority: Optional[str] = None
+
+
+class TicketTemplateOut(BaseModel):
+    id: int
+    name: str
+    title: str
+    description: str
+    type: str
+    category: str
+    priority: str
+    author: UserOut
+    usage_count: int
+    created_at: datetime
+    updated_at: Optional[datetime]
+
+    model_config = {"from_attributes": True}
+
+
 class StatsOut(BaseModel):
     total: int
     ouvert: int

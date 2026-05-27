@@ -420,6 +420,11 @@
         </a>
       </li>
       <li class="nav-item">
+        <a class="nav-link" href="#" data-view="templates">
+          <i class="fas fa-copy"></i>Modèles de tickets
+        </a>
+      </li>
+      <li class="nav-item">
         <a class="nav-link" href="#" data-view="sla">
           <i class="fas fa-hourglass-half"></i>SLA
           <span class="badge bg-danger ms-1 d-none" id="sla-breach-badge">0</span>
@@ -1340,6 +1345,49 @@
       <div id="kb-container"></div>
     </div>
 
+    <!-- ── Modèles de tickets ── -->
+    <div id="view-templates" style="display:none">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="fw-bold mb-0"><i class="fas fa-copy me-2 text-primary"></i>Modèles de tickets</h5>
+        <button class="btn btn-primary btn-sm d-none" id="tpl-new-btn" onclick="openTemplateForm()">
+          <i class="fas fa-plus me-1"></i>Nouveau modèle
+        </button>
+      </div>
+
+      <!-- Filtres -->
+      <div class="card mb-4 filter-bar">
+        <div class="card-body py-2">
+          <div class="row g-2 align-items-center">
+            <div class="col-md-5">
+              <input type="text" id="tpl-search" class="form-control form-control-sm" placeholder="Rechercher un modèle...">
+            </div>
+            <div class="col-md-3">
+              <select id="tpl-filter-type" class="form-select form-select-sm">
+                <option value="">Tous les types</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <select id="tpl-filter-category" class="form-select form-select-sm">
+                <option value="">Toutes catégories</option>
+                <option value="logiciel">Logiciel</option>
+                <option value="materiel">Matériel</option>
+                <option value="reseau">Réseau</option>
+                <option value="securite">Sécurité</option>
+                <option value="telephonie">Téléphonie</option>
+                <option value="imprimante">Imprimante</option>
+                <option value="autre">Autre</option>
+              </select>
+            </div>
+            <div class="col-md-1">
+              <button class="btn btn-primary btn-sm w-100" onclick="loadTemplates()"><i class="fas fa-search"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="tpl-container"></div>
+    </div>
+
     <!-- ── Admin users ── -->
     <div id="view-admin-users" style="display:none">
       <h5 class="fw-bold mb-4"><i class="fas fa-users-cog me-2 text-primary"></i>Gestion des utilisateurs</h5>
@@ -1432,6 +1480,66 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
         <button type="button" class="btn btn-primary" onclick="saveKBArticle()">
+          <i class="fas fa-save me-1"></i>Enregistrer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ Modal création/édition modèle ═══════════════════════════════════ -->
+<div class="modal fade" id="tplFormModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold" id="tpl-form-title">Nouveau modèle</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Nom du modèle <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="tpl-input-name" placeholder="Ex : Réinitialisation mot de passe">
+        </div>
+        <div class="row g-3 mb-3">
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Type</label>
+            <select class="form-select" id="tpl-input-type"></select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Catégorie</label>
+            <select class="form-select" id="tpl-input-category">
+              <option value="logiciel">Logiciel</option>
+              <option value="materiel">Matériel</option>
+              <option value="reseau">Réseau</option>
+              <option value="securite">Sécurité</option>
+              <option value="telephonie">Téléphonie</option>
+              <option value="imprimante">Imprimante</option>
+              <option value="autre">Autre</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Priorité</label>
+            <select class="form-select" id="tpl-input-priority">
+              <option value="faible">Faible</option>
+              <option value="normale" selected>Normale</option>
+              <option value="haute">Haute</option>
+              <option value="critique">Critique</option>
+            </select>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Titre du ticket <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="tpl-input-title" placeholder="Titre pré-rempli du ticket">
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Description du ticket <span class="text-danger">*</span></label>
+          <textarea class="form-control" id="tpl-input-description" rows="6"
+            placeholder="Description pré-remplie du ticket...&#10;&#10;Informations à fournir :&#10;- ..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button type="button" class="btn btn-primary" onclick="saveTemplate()">
           <i class="fas fa-save me-1"></i>Enregistrer
         </button>
       </div>
@@ -1940,7 +2048,7 @@ async function loadTechUsers() {
 // ════════════════════════════════════════════
 // NAVIGATION
 // ════════════════════════════════════════════
-const VIEWS = ['dashboard', 'my-tickets', 'all-tickets', 'catalogue', 'incidents', 'demandes', 'advanced-search', 'kanban', 'reports', 'kb', 'sla', 'admin-users'];
+const VIEWS = ['dashboard', 'my-tickets', 'all-tickets', 'catalogue', 'incidents', 'demandes', 'advanced-search', 'kanban', 'reports', 'kb', 'sla', 'templates', 'admin-users'];
 
 function showView(name) {
   VIEWS.forEach(v => {
@@ -1987,6 +2095,7 @@ function loadView(name) {
   else if (name === 'kb') loadKB();
   else if (name === 'advanced-search') loadAdvSearchUsers();
   else if (name === 'sla') loadSLA();
+  else if (name === 'templates') loadTemplates();
   else if (name === 'admin-users') loadAdminUsers();
 }
 
@@ -2892,6 +3001,9 @@ const KB_TYPE_OPTIONS = (() => {
     ['virus','Virus / Malware'],['phishing','Phishing / Spam'],
     ['crash_application','Crash application'],['corruption_donnees','Corruption de données'],
     ['indisponibilite_service','Indisponibilité service'],['acces_refuse','Accès refusé'],
+    ['ransomware','Ransomware'],['erreur_reseau','Erreur réseau / DNS'],
+    ['ecran_bleu','Écran bleu (BSOD)'],['peripherique_defaillant','Périphérique défaillant'],
+    ['probleme_impression',"Problème d'impression"],
   ];
   const dem = [
     ['demande','Demande'],['demande_acces','Accès'],['demande_installation','Installation'],
@@ -2901,7 +3013,9 @@ const KB_TYPE_OPTIONS = (() => {
     ['demande_reinitialisation_mdp','Réinit. mot de passe'],
     ['demande_creation_compte','Création de compte'],['demande_assistance','Assistance'],
     ['demande_configuration','Configuration'],['demande_mise_a_jour','Mise à jour'],
-    ['demande_archivage','Archivage'],
+    ['demande_archivage','Archivage'],['demande_deblockage_compte','Déblocage de compte'],
+    ['demande_vpn','Accès VPN'],['demande_messagerie','Messagerie / Email'],
+    ['demande_impression_config','Config. impression'],['demande_badge_acces',"Badge d'accès"],
   ];
   return { inc, dem };
 })();
@@ -3062,6 +3176,175 @@ async function deleteKBArticle(id) {
     bootstrap.Modal.getInstance(document.getElementById('kbReadModal'))?.hide();
     toast('Article supprimé');
     loadKB();
+  } catch(e) {
+    toast('Erreur suppression : ' + e.message, 'danger');
+  }
+}
+
+// ════════════════════════════════════════════
+// MODÈLES DE TICKETS
+// ════════════════════════════════════════════
+let _tplCurrentId = null;
+
+function _fillTplTypeSelect(selId) {
+  const sel = document.getElementById(selId);
+  if (!sel) return;
+  const first = sel.options[0]?.outerHTML ?? '';
+  sel.innerHTML = first +
+    `<optgroup label="Incidents">${KB_TYPE_OPTIONS.inc.map(([v,l]) => `<option value="${v}">${l}</option>`).join('')}</optgroup>` +
+    `<optgroup label="Demandes">${KB_TYPE_OPTIONS.dem.map(([v,l]) => `<option value="${v}">${l}</option>`).join('')}</optgroup>`;
+}
+
+async function loadTemplates() {
+  const isStaff = ['technician','admin'].includes(state.user?.role);
+  document.getElementById('tpl-new-btn').classList.toggle('d-none', !isStaff);
+  _fillTplTypeSelect('tpl-filter-type');
+  _fillTplTypeSelect('tpl-input-type');
+
+  const el = document.getElementById('tpl-container');
+  el.innerHTML = `<div class="text-center py-5"><div class="spinner-border text-primary"></div></div>`;
+  const params = new URLSearchParams();
+  const search = document.getElementById('tpl-search').value.trim();
+  const type = document.getElementById('tpl-filter-type').value;
+  const cat = document.getElementById('tpl-filter-category').value;
+  if (search) params.set('search', search);
+  if (type) params.set('type', type);
+  if (cat) params.set('category', cat);
+
+  try {
+    const templates = await API.get('/templates/?' + params.toString());
+    if (!templates.length) {
+      el.innerHTML = `<div class="text-center text-muted py-5">
+        <i class="fas fa-copy fa-3x mb-3 d-block"></i>
+        Aucun modèle disponible.${isStaff ? ' Créez le premier en cliquant sur "+ Nouveau modèle".' : ''}
+      </div>`;
+      return;
+    }
+
+    const PRIO_COLOR = { critique:'danger', haute:'warning', normale:'primary', faible:'success' };
+    const PRIO_LABEL = { critique:'Critique', haute:'Haute', normale:'Normale', faible:'Faible' };
+
+    el.innerHTML = `<div class="row g-3">` + templates.map(t => {
+      const tm = TYPE_META[t.type] || { label: t.type, icon: 'tag' };
+      const pColor = PRIO_COLOR[t.priority] || 'secondary';
+      const editBtns = isStaff ? `
+        <button class="btn btn-outline-secondary btn-sm" onclick="event.stopPropagation();openTemplateForm(${t.id})" title="Modifier">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="btn btn-outline-danger btn-sm" onclick="event.stopPropagation();deleteTemplate(${t.id})" title="Supprimer">
+          <i class="fas fa-trash"></i>
+        </button>` : '';
+      return `
+        <div class="col-md-6 col-lg-4">
+          <div class="card h-100 shadow-sm" style="cursor:pointer" onclick="useTemplate(${t.id})">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <h6 class="fw-bold mb-0">${escHtml(t.name)}</h6>
+                <div class="d-flex gap-1">${editBtns}</div>
+              </div>
+              <div class="mb-2">
+                <span class="badge badge-${t.type} me-1"><i class="fas fa-${tm.icon} me-1"></i>${tm.label}</span>
+                <span class="badge bg-${pColor}">${PRIO_LABEL[t.priority]}</span>
+                <span class="badge bg-secondary ms-1">${categoryLabel(t.category)}</span>
+              </div>
+              <p class="text-muted small mb-2" style="white-space:pre-wrap;max-height:60px;overflow:hidden">${escHtml(t.title)}</p>
+              <div class="d-flex justify-content-between align-items-center mt-auto pt-2 border-top">
+                <small class="text-muted"><i class="fas fa-user me-1"></i>${t.author.username}</small>
+                <small class="text-muted"><i class="fas fa-mouse-pointer me-1"></i>${t.usage_count} utilisation${t.usage_count !== 1 ? 's' : ''}</small>
+              </div>
+            </div>
+            <div class="card-footer bg-primary text-white text-center py-2 small fw-semibold">
+              <i class="fas fa-plus-circle me-1"></i>Utiliser ce modèle
+            </div>
+          </div>
+        </div>`;
+    }).join('') + `</div>`;
+  } catch(e) {
+    el.innerHTML = `<div class="alert alert-danger">Erreur : ${e.message}</div>`;
+  }
+}
+
+async function useTemplate(id) {
+  try {
+    const t = await API.post(`/templates/${id}/use`, {});
+    // Pre-fill create ticket modal
+    document.getElementById('create-title').value = t.title;
+    document.getElementById('create-description').value = t.description;
+    document.getElementById('create-type').value = t.type;
+    document.getElementById('create-category').value = t.category;
+    document.getElementById('create-priority').value = t.priority;
+    // Trigger priority hint
+    document.getElementById('create-type').dispatchEvent(new Event('change'));
+    new bootstrap.Modal(document.getElementById('createModal')).show();
+  } catch(e) {
+    toast('Erreur : ' + e.message, 'danger');
+  }
+}
+
+function openTemplateForm(id = null) {
+  _tplCurrentId = id;
+  _fillTplTypeSelect('tpl-input-type');
+  const modal = document.getElementById('tplFormModal');
+  document.getElementById('tpl-form-title').textContent = id ? 'Modifier le modèle' : 'Nouveau modèle';
+  document.getElementById('tpl-input-name').value = '';
+  document.getElementById('tpl-input-title').value = '';
+  document.getElementById('tpl-input-description').value = '';
+  document.getElementById('tpl-input-type').value = 'demande';
+  document.getElementById('tpl-input-category').value = 'autre';
+  document.getElementById('tpl-input-priority').value = 'normale';
+
+  if (id) {
+    API.get(`/templates/?`).then(list => {
+      const t = list.find(x => x.id === id);
+      if (!t) return;
+      document.getElementById('tpl-input-name').value = t.name;
+      document.getElementById('tpl-input-title').value = t.title;
+      document.getElementById('tpl-input-description').value = t.description;
+      document.getElementById('tpl-input-type').value = t.type;
+      document.getElementById('tpl-input-category').value = t.category;
+      document.getElementById('tpl-input-priority').value = t.priority;
+    });
+  }
+  new bootstrap.Modal(modal).show();
+}
+
+async function saveTemplate() {
+  const payload = {
+    name:        document.getElementById('tpl-input-name').value.trim(),
+    title:       document.getElementById('tpl-input-title').value.trim(),
+    description: document.getElementById('tpl-input-description').value.trim(),
+    type:        document.getElementById('tpl-input-type').value,
+    category:    document.getElementById('tpl-input-category').value,
+    priority:    document.getElementById('tpl-input-priority').value,
+  };
+  if (!payload.name || !payload.title || !payload.description) {
+    toast('Nom, titre et description sont obligatoires', 'warning'); return;
+  }
+  try {
+    if (_tplCurrentId) {
+      await API.patch(`/templates/${_tplCurrentId}`, payload);
+      toast('Modèle mis à jour');
+    } else {
+      await API.post('/templates/', payload);
+      toast('Modèle créé');
+    }
+    bootstrap.Modal.getInstance(document.getElementById('tplFormModal')).hide();
+    loadTemplates();
+  } catch(e) {
+    toast('Erreur : ' + e.message, 'danger');
+  }
+}
+
+async function deleteTemplate(id) {
+  if (!confirm('Supprimer ce modèle ?')) return;
+  try {
+    const res = await fetch(`/api/templates/${id}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${API.token}` },
+    });
+    if (!res.ok && res.status !== 204) throw new Error(await res.text());
+    toast('Modèle supprimé');
+    loadTemplates();
   } catch(e) {
     toast('Erreur suppression : ' + e.message, 'danger');
   }
