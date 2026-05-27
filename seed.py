@@ -799,6 +799,16 @@ def seed(force=False):
              (6, "Vérifier le retour à la normale", "Confirmer la connectivité sur l'ensemble du périmètre touché. Tester les services critiques (AD, DNS, accès Internet, serveurs)."),
              (7, "Documenter et clore", "Rédiger le compte-rendu d'incident : cause, actions, durée de l'interruption. Clore le ticket et notifier les utilisateurs."),
          ]),
+        ("Création de compte utilisateur", "demande_creation_compte",
+         "Processus de création d'un nouveau compte utilisateur dans le système d'information", [
+             (1, "Vérifier et collecter les informations", "Recueillir nom, prénom, service, responsable, date d'arrivée, rôle et liste des accès applicatifs nécessaires. Vérifier la validation du responsable."),
+             (2, "Créer le compte Active Directory", "Créer le compte AD avec l'identifiant selon la convention de nommage, définir un mot de passe temporaire et placer le compte dans les OU et groupes adéquats."),
+             (3, "Créer la boîte mail", "Créer la boîte Exchange/Microsoft 365, configurer le nom d'affichage, les alias et ajouter l'utilisateur aux listes de diffusion de son service."),
+             (4, "Attribuer les licences logicielles", "Affecter les licences Microsoft 365, logiciels métier et outils requis selon le profil de poste."),
+             (5, "Créer les accès applicatifs", "Ouvrir les comptes sur chaque application métier requise (ERP, CRM, intranet, etc.) avec les profils et droits correspondant au rôle."),
+             (6, "Communiquer les identifiants", "Transmettre les identifiants de connexion via un canal sécurisé. Informer l'utilisateur de la procédure de changement du mot de passe temporaire."),
+             (7, "Vérifier et clore", "Confirmer que le compte fonctionne sur tous les accès requis. Documenter la création dans l'outil de gestion du parc et fermer le ticket."),
+         ]),
         ("Demande de matériel informatique", "demande_materiel",
          "Processus de traitement d'une demande de matériel informatique", [
              (1, "Valider le besoin avec le responsable", "Vérifier que la demande est justifiée et validée par le responsable hiérarchique de l'utilisateur."),
